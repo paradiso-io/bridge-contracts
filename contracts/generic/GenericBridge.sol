@@ -78,7 +78,6 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 			safeTransferIn(_tokenAddress, msg.sender, _amount);
 			emit RequestBridge(_tokenAddress, msg.sender, _amount, chainId, _toChainId, index);
 			index++;
-			uint256[] memory l = tokenMapList[_tokenAddress];
 			if (!tokenMapSupportCheck[_tokenAddress][_toChainId]) {
 				tokenMapList[_tokenAddress].push(_toChainId);
 				tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
