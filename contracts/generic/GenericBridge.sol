@@ -26,6 +26,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention {
 	uint256 public index;
 	uint256 public minApprovers;
 
+	//_token is the origin token, regardless it's bridging from or to the origini token 
 	event RequestBridge(address indexed _token, address indexed _addr, uint256 _amount, uint256 _fromChainId, uint256 _toChainId, uint256 _index);
 
 	constructor(address[] memory _bridgeApprovers, uint256 _chainId) public {
@@ -89,7 +90,8 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention {
 			}
 		} else {
 			ERC20Burnable(_tokenAddress).burnFrom(msg.sender, _amount);
-			emit RequestBridge(_tokenAddress, msg.sender, _amount, chainId, _toChainId, index);
+			address _originToken = tokenMapReverse[_tokenAddress];
+			emit RequestBridge(_originToken, msg.sender, _amount, chainId, _toChainId, index);
 			index++;
 		}
 	}
@@ -114,9 +116,10 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention {
 
 	//@dev: _claimData: includex tx hash, event index, event data
 	//@dev _tokenInfos: contain token name and symbol of bridge token
-	function claimToken(address _originToken, address _to, uint256 _amount, uint256 _chainId, bytes32 _claimData, bytes32[] memory r, bytes32[] memory s, uint8[] memory v, string memory _name, string memory _symbol, uint8 _decimals) external nonReentrant {
-		require(chainId != _chainId, "!chain id claim");
-		bytes32 _claimId = keccak256(abi.encode(_originToken, _to, _amount, _chainId, _claimData, _name, _symbol, _decimals));
+	//_chainIdsIndex: length = 3, _chainIdsIndex[0] => fromChainId, _chainIdsIndex[1] = toChainId = this chainId, _chainIdsIndex[2] = index
+	function claimToken(address _originToken, address _to, uint256 _amount, uint256[] memory _chainIdsIndex, bytes32 _txHash,  bytes32[] memory r, bytes32[] memory s, uint8[] memory v, string memory _name, string memory _symbol, uint8 _decimals) external nonReentrant {
+		require(_chainIdsIndex.length == 3 && chainId != _chainIdsIndex[1], "!chain id claim");
+		bytes32 _claimId = keccak256(abi.encode(_originToken, _to, _amount, _chainIdsIndex, _txHash, _name, _symbol, _decimals));
 		require(!alreadyClaims[_claimId], "already claim");
 		require(verifySignatures(r, s, v, _claimId), "invalid signatures");
 
@@ -126,12 +129,12 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention {
 			//claiming on bridge token
 			if (tokenMap[_originToken] == address(0)) {
 				//create bridge token
-				DTOBridgeToken bt = new DTOBridgeToken(_originToken, _chainId, _name, _symbol, _decimals);
+				DTOBridgeToken bt = new DTOBridgeToken(_originToken, _chainIdsIndex[1], _name, _symbol, _decimals);
 				tokenMap[_originToken] = address(bt);
 				tokenMapReverse[address(bt)] = _originToken;
 			}
 			//claim
-			IDTOTokenBridge(tokenMap[_originToken]).claimBridgeToken(_originToken, _to, _amount, _chainId, _claimData);
+			IDTOTokenBridge(tokenMap[_originToken]).claimBridgeToken(_originToken, _to, _amount, _chainIdsIndex, _txHash);
 		} else {
 			//claiming original token
 			safeTransferOut(_originToken, _to, _amount);

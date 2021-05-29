@@ -19,11 +19,12 @@ contract DTOBridgeToken is ERC20Burnable, Ownable, BlackholePrevention, IDTOToke
 		originalTokenAddress = _originalTokenAddress;
     }
 
-    function claimBridgeToken(address _originToken, address _to, uint256 _amount, uint256 _chainId, bytes32 _claimData) public override onlyOwner {
+    function claimBridgeToken(address _originToken, address _to, uint256 _amount, uint256[] memory _chainIdsIndex, bytes32 _txHash) public override onlyOwner {
+		require(_chainIdsIndex.length == 3, "!_chainIdsIndex.length");
 		require(_originToken == originalTokenAddress, "!originalTokenAddress");
-		require(_chainId == chainId, "!invalid chainId");
+		require(_chainIdsIndex[1] == chainId, "!invalid chainId");
 		require(_to != address(0), "!invalid to");
-		bytes32 _claimId = keccak256(abi.encode(_originToken, _to, _amount, _chainId, _claimData, name(), symbol(), decimals()));
+		bytes32 _claimId = keccak256(abi.encode(_originToken, _to, _amount, _chainIdsIndex, _txHash, name(), symbol(), decimals()));
 		require(!alreadyClaims[_claimId], "already claim");
 
 		alreadyClaims[_claimId] = true;
