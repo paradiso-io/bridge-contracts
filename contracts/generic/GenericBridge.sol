@@ -1,5 +1,4 @@
 pragma solidity ^0.7.0;
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol"; // for WETH
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
@@ -7,8 +6,9 @@ import "../lib/BlackholePrevention.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol"; // for WETH
 import "./DTOBridgeToken.sol";
 import "./IDTOTokenBridge.sol";
+import "./Governable.sol";
 
-contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention {
+contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governable {
 	using SafeMath for uint256;
 	using SafeERC20 for IERC20;
 
@@ -38,11 +38,6 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention {
 			approverMap[bridgeApprovers[i]] = true;
 		}
     }
-
-	modifier onlyGovernance() {
-		require(msg.sender == owner(), "!onlyGovernance");
-		_;
-	}
 
 	function setMinApprovers(uint256 _val) public onlyGovernance {
 		require(_val >= 2, "!min set approver");
