@@ -97,6 +97,12 @@ module.exports = {
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY]
     },
+    fujitestnet: {  //avalanche
+      url: `https://api.avax-test.network/ext/bc/C/rpc`,
+      gasPrice: 225e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY]
+    },
   },
   solidity: {
     version: "0.7.3",
