@@ -29,6 +29,8 @@ const chainIdByName = (chainName) => {
     case 'coverage': return 31337;
     case 'bsc': return 56;
     case 'bsctestnet': return 97;
+    case 'moonbeamtestnet': return 1287;
+    case 'fantomtestnet': return 4002;
     default: return 0;
   }
 };
@@ -42,6 +44,8 @@ const chainNameById = (chainId) => {
     case 31337: return 'Hardhat';
     case 56: return 'BSC';
     case 97: return 'BSCTestnet';
+    case 1287: return 'MoonBeamTestnet';
+    case 4002: return 'FantomTestnet';
     default: return 'Unknown';
   }
 };

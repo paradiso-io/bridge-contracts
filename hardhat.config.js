@@ -79,6 +79,18 @@ module.exports = {
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY]
     },
+    moonbeamtestnet: {
+      url: `https://rpc.testnet.fantom.network/`,
+      gasPrice: 5e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY]
+    },
+    fantomtestnet: {
+      url: `https://rpc.testnet.moonbeam.network`,
+      gasPrice: 22e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY]
+    },
   },
   solidity: {
     version: "0.7.3",

@@ -30,7 +30,7 @@ module.exports = async (hre) => {
     log('  - Trusted Forwarder: ', trustedForwarder);
     log(' ');
 
-    log('  Deploying Universe...');
+    log('  Deploying GenericBridge...');
     const GenericBridge = await ethers.getContractFactory('GenericBridge');
     const GenericBridgeInstance = await GenericBridge.deploy([], chainId)
     const genericBridge = await GenericBridgeInstance.deployed()
