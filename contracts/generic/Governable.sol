@@ -6,4 +6,10 @@ contract Governable is Ownable {
 		require(msg.sender == owner(), "!onlyGovernance");
 		_;
 	}
+
+	address public governance;
+
+	function setGovernance(address _gov) public onlyGovernance {
+		governance = _gov;
+	}
 }

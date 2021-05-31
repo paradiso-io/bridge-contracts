@@ -29,7 +29,7 @@ contract DTOBridgeToken is ERC20Burnable, Ownable, BlackholePrevention, IDTOToke
 		require(!alreadyClaims[_claimId], "already claim");
 
 		alreadyClaims[_claimId] = true;
-		_mint(_to, _amount);
+		_mint(msg.sender, _amount);	//send token to bridge contract, which then distributes token and fee to user and governance
 	}
 
   function withdrawEther(address payable receiver, uint256 amount) external virtual onlyGovernance {

@@ -23,6 +23,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	mapping(address => address) public tokenMapReverse;	//mapping from bridge token to address of the original token
 	mapping(address => bool) public bridgeTokens;	//mapping of bridge tokens on this chain
 	address[] public originTokenList;
+	uint256 public feex10000;	//1 => 0.01%
 
 	uint256 public index;
 	uint256 public minApprovers;
@@ -38,6 +39,8 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		for(uint256 i = 0; i < bridgeApprovers.length; i++) {
 			approverMap[bridgeApprovers[i]] = true;
 		}
+		feex10000 = 0;
+		governance = owner();
     }
 
 	function setMinApprovers(uint256 _val) public onlyGovernance {
@@ -71,6 +74,10 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		supportedChainIds[_chainId] = _val;
 	}
 
+	function setGovernanceFee(uint256 _feeX10000) public onlyGovernance {
+		feex10000 = _feeX10000;
+	}
+
 	function requestBridge(address _tokenAddress, uint256 _amount, uint256 _toChainId) public {
 		require(chainId != _toChainId, "source and target chain ids must be different");
 		require(supportedChainIds[_toChainId], "unsupported chainId");
@@ -79,7 +86,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 			safeTransferIn(_tokenAddress, msg.sender, _amount);
 			emit RequestBridge(_tokenAddress, msg.sender, _amount, chainId, _toChainId, index);
 			index++;
-			
+
 			if (tokenMapList[_tokenAddress].length == 0) {
 				originTokenList.push(_tokenAddress);
 			}
@@ -124,7 +131,6 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		require(verifySignatures(r, s, v, _claimId), "invalid signatures");
 
 		alreadyClaims[_claimId] = true;
-
 		if (tokenMapList[_originToken].length == 0) {
 			//claiming on bridge token
 			if (tokenMap[_originToken] == address(0)) {
@@ -135,12 +141,22 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 			}
 			//claim
 			IDTOTokenBridge(tokenMap[_originToken]).claimBridgeToken(_originToken, _to, _amount, _chainIdsIndex, _txHash);
+			safeTransferOut(tokenMap[_originToken], _to, computeTransferAmount(_amount));
+			safeTransferOut(tokenMap[_originToken], governance, computeFeeAmount(_amount));
 		} else {
 			//claiming original token
-			safeTransferOut(_originToken, _to, _amount);
+			safeTransferOut(_originToken, _to, computeTransferAmount(_amount));
+			safeTransferOut(_originToken, governance, computeFeeAmount(_amount));
 		}
 	}
 
+	function computeTransferAmount(uint256 _amount) internal view returns (uint256) {
+		return _amount.sub(_amount.mul(feex10000).div(10000));
+	}
+
+	function computeFeeAmount(uint256 _amount) internal view returns (uint256) {
+		return _amount.mul(feex10000).div(10000);
+	}
 
 	/***********************************|
 	|          Only Admin               |
