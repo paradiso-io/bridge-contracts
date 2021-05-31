@@ -103,6 +103,12 @@ module.exports = {
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY]
     },
+    tomotestnet: {  
+      url: `https://rpc.testnet.tomochain.com`,
+      gasPrice: 1e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY]
+    },
   },
   solidity: {
     version: "0.7.3",
