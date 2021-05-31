@@ -91,6 +91,12 @@ module.exports = {
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY]
     },
+    mumbaitestnet: {  //matic
+      url: `https://rpc-mumbai.maticvigil.com/`,
+      gasPrice: 20e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY]
+    },
   },
   solidity: {
     version: "0.7.3",
