@@ -41,7 +41,7 @@ const chainNameById = (chainId) => {
     case 42: return 'Kovan';
     case 31337: return 'Hardhat';
     case 56: return 'BSC';
-    case 97: return 'BSC Testnet';
+    case 97: return 'BSCTestnet';
     default: return 'Unknown';
   }
 };
@@ -78,7 +78,8 @@ const saveDeploymentData = (chainId, deployData) => {
 };
 
 const getContractAbi = (contractName) => {
-  const buildPath = path.join(__dirname, '..', 'abis');
+  const buildPath = path.join(__dirname, '..', 'abi');
+  console.log('buildPath', buildPath)
   const filename = `${buildPath}/${contractName}.json`;
   const contractJson = require(filename);
   return contractJson;

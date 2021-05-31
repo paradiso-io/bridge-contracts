@@ -1,0 +1,35 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_originToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_chainIdsIndex",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_txHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "claimBridgeToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
