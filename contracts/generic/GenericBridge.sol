@@ -22,6 +22,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	mapping(address => address) public tokenMap;
 	mapping(address => address) public tokenMapReverse;	//mapping from bridge token to address of the original token
 	mapping(address => bool) public bridgeTokens;	//mapping of bridge tokens on this chain
+	address[] public originTokenList;
 
 	uint256 public index;
 	uint256 public minApprovers;
@@ -78,6 +79,11 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 			safeTransferIn(_tokenAddress, msg.sender, _amount);
 			emit RequestBridge(_tokenAddress, msg.sender, _amount, chainId, _toChainId, index);
 			index++;
+			
+			if (tokenMapList[_tokenAddress].length == 0) {
+				originTokenList.push(_tokenAddress);
+			}
+
 			if (!tokenMapSupportCheck[_tokenAddress][_toChainId]) {
 				tokenMapList[_tokenAddress].push(_toChainId);
 				tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
