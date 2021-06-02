@@ -45,7 +45,19 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_chainId",
+        "name": "_fromChainId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_toChainId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_index",
         "type": "uint256"
       },
       {
