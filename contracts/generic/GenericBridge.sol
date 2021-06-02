@@ -38,6 +38,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 
 	//_token is the origin token, regardless it's bridging from or to the origini token 
 	event RequestBridge(address indexed _token, address indexed _addr, uint256 _amount, uint256 _originChainId, uint256 _fromChainId, uint256 _toChainId, uint256 _index);
+	event ClaimToken(address indexed _token, address indexed _addr, uint256 _amount, uint256 _originChainId, uint256 _chainId, bytes32 _claimId);
 
 	constructor(address[] memory _bridgeApprovers, uint256 _chainId) public {
         bridgeApprovers = _bridgeApprovers;
@@ -155,9 +156,11 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 			}
 			//claim
 			IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken]).claimBridgeToken(_originToken, _to, _amount, _chainIdsIndex, _txHash);
+			emit ClaimToken(_originToken, _to, _amount, _chainIdsIndex[0], chainId, _claimId);
 		} else {
 			//claiming original token
 			safeTransferOut(_originToken, _to, _amount);
+			emit ClaimToken(_originToken, _to, _amount, _chainIdsIndex[0], chainId, _claimId);
 		}
 	}
 
