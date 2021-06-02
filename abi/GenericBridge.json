@@ -58,6 +58,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "_originChainId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "_fromChainId",
         "type": "uint256"
       },
@@ -145,6 +151,19 @@
     ],
     "name": "WithdrawStuckEther",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "NATIVE_TOKEN_ADDRESS",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -249,6 +268,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "claimFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -308,20 +340,7 @@
     ],
     "name": "claimToken",
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "feex10000",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -472,7 +491,7 @@
     ],
     "name": "requestBridge",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -492,7 +511,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_feeX10000",
+        "name": "_fee",
         "type": "uint256"
       }
     ],
@@ -554,6 +573,11 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -606,8 +630,13 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "addr",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

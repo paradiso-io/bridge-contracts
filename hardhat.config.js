@@ -140,6 +140,11 @@ module.exports = {
     clear: true,
     flat: true,
   },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://bscscan.com/
+    apiKey: process.env.BSC_APIKEY
+  },
   namedAccounts: {
         deployer: {
           default: 0,

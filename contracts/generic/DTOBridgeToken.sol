@@ -21,15 +21,15 @@ contract DTOBridgeToken is ERC20Burnable, Ownable, BlackholePrevention, IDTOToke
     }
 
     function claimBridgeToken(address _originToken, address _to, uint256 _amount, uint256[] memory _chainIdsIndex, bytes32 _txHash) public override onlyGovernance {
-		require(_chainIdsIndex.length == 3, "!_chainIdsIndex.length");
+		require(_chainIdsIndex.length == 4, "!_chainIdsIndex.length");
 		require(_originToken == originalTokenAddress, "!originalTokenAddress");
-		require(_chainIdsIndex[1] == chainId, "!invalid chainId");
+		require(_chainIdsIndex[2] == chainId, "!invalid chainId");
 		require(_to != address(0), "!invalid to");
 		bytes32 _claimId = keccak256(abi.encode(_originToken, _to, _amount, _chainIdsIndex, _txHash, name(), symbol(), decimals()));
 		require(!alreadyClaims[_claimId], "already claim");
 
 		alreadyClaims[_claimId] = true;
-		_mint(msg.sender, _amount);	//send token to bridge contract, which then distributes token and fee to user and governance
+		_mint(_to, _amount);	//send token to bridge contract, which then distributes token and fee to user and governance
 	}
 
   function withdrawEther(address payable receiver, uint256 amount) external virtual onlyGovernance {
