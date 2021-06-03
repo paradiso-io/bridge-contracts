@@ -40,14 +40,10 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	event RequestBridge(address indexed _token, address indexed _addr, uint256 _amount, uint256 _originChainId, uint256 _fromChainId, uint256 _toChainId, uint256 _index);
 	event ClaimToken(address indexed _token, address indexed _addr, uint256 _amount, uint256 _originChainId, uint256 _fromChainId, uint256 _toChainId, uint256 _index, bytes32 _claimId);
 
-	constructor(address[] memory _bridgeApprovers, uint256 _chainId) public {
-        bridgeApprovers = _bridgeApprovers;
+	constructor(uint256 _chainId) public {
 		chainId = _chainId;
 		supportedChainIds[_chainId] = true;
 		minApprovers = 2;
-		for(uint256 i = 0; i < bridgeApprovers.length; i++) {
-			approverMap[bridgeApprovers[i]] = true;
-		}
 		claimFee = 0;
 		governance = owner();
     }
@@ -60,11 +56,17 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	function addApprover(address _addr) public onlyGovernance {
 		require(!approverMap[_addr], "already approver");
 		require(_addr != address(0), "non zero address");
-		for(uint256 i = 0; i < bridgeApprovers.length; i++) {
-			if (bridgeApprovers[i] == _addr) return;
-		}
 		bridgeApprovers.push(_addr);
 		approverMap[_addr] = true;
+	}
+
+	function addApprovers(address[] memory _addrs) public onlyGovernance {
+		for(uint256 i = 0; i < _addrs.length; i++) {
+			if (!approverMap[_addrs[i]]) {
+				bridgeApprovers.push(_addrs[i]);
+				approverMap[_addrs[i]] = true;
+			}
+		}
 	}
 
 	function removeApprover(address _addr) public onlyGovernance {
@@ -81,6 +83,12 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 
 	function setSupportedChainId(uint256 _chainId, bool _val) public onlyGovernance {
 		supportedChainIds[_chainId] = _val;
+	}
+
+	function setSupportedChainIds(uint256[] memory _chainIds, bool _val) public onlyGovernance {
+		for(uint256 i = 0;  i < _chainIds.length; i++) {
+			supportedChainIds[_chainIds[i]] = _val;
+		}
 	}
 
 	function setGovernanceFee(uint256 _fee) public onlyGovernance {
@@ -134,7 +142,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	//@dev _tokenInfos: contain token name and symbol of bridge token
 	//_chainIdsIndex: length = 4, _chainIdsIndex[0] = originChainId, _chainIdsIndex[1] => fromChainId, _chainIdsIndex[2] = toChainId = this chainId, _chainIdsIndex[3] = index
 	function claimToken(address _originToken, address _to, uint256 _amount, uint256[] memory _chainIdsIndex, bytes32 _txHash,  bytes32[] memory r, bytes32[] memory s, uint8[] memory v, string memory _name, string memory _symbol, uint8 _decimals) external payable nonReentrant {
-		require(_chainIdsIndex.length == 4 && chainId != _chainIdsIndex[2], "!chain id claim");
+		require(_chainIdsIndex.length == 4 && chainId == _chainIdsIndex[2], "!chain id claim");
 		bytes32 _claimId = keccak256(abi.encode(_originToken, _to, _amount, _chainIdsIndex, _txHash, _name, _symbol, _decimals));
 		require(!alreadyClaims[_claimId], "already claim");
 		require(verifySignatures(r, s, v, _claimId), "invalid signatures");

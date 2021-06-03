@@ -4,7 +4,9 @@ const {
   saveDeploymentData,
   getContractAbi,
   getTxGasCost,
-  log
+  log,
+  supportedChainIds,
+  approvers
 } = require("../js-helpers/deploy");
 
 const _ = require('lodash');
@@ -32,7 +34,7 @@ module.exports = async (hre) => {
 
     log('  Deploying GenericBridge...');
     const GenericBridge = await ethers.getContractFactory('GenericBridge');
-    const GenericBridgeInstance = await GenericBridge.deploy([], chainId)
+    const GenericBridgeInstance = await GenericBridge.deploy(chainId)
     const genericBridge = await GenericBridgeInstance.deployed()
     log('  - GenericBridge:         ', genericBridge.address);
     deployData['GenericBridge'] = {
@@ -40,6 +42,9 @@ module.exports = async (hre) => {
       address: genericBridge.address,
       deployTransaction: genericBridge.deployTransaction,
     }
+
+    await genericBridge.setSupportedChainIds(supportedChainIds, true)
+    await genericBridge.addApprovers(approvers)
 
     saveDeploymentData(chainId, deployData);
     log('\n  Contract Deployment Data saved to "deployments" directory.');
