@@ -80,13 +80,13 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY]
     },
     moonbeamtestnet: {
-      url: `https://rpc.testnet.fantom.network/`,
+      url: `https://rpc.testnet.moonbeam.network/`,
       gasPrice: 5e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY]
     },
     fantomtestnet: {
-      url: `https://rpc.testnet.moonbeam.network`,
+      url: `https://rpc.testnet.fantom.network`,
       gasPrice: 22e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY]
@@ -143,7 +143,7 @@ module.exports = {
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://bscscan.com/
-    apiKey: process.env.BSC_APIKEY
+    apiKey: process.env.ETHERSCAN_APIKEY
   },
   namedAccounts: {
         deployer: {

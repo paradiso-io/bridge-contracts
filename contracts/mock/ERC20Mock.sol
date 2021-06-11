@@ -15,8 +15,8 @@ contract ERC20Mock is ERC20 {
         _mint(initialAccount, initialBalance);
     }
 
-    function mint(address account, uint256 amount) public {
-        _mint(account, amount);
+    function mint(address account) public {
+        _mint(account, 1000e18);
     }
 
     function burn(address account, uint256 amount) public {

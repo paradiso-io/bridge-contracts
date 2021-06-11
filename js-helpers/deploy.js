@@ -74,7 +74,7 @@ const ensureDirectoryExistence = (filePath) => {
 
 const saveDeploymentData = (chainId, deployData) => {
   const network = chainNameById(chainId).toLowerCase();
-  const deployPath = path.join(__dirname, '..', 'deployments', network);
+  const deployPath = path.join(__dirname, '..', 'deployments', `${chainId}`);
 
   _.forEach(_.keys(deployData), (contractName) => {
     const filename = `${deployPath}/${contractName}.json`;

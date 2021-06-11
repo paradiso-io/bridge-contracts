@@ -95,7 +95,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		claimFee = _fee;
 	}
 
-	function requestBridge(address _tokenAddress, uint256 _amount, uint256 _toChainId) public payable {
+	function requestBridge(address _tokenAddress, uint256 _amount, uint256 _toChainId) public payable nonReentrant {
 		require(chainId != _toChainId, "source and target chain ids must be different");
 		require(supportedChainIds[_toChainId], "unsupported chainId");
 		if (!isBridgeToken(_tokenAddress)) {
@@ -199,7 +199,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		return bridgeTokens[_token];
 	}
 
-	function safeTransferIn(address _token, address _from, uint256 _amount) internal nonReentrant {
+	function safeTransferIn(address _token, address _from, uint256 _amount) internal {
 		if (_token == NATIVE_TOKEN_ADDRESS) {
 			require(msg.value == _amount, "invalid bridge amount");
 		} else {
@@ -210,7 +210,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		}
 	}
 
-	function safeTransferOut(address _token, address _to, uint256 _amount) internal nonReentrant {
+	function safeTransferOut(address _token, address _to, uint256 _amount) internal {
 		if (_token == NATIVE_TOKEN_ADDRESS) {
 			payable(_to).sendValue(_amount);
 		} else {

@@ -32,7 +32,7 @@ module.exports = async (hre) => {
 
     log('  Deploying Mock ERC20...');
     const ERC20Mock = await ethers.getContractFactory('ERC20Mock');
-    const ERC20MockInstance = await ERC20Mock.deploy("ERC20Mock", "ERC20Mock", deployer, '1000000000000000000000000000')
+    const ERC20MockInstance = await ERC20Mock.deploy("MEME" + chainNameById(chainId), "MEME" + chainId, deployer, '1000000000000000000000000000')
     const genericBridge = await ERC20MockInstance.deployed()
     log('  - ERC20Mock:         ', ERC20Mock.address);
     deployData['ERC20Mock'] = {
