@@ -40,7 +40,11 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	event RequestBridge(address indexed _token, address indexed _addr, uint256 _amount, uint256 _originChainId, uint256 _fromChainId, uint256 _toChainId, uint256 _index);
 	event ClaimToken(address indexed _token, address indexed _addr, uint256 _amount, uint256 _originChainId, uint256 _fromChainId, uint256 _toChainId, uint256 _index, bytes32 _claimId);
 
-	constructor(uint256 _chainId) public {
+	constructor() public {
+		uint _chainId;
+        assembly {
+            _chainId := chainid()
+        }
 		chainId = _chainId;
 		supportedChainIds[_chainId] = true;
 		minApprovers = 2;
@@ -154,7 +158,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 			//claiming bridge token
 			if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
 				//create bridge token
-				DTOBridgeToken bt = new DTOBridgeToken(_originToken, _chainIdsIndex[2], _name, _symbol, _decimals);
+				DTOBridgeToken bt = new DTOBridgeToken(_originToken, _name, _symbol, _decimals);
 				tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
 				tokenMapReverse[address(bt)] = TokenInfo({
 					addr: _originToken,

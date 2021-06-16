@@ -20,8 +20,12 @@ contract DTO is Context, Ownable, ERC20Burnable, IClaim {
 	mapping(address => bool) public bridges;
 	mapping(uint256 => bool) public alreadyClaims;
 
-	constructor(address _tokenRecipient, uint256 _initialAmount, uint256 _chainId) public ERC20("DOTORACLE.NETWORK", "DTO") {
+	constructor(address _tokenRecipient, uint256 _initialAmount) public ERC20("DOTORACLE.NETWORK", "DTO") {
 		_mint(_tokenRecipient, _initialAmount);
+		uint _chainId;
+        assembly {
+            _chainId := chainid()
+        }
 		chainId = _chainId;
     }
 

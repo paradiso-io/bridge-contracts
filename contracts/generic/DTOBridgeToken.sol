@@ -14,8 +14,12 @@ contract DTOBridgeToken is ERC20Burnable, Ownable, BlackholePrevention, IDTOToke
 	address public originalTokenAddress;
 	uint256 public chainId;
 
-	constructor(address _originalTokenAddress, uint256 _chainId, string memory _tokenName, string memory _tokenSymbol, uint8 _decimals) public ERC20(_tokenName, _tokenSymbol) {
+	constructor(address _originalTokenAddress, string memory _tokenName, string memory _tokenSymbol, uint8 _decimals) public ERC20(_tokenName, _tokenSymbol) {
 		_setupDecimals(_decimals);
+		uint _chainId;
+        assembly {
+            _chainId := chainid()
+        }
 		chainId = _chainId;
 		originalTokenAddress = _originalTokenAddress;
     }

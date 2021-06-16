@@ -11,7 +11,11 @@ contract Bridge is Ownable {
 
 	event RequestBridge(address indexed _addr, uint256 indexed _amount, uint256 _fromChainId, uint256 _toChainId);
 
-	constructor(address _bridgeApprover, uint256 _chainId, address _tokenAddress) public {
+	constructor(address _bridgeApprover, address _tokenAddress) public {
+		uint _chainId;
+        assembly {
+            _chainId := chainid()
+        }
         bridgeApprover = _bridgeApprover;
 		chainId = _chainId;
 		tokenAddress = _tokenAddress;
