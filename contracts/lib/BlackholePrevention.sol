@@ -1,9 +1,8 @@
 pragma solidity ^0.7.0;
 
-import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./TransferHelper.sol";
 
 /**
  * @notice Prevents ETH or Tokens from getting stuck in a contract by allowing
@@ -11,9 +10,6 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
  * This is only meant to contracts that are not expected to hold tokens, but do handle transferring them.
  */
 contract BlackholePrevention {
-  using Address for address payable;
-  using SafeERC20 for IERC20;
-
   event WithdrawStuckEther(address indexed receiver, uint256 amount);
   event WithdrawStuckERC20(address indexed receiver, address indexed tokenAddress, uint256 amount);
   event WithdrawStuckERC721(address indexed receiver, address indexed tokenAddress, uint256 indexed tokenId);
@@ -21,7 +17,7 @@ contract BlackholePrevention {
   function _withdrawEther(address payable receiver, uint256 amount) internal virtual {
     require(receiver != address(0x0), "BHP:E-403");
     if (address(this).balance >= amount) {
-      receiver.sendValue(amount);
+      TransferHelper.safeTransferETH(receiver, amount);
       emit WithdrawStuckEther(receiver, amount);
     }
   }
@@ -29,7 +25,7 @@ contract BlackholePrevention {
   function _withdrawERC20(address payable receiver, address tokenAddress, uint256 amount) internal virtual {
     require(receiver != address(0x0), "BHP:E-403");
     if (IERC20(tokenAddress).balanceOf(address(this)) >= amount) {
-      IERC20(tokenAddress).safeTransfer(receiver, amount);
+      TransferHelper.safeTransfer(tokenAddress, receiver, amount);
       emit WithdrawStuckERC20(receiver, tokenAddress, amount);
     }
   }

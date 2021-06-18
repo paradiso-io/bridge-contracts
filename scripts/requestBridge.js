@@ -10,7 +10,7 @@ const {
 } = require("../js-helpers/deploy");
 
 const call = require('../js-helpers/call')
-const erc20Address = "0xFaAb233b75df55eF19aa69B060Ac06C9De8E4C0b"
+const erc20Address = "0x20aaDa979814b9Ff3E5DF1999871a7244Bf71BFE"
 
 async function requestBridge() {
 	const { ethers, upgrades, getNamedAccounts } = hre;
@@ -19,14 +19,14 @@ async function requestBridge() {
 
 	const chainId = chainIdByName(network.name);
 
-    log('  Using Network: ', chainNameById(chainId));
+  log('  Using Network: ', chainNameById(chainId));
 
 	const IERC20 = await ethers.getContractAt('IERC20');
 	let token = await IERC20.attach(erc20Address)
 
 	const networkName = chainNameById(chainId).toLowerCase()
 	const GenericBridge = await ethers.getContractFactory('GenericBridge');
-	const genericBridgeInfo = require(`../deployments/${networkName}/GenericBridge.json`)
+	const genericBridgeInfo = require(`../deployments/${chainId}/GenericBridge.json`)
 	const genericBridgeContract = await GenericBridge.attach(genericBridgeInfo.address)
 
 	await call(token, "approve", [genericBridgeInfo.address, 100000e18])

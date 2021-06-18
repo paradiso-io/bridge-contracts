@@ -4,7 +4,6 @@ pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -13,7 +12,6 @@ import "./IClaim.sol";
 //token owner will be a time lock contract after farming started
 contract DTO is Context, Ownable, ERC20Burnable, IClaim {
     using SafeMath for uint256;
-    using Address for address;
 
 	uint256 public constant MAX_SUPPLY = 100000000e18;
 	uint256 public chainId;

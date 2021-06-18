@@ -1,18 +1,15 @@
 pragma solidity ^0.7.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol"; // for WETH
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
 import "../lib/BlackholePrevention.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol"; 
-import "@openzeppelin/contracts/utils/Address.sol"; 
 import "./DTOBridgeToken.sol";
 import "./IDTOTokenBridge.sol";
 import "./Governable.sol";
+import "../lib/TransferHelper.sol";
 
 contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governable {
 	using SafeMath for uint256;
-	using SafeERC20 for IERC20;
-	using Address for address payable;
 
 	struct TokenInfo {
 		address addr;
@@ -179,7 +176,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	function payClaimFee(uint256 _amount) internal {
 		if (claimFee > 0) {
 			require(_amount >= claimFee, "!min claim fee");
-			payable(governance).sendValue(_amount);
+			TransferHelper.safeTransferETH(governance, _amount);
 		}
 	}
 
@@ -209,18 +206,18 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		} else {
 			IERC20 erc20 = IERC20(_token);
 			uint256 balBefore = erc20.balanceOf(address(this));
-			erc20.safeTransferFrom(_from, address(this), _amount);
+			TransferHelper.safeTransferFrom(_token, _from, address(this), _amount);
 			require(erc20.balanceOf(address(this)).sub(balBefore) == _amount, "!transfer from");
 		}
 	}
 
 	function safeTransferOut(address _token, address _to, uint256 _amount) internal {
 		if (_token == NATIVE_TOKEN_ADDRESS) {
-			payable(_to).sendValue(_amount);
+			TransferHelper.safeTransferETH(_to, _amount);
 		} else {
 			IERC20 erc20 = IERC20(_token);
 			uint256 balBefore = erc20.balanceOf(address(this));
-			erc20.safeTransfer(_to, _amount);
+			TransferHelper.safeTransfer(_token, _to, _amount);
 			require(balBefore.sub(erc20.balanceOf(address(this))) == _amount, "!transfer to");
 		}
 	}
