@@ -34,7 +34,7 @@ module.exports = async (hre) => {
 
     log('  Deploying GenericBridge...');
     const GenericBridge = await ethers.getContractFactory('GenericBridge');
-    const GenericBridgeInstance = await GenericBridge.deploy(chainId)
+    const GenericBridgeInstance = await GenericBridge.deploy()
     const genericBridge = await GenericBridgeInstance.deployed()
     log('  - GenericBridge:         ', genericBridge.address);
     deployData['GenericBridge'] = {

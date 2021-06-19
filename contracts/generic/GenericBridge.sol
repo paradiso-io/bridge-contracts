@@ -50,6 +50,11 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		minApprovers = 2;
 		claimFee = 0;
 		governance = owner();
+
+		uint24[12] memory _chainIds = [1, 3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43113, 89];
+		for(uint256 i = 0;  i < _chainIds.length; i++) {
+			supportedChainIds[_chainIds[i]] = true;
+		}
     }
 
 	function setMinApprovers(uint256 _val) public onlyGovernance {
