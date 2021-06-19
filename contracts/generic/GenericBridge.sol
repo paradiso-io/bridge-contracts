@@ -1,4 +1,4 @@
-pragma solidity ^0.7.0;
+pragma solidity 0.5.17;
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
 import "../lib/BlackholePrevention.sol";
@@ -142,7 +142,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	//@dev: _claimData: includex tx hash, event index, event data
 	//@dev _tokenInfos: contain token name and symbol of bridge token
 	//_chainIdsIndex: length = 4, _chainIdsIndex[0] = originChainId, _chainIdsIndex[1] => fromChainId, _chainIdsIndex[2] = toChainId = this chainId, _chainIdsIndex[3] = index
-	function claimToken(address _originToken, address _to, uint256 _amount, uint256[] memory _chainIdsIndex, bytes32 _txHash,  bytes32[] memory r, bytes32[] memory s, uint8[] memory v, string memory _name, string memory _symbol, uint8 _decimals) external payable nonReentrant {
+	function claimToken(address _originToken, address _to, uint256 _amount, uint256[] memory _chainIdsIndex, bytes32 _txHash,  bytes32[] memory r, bytes32[] memory s, uint8[] memory v, string memory _name, string memory _symbol, uint8 _decimals) public payable nonReentrant {
 		require(_chainIdsIndex.length == 4 && chainId == _chainIdsIndex[2], "!chain id claim");
 		bytes32 _claimId = keccak256(abi.encode(_originToken, _to, _amount, _chainIdsIndex, _txHash, _name, _symbol, _decimals));
 		require(!alreadyClaims[_claimId], "already claim");
@@ -151,6 +151,10 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		payClaimFee(msg.value);
 
 		alreadyClaims[_claimId] = true;
+		claimTokenInternal(_originToken, _to, _amount, _chainIdsIndex, _txHash, _name, _symbol, _decimals, _claimId);
+	}
+
+	function claimTokenInternal(address _originToken, address _to, uint256 _amount, uint256[] memory _chainIdsIndex, bytes32 _txHash, string memory _name, string memory _symbol, uint8 _decimals, bytes32 _claimId) private {
 		if (tokenMapList[_originToken].length == 0) {
 			//claiming bridge token
 			if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
@@ -184,15 +188,15 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	|          Only Admin               |
 	|      (blackhole prevention)       |
 	|__________________________________*/
-	function withdrawEther(address payable receiver, uint256 amount) external virtual onlyGovernance {
+	function withdrawEther(address payable receiver, uint256 amount) external onlyGovernance {
     	_withdrawEther(receiver, amount);
 	}
 
-	function withdrawERC20(address payable receiver, address tokenAddress, uint256 amount) external virtual onlyGovernance {
+	function withdrawERC20(address payable receiver, address tokenAddress, uint256 amount) external onlyGovernance {
 		_withdrawERC20(receiver, tokenAddress, amount);
 	}
 
-	function withdrawERC721(address payable receiver, address tokenAddress, uint256 tokenId) external virtual onlyGovernance {
+	function withdrawERC721(address payable receiver, address tokenAddress, uint256 tokenId) external onlyGovernance {
 		_withdrawERC721(receiver, tokenAddress, tokenId);
 	}
 

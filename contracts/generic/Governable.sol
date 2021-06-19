@@ -1,5 +1,5 @@
-pragma solidity ^0.7.0;
-import "@openzeppelin/contracts/access/Ownable.sol";
+pragma solidity 0.5.17;
+import "@openzeppelin/contracts/ownership/Ownable.sol";
 
 contract Governable is Ownable {
 	modifier onlyGovernance() {

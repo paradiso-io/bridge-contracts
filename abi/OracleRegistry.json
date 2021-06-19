@@ -1,5 +1,6 @@
 [
   {
+    "constant": true,
     "inputs": [
       {
         "internalType": "address",
@@ -20,10 +21,12 @@
         "type": "string"
       }
     ],
+    "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "address",
@@ -38,10 +41,12 @@
     ],
     "name": "registerUrl",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "address",
@@ -56,6 +61,7 @@
     ],
     "name": "unregisterUrl",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   }

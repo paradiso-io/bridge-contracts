@@ -1,5 +1,5 @@
-pragma solidity ^0.7.0;
-import "@openzeppelin/contracts/access/Ownable.sol";
+pragma solidity 0.5.17;
+import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "./IClaim.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
 

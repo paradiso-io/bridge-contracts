@@ -1,7 +1,7 @@
-pragma solidity ^0.7.0;
+pragma solidity 0.5.17;
 
 library DotOracleLib {
-	function fetchOffChainData(string memory _source) external returns (bytes memory) {
+	function fetchOffChainData(string calldata _source) external returns (bytes memory) {
 
 	}
 }

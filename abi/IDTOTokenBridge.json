@@ -1,5 +1,6 @@
 [
   {
+    "constant": false,
     "inputs": [
       {
         "internalType": "address",
@@ -29,6 +30,7 @@
     ],
     "name": "claimBridgeToken",
     "outputs": [],
+    "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   }
