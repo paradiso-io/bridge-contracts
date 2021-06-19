@@ -47,6 +47,11 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 		minApprovers = 2;
 		claimFee = 0;
 		governance = owner();
+
+		uint24[12] memory _chainIds = [1, 3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43113, 89];
+		for(uint256 i = 0;  i < _chainIds.length; i++) {
+			supportedChainIds[_chainIds[i]] = true;
+		}
     }
 
 	function setMinApprovers(uint256 _val) public onlyGovernance {
@@ -98,7 +103,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 
 	function requestBridge(address _tokenAddress, uint256 _amount, uint256 _toChainId) public payable nonReentrant {
 		require(chainId != _toChainId, "source and target chain ids must be different");
-		require(supportedChainIds[_toChainId], "unsupported chainId");
+		require(supportedChainIds[_toChainId] == true, "unsupported chainId");
 		if (!isBridgeToken(_tokenAddress)) {
 			//transfer and lock token here
 			safeTransferIn(_tokenAddress, msg.sender, _amount);
