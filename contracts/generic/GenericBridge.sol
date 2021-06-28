@@ -8,8 +8,9 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "./DTOBridgeToken.sol";
 import "./IDTOTokenBridge.sol";
 import "./Governable.sol";
+import "../lib/ChainIdHolding.sol";
 
-contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governable {
+contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governable, ChainIdHolding {
 	using SafeMath for uint256;
 	using SafeERC20 for IERC20;
 	using Address for address payable;
@@ -23,7 +24,6 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	mapping(bytes32 => bool) public alreadyClaims;
 	address[] public bridgeApprovers;
 	mapping(address => bool) public approverMap; 	//easily check approver signature
-	uint256 public chainId;
     mapping(uint256 => bool) public supportedChainIds;
 	mapping(address => uint256[]) public tokenMapList;	//to which chain ids this token is bridged to
 	mapping(address => mapping(uint256 => bool)) public tokenMapSupportCheck;	//to which chain ids this token is bridged to
@@ -41,12 +41,7 @@ contract GenericBridge is Ownable, ReentrancyGuard, BlackholePrevention, Governa
 	event ClaimToken(address indexed _token, address indexed _addr, uint256 _amount, uint256 _originChainId, uint256 _fromChainId, uint256 _toChainId, uint256 _index, bytes32 _claimId);
 
 	constructor() public {
-		uint _chainId;
-        assembly {
-            _chainId := chainid()
-        }
-		chainId = _chainId;
-		supportedChainIds[_chainId] = true;
+		supportedChainIds[chainId] = true;
 		minApprovers = 2;
 		claimFee = 0;
 		governance = owner();

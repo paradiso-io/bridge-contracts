@@ -7,20 +7,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../lib/BlackholePrevention.sol";
 import "./IDTOTokenBridge.sol";
 import "./Governable.sol";
+import "../lib/ChainIdHolding.sol";
 
-contract DTOBridgeToken is ERC20Burnable, Ownable, BlackholePrevention, IDTOTokenBridge, Governable {
+contract DTOBridgeToken is ERC20Burnable, Ownable, BlackholePrevention, IDTOTokenBridge, Governable, ChainIdHolding {
     using SafeMath for uint256;
 	mapping(bytes32 => bool) public alreadyClaims;
 	address public originalTokenAddress;
-	uint256 public chainId;
 
 	constructor(address _originalTokenAddress, string memory _tokenName, string memory _tokenSymbol, uint8 _decimals) public ERC20(_tokenName, _tokenSymbol) {
 		_setupDecimals(_decimals);
-		uint _chainId;
-        assembly {
-            _chainId := chainid()
-        }
-		chainId = _chainId;
 		originalTokenAddress = _originalTokenAddress;
     }
 
