@@ -7,35 +7,20 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../generic/Governable.sol";
 import "../lib/ChainIdHolding.sol";
 import "../lib/SafeTransferHelper.sol";
+import "./IBonding.sol";
 
-contract DTOBonding is Governable, ChainIdHolding {
+contract DTOBonding is Governable, ChainIdHolding, IBonding {
     using SafeMath for uint256;
 
-    address public dtoToken;
-    address[] public validatorList;
-
-    struct Validator {
-        address addr;
-        uint256 blockNumber;
-        uint256 timestamp;
-    }
-
-    struct ValidatorPending {
-        address addr;
-        uint256 blockNumber;
-        uint256 timestamp;
-    }
+    address public override dtoToken;
+    address[] public override validatorList;
 
     mapping(address => Validator) public validatorMap;
     
     mapping(address => ValidatorPending) public pendingValidators;
 
-    uint256 public immutable BONDING_AMOUNT;
-    uint256 public constant MINIMUM_WAITING = 1 hours;
-
-    event ValidatorApply(address indexed validator, uint256 blockNumber, uint256 timestamp);
-    event ValidatorApproval(address indexed validator, uint256 blockNumber, uint256 timestamp);
-    event ValidatorResign(address indexed validator, uint256 blockNumber, uint256 timestamp);
+    uint256 public immutable override BONDING_AMOUNT;
+    uint256 public constant override MINIMUM_WAITING = 1 hours;
     constructor(uint256 _bondingAmount, address _dtoToken) public {
         BONDING_AMOUNT = _bondingAmount;
         dtoToken = _dtoToken;
@@ -51,7 +36,7 @@ contract DTOBonding is Governable, ChainIdHolding {
         _;
     }
 
-    function applyValidtor() external notValidator(msg.sender) notPendingValidator(msg.sender) {
+    function applyValidtor() external override notValidator(msg.sender) notPendingValidator(msg.sender) {
         SafeTransferHelper.safeTransferFrom(dtoToken, msg.sender, address(this), BONDING_AMOUNT);
         pendingValidators[msg.sender] = ValidatorPending({
             addr: msg.sender,
@@ -61,7 +46,7 @@ contract DTOBonding is Governable, ChainIdHolding {
         emit ValidatorApply(msg.sender, block.number, block.timestamp);
     }
 
-    function approveValidator(address _validator) external onlyGovernance notValidator(_validator) {
+    function approveValidator(address _validator) external override onlyGovernance notValidator(_validator) {
         require(pendingValidators[_validator].blockNumber > 0, "DTOBonding: not a pending validator");
         require(pendingValidators[_validator].timestamp.sub(block.timestamp) >= MINIMUM_WAITING, "DTOBonding: approval too early");
 
@@ -77,7 +62,7 @@ contract DTOBonding is Governable, ChainIdHolding {
     }
 
     //todo:lock validator amount
-    function resignValidator() external {
+    function resignValidator() external override {
         require(validatorMap[msg.sender].blockNumber > 0, "DTOBonding: not a validator");
         delete validatorMap[msg.sender];
 
@@ -91,5 +76,17 @@ contract DTOBonding is Governable, ChainIdHolding {
                 break;
             }
         }
+    }
+
+    function getValidatorInfo(address addr) external override view returns (address, uint256, uint256) {
+        return (validatorMap[addr].addr, validatorMap[addr].blockNumber, validatorMap[addr].timestamp);
+    }
+    
+    function getPendingValidatorInfo(address addr) external override view returns (address, uint256, uint256) {
+        return (pendingValidators[addr].addr, validatorMap[addr].blockNumber, validatorMap[addr].timestamp);
+    }
+
+    function isValidator(address addr) external override view returns (bool) {
+        return validatorMap[addr].blockNumber > 0;
     }
 }

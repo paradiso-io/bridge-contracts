@@ -2,13 +2,8 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_bondingAmount",
-        "type": "uint256"
-      },
-      {
         "internalType": "address",
-        "name": "_dtoToken",
+        "name": "_bonding",
         "type": "address"
       }
     ],
@@ -40,23 +35,23 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "validator",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "blockNumber",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
+        "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "ValidatorApply",
+    "name": "Stake",
     "type": "event"
   },
   {
@@ -65,23 +60,23 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "validator",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "blockNumber",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
+        "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "ValidatorApproval",
+    "name": "Unstake",
     "type": "event"
   },
   {
@@ -90,28 +85,28 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "validator",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "blockNumber",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
+        "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "ValidatorResign",
+    "name": "Withdraw",
     "type": "event"
   },
   {
     "inputs": [],
-    "name": "BONDING_AMOUNT",
+    "name": "MIN_STAKE",
     "outputs": [
       {
         "internalType": "uint256",
@@ -124,7 +119,7 @@
   },
   {
     "inputs": [],
-    "name": "MINIMUM_WAITING",
+    "name": "UNSTAKE_WAITING_TIME",
     "outputs": [
       {
         "internalType": "uint256",
@@ -137,22 +132,15 @@
   },
   {
     "inputs": [],
-    "name": "applyValidtor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+    "name": "bonding",
+    "outputs": [
       {
-        "internalType": "address",
-        "name": "_validator",
+        "internalType": "contract IBonding",
+        "name": "",
         "type": "address"
       }
     ],
-    "name": "approveValidator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -182,64 +170,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
-    "name": "getPendingValidatorInfo",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
-    "name": "getValidatorInfo",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "governance",
     "outputs": [
@@ -256,11 +186,16 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "addr",
+        "name": "_user",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_index",
+        "type": "uint256"
       }
     ],
-    "name": "isValidator",
+    "name": "isWithdrawnable",
     "outputs": [
       {
         "internalType": "bool",
@@ -285,44 +220,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "pendingValidators",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "blockNumber",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "resignValidator",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -344,6 +243,24 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_validator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "stakeDTO",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "newOwner",
         "type": "address"
       }
@@ -356,17 +273,79 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_validator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "unstakeDTO",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }
     ],
-    "name": "validatorList",
+    "name": "unstakes",
     "outputs": [
+      {
+        "internalType": "bool",
+        "name": "isWithdrawn",
+        "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "validator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "withdrawnableTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "address",
         "name": "",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "userInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -380,25 +359,33 @@
         "type": "address"
       }
     ],
-    "name": "validatorMap",
+    "name": "validatorTotalStake",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
-        "name": "blockNumber",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timestamp",
+        "name": "",
         "type": "uint256"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_index",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawUnstake",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
