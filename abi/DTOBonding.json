@@ -111,6 +111,19 @@
   },
   {
     "inputs": [],
+    "name": "APPROVE_PERCENT_THRESHOLD",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "BONDING_AMOUNT",
     "outputs": [
       {
@@ -157,6 +170,13 @@
   },
   {
     "inputs": [],
+    "name": "cancelValidatorApplication",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "chainId",
     "outputs": [
       {
@@ -179,6 +199,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_validator",
+        "type": "address"
+      }
+    ],
+    "name": "foundationApproveValidator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

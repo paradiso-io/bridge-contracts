@@ -13,6 +13,7 @@ interface IBonding {
         address addr;
         uint256 blockNumber;
         uint256 timestamp;
+        address[] approveList;
     }
 
     event ValidatorApply(address indexed validator, uint256 blockNumber, uint256 timestamp);

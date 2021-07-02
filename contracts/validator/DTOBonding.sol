@@ -21,6 +21,7 @@ contract DTOBonding is Governable, ChainIdHolding, IBonding {
 
     uint256 public immutable override BONDING_AMOUNT;
     uint256 public constant override MINIMUM_WAITING = 1 hours;
+    uint256 public constant APPROVE_PERCENT_THRESHOLD = 100;
     constructor(uint256 _bondingAmount, address _dtoToken) public {
         BONDING_AMOUNT = _bondingAmount;
         dtoToken = _dtoToken;
@@ -38,16 +39,37 @@ contract DTOBonding is Governable, ChainIdHolding, IBonding {
 
     function applyValidtor() external override notValidator(msg.sender) notPendingValidator(msg.sender) {
         SafeTransferHelper.safeTransferFrom(dtoToken, msg.sender, address(this), BONDING_AMOUNT);
+        address[] memory approveList;
         pendingValidators[msg.sender] = ValidatorPending({
             addr: msg.sender,
             blockNumber: block.number,
-            timestamp: block.timestamp
+            timestamp: block.timestamp,
+            approveList: approveList
         });
         emit ValidatorApply(msg.sender, block.number, block.timestamp);
     }
 
     function approveValidator(address _validator) external override onlyGovernance notValidator(_validator) {
+        require(validatorMap[msg.sender].blockNumber > 0, "DTOBonding: not a validator to approve");
         require(pendingValidators[_validator].blockNumber > 0, "DTOBonding: not a pending validator");
+        require(pendingValidators[_validator].timestamp.sub(block.timestamp) >= MINIMUM_WAITING, "DTOBonding: approval too early");
+
+        address[] memory approvedList = pendingValidators[_validator].approveList;
+        bool found = false;
+        for(uint i = 0; i < approvedList.length; i++) {
+            if (approvedList[i] == msg.sender) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            pendingValidators[_validator].approveList.push(msg.sender);
+        }
+    }
+
+    function foundationApproveValidator(address _validator) external onlyGovernance notValidator(_validator) {
+        require(pendingValidators[_validator].blockNumber > 0, "DTOBonding: not a pending validator");
+        require(pendingValidators[_validator].approveList.length.mul(100).div(validatorList.length) >= APPROVE_PERCENT_THRESHOLD, "DTOBonding: not enough approvals from validators");
         require(pendingValidators[_validator].timestamp.sub(block.timestamp) >= MINIMUM_WAITING, "DTOBonding: approval too early");
 
         validatorMap[_validator] = Validator({
@@ -76,6 +98,13 @@ contract DTOBonding is Governable, ChainIdHolding, IBonding {
                 break;
             }
         }
+    }
+
+    function cancelValidatorApplication() external {
+        require(pendingValidators[msg.sender].blockNumber > 0, "DTOBonding: not a pending validator");
+        delete pendingValidators[msg.sender];
+
+        SafeTransferHelper.safeTransfer(dtoToken, msg.sender, BONDING_AMOUNT);
     }
 
     function getValidatorInfo(address addr) external override view returns (address, uint256, uint256) {
