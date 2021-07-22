@@ -91,6 +91,24 @@ contract GenericBridgeV2 is
         }
     }
 
+	function changeBridgeValidator(address _newValidator, uint256 deadline, bytes32 r, bytes32 s, uint8 v) external {
+		bytes32 signedData = keccak256(
+            abi.encode(address(this), "changeBridgeValidator", chainId, _newValidator, deadline)
+        );
+
+		require(
+            verifyValidatorSignature(signedData, r, s, v),
+            "changeBridgeValidator: Invalid validator signature"
+        );
+		bridgeValidator = _newValidator;
+	}
+
+	function initValidator(address _validator) external onlyGovernance {
+		require(bridgeValidator == address(0), "validator must not be set initially");
+		require(_validator != address(0), "validator must not be zero");
+		bridgeValidator = _validator;
+	}
+
     function setMinApprovers(uint256 _val) public onlyGovernance {
         require(_val >= 2, "!min set approver");
         minApprovers = _val;
@@ -128,18 +146,10 @@ contract GenericBridgeV2 is
         uint256 deadline
     ) external {
         bytes32 signedData = keccak256(
-            abi.encode(address(this), chainId, _addr, deadline)
-        );
-        address signer = ecrecover(
-            keccak256(
-                abi.encodePacked("\x19Ethereum Signed Message:\n32", signedData)
-            ),
-            v,
-            r,
-            s
+            abi.encode(address(this), "addApproverMPC", chainId, _addr, deadline)
         );
         require(
-            signer == bridgeValidator,
+            verifyValidatorSignature(signedData, r, s, v),
             "addApproverMPC: Invalid validator signature"
         );
         require(!approverMap[_addr], "already approver");
@@ -158,18 +168,10 @@ contract GenericBridgeV2 is
         require(approverMap[_addr], "not approver");
 
         bytes32 signedData = keccak256(
-            abi.encode(address(this), chainId, _addr, deadline)
-        );
-        address signer = ecrecover(
-            keccak256(
-                abi.encodePacked("\x19Ethereum Signed Message:\n32", signedData)
-            ),
-            v,
-            r,
-            s
+            abi.encode(address(this), "removeApprover", chainId, _addr, deadline)
         );
         require(
-            signer == bridgeValidator,
+            verifyValidatorSignature(signedData, r, s, v),
             "removeApprover: Invalid validator signature"
         );
 
