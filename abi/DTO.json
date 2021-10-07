@@ -1,17 +1,6 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenRecipient",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_initialAmount",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
