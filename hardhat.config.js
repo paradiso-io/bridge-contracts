@@ -46,15 +46,6 @@ module.exports = {
   networks: {
     hardhat: {
     },
-    // hardhatfork: {
-    //   blockGasLimit: 200000000,
-    //   allowUnlimitedContractSize: true,
-    //   gasPrice: 1e9,
-    //   forking: {
-    //     url: `https://mainnet.infura.io/v3/${process.env.INFURA_APIKEY}`,
-    //     timeout: 1000000
-    //   }
-    // },
     kovan: {
       url: `https://kovan.infura.io/v3/${process.env.INFURA_APIKEY}`,
       gasPrice: 10e9,
