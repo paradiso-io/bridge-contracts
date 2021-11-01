@@ -4,10 +4,13 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/EnumerableSet.sol";
+
 import "../generic/Governable.sol";
 import "../lib/ChainIdHolding.sol";
 import "../lib/SafeTransferHelper.sol";
 import "./IBonding.sol";
+import "./LockingTokenValidator.sol";
 
 contract DTOBonding is Governable, ChainIdHolding, IBonding {
     using SafeMath for uint256;
@@ -22,9 +25,14 @@ contract DTOBonding is Governable, ChainIdHolding, IBonding {
     uint256 public immutable override BONDING_AMOUNT;
     uint256 public constant override MINIMUM_WAITING = 1 hours;
     uint256 public constant APPROVE_PERCENT_THRESHOLD = 100;
+
+    LockingTokenValidator public lockingtoken;
+    uint256 public poolLockedTime = 1 days;
+
     constructor(uint256 _bondingAmount, address _dtoToken) public {
         BONDING_AMOUNT = _bondingAmount;
         dtoToken = _dtoToken;
+        lockingtoken = new LockingTokenValidator();
     }
 
     modifier notValidator(address addr) {
@@ -86,18 +94,20 @@ contract DTOBonding is Governable, ChainIdHolding, IBonding {
     //todo:lock validator amount
     function resignValidator() external override {
         require(validatorMap[msg.sender].blockNumber > 0, "DTOBonding: not a validator");
-        delete validatorMap[msg.sender];
+        // delete validatorMap[msg.sender];
 
-        SafeTransferHelper.safeTransfer(dtoToken, msg.sender, BONDING_AMOUNT);
+        // SafeTransferHelper.safeTransfer(dtoToken, msg.sender, BONDING_AMOUNT);
 
-        //delete validator from list
-        for(uint256 i = 0;  i < validatorList.length; i++) {
-            if (validatorList[i] == msg.sender) {
-                validatorList[i] = validatorList[validatorList.length - 1];
-                validatorList.pop();
-                break;
-            }
-        }
+        lockingtoken.lock(dtoToken, msg.sender, BONDING_AMOUNT, poolLockedTime);
+
+        // //delete validator from list
+        // for(uint256 i = 0;  i < validatorList.length; i++) {
+        //     if (validatorList[i] == msg.sender) {
+        //         validatorList[i] = validatorList[validatorList.length - 1];
+        //         validatorList.pop();
+        //         break;
+        //     }
+        // }
     }
 
     function cancelValidatorApplication() external {
