@@ -1,13 +1,13 @@
-pragma solidity ^0.7.0;
-import "@openzeppelin/contracts/math/SafeMath.sol";
+pragma solidity ^0.8.0;
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
-import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // for WETH
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../generic/Governable.sol";
 import "../lib/ChainIdHolding.sol";
 import "../lib/SafeTransferHelper.sol";
-import "./IBonding.sol";
+import "../interfaces/IBonding.sol";
 
 contract DTOBonding is Governable, ChainIdHolding, IBonding {
     using SafeMath for uint256;

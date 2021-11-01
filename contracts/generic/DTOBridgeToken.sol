@@ -1,11 +1,11 @@
-pragma solidity ^0.7.0;
-import "@openzeppelin/contracts/math/SafeMath.sol";
+pragma solidity ^0.8.0;
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
-import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // for WETH
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../lib/BlackholePrevention.sol";
-import "./IDTOTokenBridge.sol";
+import "../interfaces/IDTOTokenBridge.sol";
 import "./Governable.sol";
 import "../lib/ChainIdHolding.sol";
 
@@ -13,12 +13,14 @@ contract DTOBridgeToken is ERC20Burnable, Ownable, BlackholePrevention, IDTOToke
     using SafeMath for uint256;
 	mapping(bytes32 => bool) public alreadyClaims;
 	address public originalTokenAddress;
-
-	constructor(address _originalTokenAddress, string memory _tokenName, string memory _tokenSymbol, uint8 _decimals) public ERC20(_tokenName, _tokenSymbol) {
-		_setupDecimals(_decimals);
+	uint8 _decimals;
+	constructor(address _originalTokenAddress, string memory _tokenName, string memory _tokenSymbol, uint8 __decimals) public ERC20(_tokenName, _tokenSymbol) {
+		_decimals= __decimals;
 		originalTokenAddress = _originalTokenAddress;
     }
-
+	 function decimals() public view virtual override returns (uint8) {
+        return _decimals;
+    }
     function claimBridgeToken(address _originToken, address _to, uint256 _amount, uint256[] memory _chainIdsIndex, bytes32 _txHash) public override onlyGovernance {
 		require(_chainIdsIndex.length == 4, "!_chainIdsIndex.length");
 		require(_originToken == originalTokenAddress, "!originalTokenAddress");

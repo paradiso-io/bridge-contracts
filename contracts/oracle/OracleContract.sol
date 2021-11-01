@@ -1,7 +1,7 @@
 
 
 
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 import "../lib/DotOracleLib.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 contract OracleContract is Ownable {

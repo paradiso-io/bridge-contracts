@@ -1,4 +1,4 @@
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 interface IBonding {
     function dtoToken() external view returns (address);
     function validatorList(uint256 i) external view returns (address);

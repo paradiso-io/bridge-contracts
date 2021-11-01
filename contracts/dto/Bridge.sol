@@ -1,7 +1,7 @@
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./IClaim.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
+import "../interfaces/IClaim.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // for WETH
 
 contract Bridge is Ownable {
 	address public bridgeApprover;

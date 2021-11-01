@@ -1,6 +1,6 @@
 pragma solidity >=0.6.6;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
-import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 // helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
 library SafeTransferHelper {

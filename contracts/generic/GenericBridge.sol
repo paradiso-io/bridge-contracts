@@ -1,12 +1,12 @@
-pragma solidity ^0.7.0;
-import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol"; // for WETH
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol"; // for WETH
+pragma solidity ^0.8.0;
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // for WETH
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"; // for WETH
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
 import "../lib/BlackholePrevention.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./DTOBridgeToken.sol";
-import "./IDTOTokenBridge.sol";
+import "../interfaces/IDTOTokenBridge.sol";
 import "./Governable.sol";
 import "../lib/ChainIdHolding.sol";
 

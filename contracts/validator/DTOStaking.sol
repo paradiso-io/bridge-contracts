@@ -1,25 +1,28 @@
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
 // Inheritance
-import "./IStakingRewards.sol";
-import "./RewardsDistributionRecipient.sol";
-import "./Pausable.sol";
+//import "../interfaces/IStakingRewards.sol";
+
+import "../interfaces/IStakingTokenLock.sol";
 
 // https://docs.synthetix.io/contracts/source/contracts/stakingrewards
-contract DTOStaking is IStakingRewards, ReentrancyGuard, Pausable {
-    using SafeMath for uint256;
-    using SafeERC20 for IERC20;
+contract DTOStaking is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeable,PausableUpgradeable,OwnableUpgradeable{
+    using SafeMathUpgradeable for uint256;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
 
     /* ========== STATE VARIABLES ========== */
-
-    IERC20 public rewardsToken;
-    IERC20 public stakingToken;
+    IStakingTokenLock public stakingTokenLock;
+    IERC20Upgradeable public rewardsToken;
+    IERC20Upgradeable public stakingToken;
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
     uint256 public rewardsDuration = 7 days;
@@ -31,37 +34,41 @@ contract DTOStaking is IStakingRewards, ReentrancyGuard, Pausable {
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
+    uint256 public stakingLockTime = 3 days;
 
     address public rewardsDistribution;
-
-    /* ========== CONSTRUCTOR ========== */
-
-    constructor(
-        address _owner,
-        address _rewardsDistribution,
+     function initialize(
+         //address _owner,
         address _rewardsToken,
-        address _stakingToken
-    ) public Owned(_owner) {
-        rewardsToken = IERC20(_rewardsToken);
-        stakingToken = IERC20(_stakingToken);
-        rewardsDistribution = _rewardsDistribution;
+        address _stakingToken,
+        address _stakingTokenLock
+
+    ) public initializer {
+        rewardsToken = IERC20Upgradeable(_rewardsToken);
+        stakingToken = IERC20Upgradeable(_stakingToken);
+        stakingTokenLock = IStakingTokenLock(_stakingTokenLock);
+
+
     }
 
+    /* ========== CONSTRUCTOR ========== */
+   constructor() initializer {}
+   function _authorizeUpgrade(address) internal override onlyOwner {}
     /* ========== VIEWS ========== */
 
-    function totalSupply() external view returns (uint256) {
+    function totalSupply() external  view returns (uint256) {
         return _totalSupply;
     }
 
-    function balanceOf(address account) external view returns (uint256) {
+    function balanceOf(address account) external  view returns (uint256) {
         return _balances[account];
     }
 
-    function lastTimeRewardApplicable() public view returns (uint256) {
+    function lastTimeRewardApplicable() public  view returns (uint256) {
         return block.timestamp < periodFinish ? block.timestamp : periodFinish;
     }
 
-    function rewardPerToken() public view returns (uint256) {
+    function rewardPerToken() public  view returns (uint256) {
         if (_totalSupply == 0) {
             return rewardPerTokenStored;
         }
@@ -71,17 +78,19 @@ contract DTOStaking is IStakingRewards, ReentrancyGuard, Pausable {
             );
     }
 
-    function earned(address account) public view returns (uint256) {
+    function earned(address account) public  view returns (uint256) {
         return _balances[account].mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).add(rewards[account]);
     }
 
-    function getRewardForDuration() external view returns (uint256) {
+    function getRewardForDuration() external  view returns (uint256) {
         return rewardRate.mul(rewardsDuration);
     }
-
+    function changeLockTime(uint256 _stakingLockTime) external onlyOwner {
+        stakingLockTime = _stakingLockTime;
+    }
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function stake(uint256 amount) external nonReentrant notPaused updateReward(msg.sender) {
+    function stake(uint256 amount) external nonReentrant whenNotPaused updateReward(msg.sender) {
         require(amount > 0, "Cannot stake 0");
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
@@ -93,7 +102,9 @@ contract DTOStaking is IStakingRewards, ReentrancyGuard, Pausable {
         require(amount > 0, "Cannot withdraw 0");
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
-        stakingToken.safeTransfer(msg.sender, amount);
+        stakingToken.safeApprove(address(stakingTokenLock), amount);
+        stakingTokenLock.lock(address(stakingToken), msg.sender, amount, stakingLockTime);
+
         emit Withdrawn(msg.sender, amount);
     }
 
@@ -113,16 +124,8 @@ contract DTOStaking is IStakingRewards, ReentrancyGuard, Pausable {
 
     /* ========== RESTRICTED FUNCTIONS ========== */
 
-    modifier onlyRewardsDistribution() {
-        require(msg.sender == rewardsDistribution, "Caller is not RewardsDistribution contract");
-        _;
-    }
 
-    function setRewardsDistribution(address _rewardsDistribution) external onlyOwner {
-        rewardsDistribution = _rewardsDistribution;
-    }
-
-    function notifyRewardAmount(uint256 reward) external onlyRewardsDistribution updateReward(address(0)) {
+    function notifyRewardAmount(uint256 reward) external onlyOwner updateReward(address(0)) {
         if (block.timestamp >= periodFinish) {
             rewardRate = reward.div(rewardsDuration);
         } else {
@@ -146,7 +149,7 @@ contract DTOStaking is IStakingRewards, ReentrancyGuard, Pausable {
     // Added to support recovering LP Rewards from other systems such as BAL to be distributed to holders
     function recoverERC20(address tokenAddress, uint256 tokenAmount) external onlyOwner {
         require(tokenAddress != address(stakingToken), "Cannot withdraw the staking token");
-        IERC20(tokenAddress).safeTransfer(owner, tokenAmount);
+        IERC20Upgradeable(tokenAddress).safeTransfer(msg.sender, tokenAmount);
         emit Recovered(tokenAddress, tokenAmount);
     }
 
