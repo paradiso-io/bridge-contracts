@@ -23,9 +23,9 @@ contract DTOStaking is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeabl
     IStakingTokenLock public stakingTokenLock;
     IERC20Upgradeable public rewardsToken;
     IERC20Upgradeable public stakingToken;
-    uint256 public periodFinish = 0;
-    uint256 public rewardRate = 0;
-    uint256 public rewardsDuration = 7 days;
+    uint256 public periodFinish;
+    uint256 public rewardRate;
+    uint256 public rewardsDuration;
     uint256 public lastUpdateTime;
     uint256 public rewardPerTokenStored;
 
@@ -34,25 +34,31 @@ contract DTOStaking is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeabl
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
-    uint256 public stakingLockTime = 3 days;
+    uint256 public stakingLockTime;
 
     address public rewardsDistribution;
      function initialize(
-         //address _owner,
         address _rewardsToken,
         address _stakingToken,
-        address _stakingTokenLock
+        address _stakingTokenLock,
+        uint256  _periodFinish ,
+        uint256  _rewardRate ,
+        uint256  _rewardsDuration,
+        uint256 _stakingLockTime
 
     ) public initializer {
+        __Ownable_init();
         rewardsToken = IERC20Upgradeable(_rewardsToken);
         stakingToken = IERC20Upgradeable(_stakingToken);
         stakingTokenLock = IStakingTokenLock(_stakingTokenLock);
-
-
+        periodFinish = _periodFinish;
+        rewardRate  =_rewardRate;
+        rewardsDuration =  _rewardsDuration;
+        stakingLockTime = _stakingLockTime;
     }
 
     /* ========== CONSTRUCTOR ========== */
-   constructor() initializer {}
+  // constructor() initializer {}
    function _authorizeUpgrade(address) internal override onlyOwner {}
     /* ========== VIEWS ========== */
 

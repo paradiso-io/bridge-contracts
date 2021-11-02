@@ -1,10 +1,5 @@
 [
   {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -290,6 +285,26 @@
         "internalType": "address",
         "name": "_stakingTokenLock",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_periodFinish",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rewardRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rewardsDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_stakingLockTime",
+        "type": "uint256"
       }
     ],
     "name": "initialize",
