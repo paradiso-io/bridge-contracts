@@ -2,7 +2,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-
+import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -114,13 +114,16 @@ contract DTOStaking is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeabl
         emit Withdrawn(msg.sender, amount);
     }
 
+    function getUnlock(address _addr, uint256 index) public {
+         stakingTokenLock.unlock(_addr,index);
+    }
     function getReward() public nonReentrant updateReward(msg.sender) {
         uint256 reward = rewards[msg.sender];
         if (reward > 0) {
             rewards[msg.sender] = 0;
             rewardsToken.safeTransfer(msg.sender, reward);
             emit RewardPaid(msg.sender, reward);
-        }
+        } 
     }
 
     function exit() external {
@@ -129,8 +132,7 @@ contract DTOStaking is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeabl
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
-
-
+   
     function notifyRewardAmount(uint256 reward) external onlyOwner updateReward(address(0)) {
         if (block.timestamp >= periodFinish) {
             rewardRate = reward.div(rewardsDuration);
