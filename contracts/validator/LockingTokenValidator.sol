@@ -5,9 +5,10 @@ import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/proxy/Initializable.sol";
+import "./ILockingTokenValidator.sol";
 
-contract LockingTokenValidator is Initializable, Ownable {
-    using SafeMath for uint256;
+contract LockingTokenValidator is Initializable, Ownable, ILockingTokenValidator {
+ using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
     struct LockInfo {
@@ -39,7 +40,7 @@ contract LockingTokenValidator is Initializable, Ownable {
         }
     }
 
-    function unlock(address _addr, uint256 index) public {
+    function unlock(address _addr, uint256 index) public override {
         LockInfo[] storage _lockInfo = lockInfo[_addr];
         require(
             !_lockInfo[index].isWithdrawn &&
@@ -63,12 +64,11 @@ contract LockingTokenValidator is Initializable, Ownable {
         address _addr,
         uint256 _amount,
         uint256 _lockedTime
-    ) external {
+    ) external override {
         //we add this check for avoiding too much vesting
         require(lockers[msg.sender], "only locker can lock");
         if (_amount > 0) {
             IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
-
             lockInfo[_addr].push(
                 LockInfo({
                     isWithdrawn: false,
@@ -85,6 +85,7 @@ contract LockingTokenValidator is Initializable, Ownable {
     function getLockInfo(address _user)
         external
         view
+        override
         returns (
             bool[] memory isWithdrawns,
             address[] memory tokens,
@@ -110,6 +111,7 @@ contract LockingTokenValidator is Initializable, Ownable {
     function getLockInfoByIndexes(address _addr, uint256[] memory _indexes)
         external
         view
+        override
         returns (
             bool[] memory isWithdrawns,
             address[] memory tokens,
@@ -135,6 +137,7 @@ contract LockingTokenValidator is Initializable, Ownable {
     function getLockInfoLength(address _addr)
         external
         view
+        override
         returns (uint256)
     {
         return lockInfo[_addr].length;
