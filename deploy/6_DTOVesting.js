@@ -36,6 +36,10 @@ module.exports = async (hre) => {
     let dtoAddress = "0xb57420fad6731b004309d5a0ec7c6c906adb8df7"
     let startVestingTime = 1638316800 //0:00:00 1/12/21 UTC+0
 
+    if (chainId == 31337) {
+      return;
+    }
+
     if (chainId != 1) {
       dtoAddress = require(`../deployments/${chainId}/DTO.json`).address
       startVestingTime = Math.floor(Date.now() / 1000)
