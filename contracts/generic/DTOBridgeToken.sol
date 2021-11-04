@@ -3,18 +3,19 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // for WETH
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../lib/BlackholePrevention.sol";
 import "../interfaces/IDTOTokenBridge.sol";
 import "./Governable.sol";
 import "../lib/ChainIdHolding.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 
-contract DTOBridgeToken is ERC20Burnable, Ownable, BlackholePrevention, IDTOTokenBridge, Governable, ChainIdHolding {
+contract DTOBridgeToken is ERC20BurnableUpgradeable, BlackholePrevention, IDTOTokenBridge, Governable, ChainIdHolding {
     using SafeMath for uint256;
 	mapping(bytes32 => bool) public alreadyClaims;
 	address public originalTokenAddress;
 	uint8 _decimals;
-	constructor(address _originalTokenAddress, string memory _tokenName, string memory _tokenSymbol, uint8 __decimals) public ERC20(_tokenName, _tokenSymbol) {
+	constructor(address _originalTokenAddress, string memory _tokenName, string memory _tokenSymbol, uint8 __decimals) public{
+		__ERC20_init(_tokenName, _tokenSymbol);
 		_decimals= __decimals;
 		originalTokenAddress = _originalTokenAddress;
     }

@@ -11,7 +11,6 @@ import "./Governable.sol";
 import "../lib/ChainIdHolding.sol";
 
 contract GenericBridgeV2 is
-    Ownable,
     ReentrancyGuard,
     BlackholePrevention,
     Governable,

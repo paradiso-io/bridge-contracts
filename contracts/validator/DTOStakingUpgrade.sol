@@ -41,7 +41,7 @@ contract DTOStakingUpgrade is Initializable, ReentrancyGuardUpgradeable, UUPSUpg
         __Ownable_init();
     }
 
-   
+      constructor() initializer {}
     function _authorizeUpgrade(address) internal override onlyOwner {}
      uint256 public number ;
   function setNumbetTest (uint256 _number)   external {
@@ -50,12 +50,5 @@ contract DTOStakingUpgrade is Initializable, ReentrancyGuardUpgradeable, UUPSUpg
   function getNumberTest () external view returns (uint256) {
       return number;
   }
-    // /* ========== EVENTS ========== */
-
-    // event RewardAdded(uint256 reward);
-    // event Staked(address indexed user, uint256 amount);
-    // event Withdrawn(address indexed user, uint256 amount);
-    // event RewardPaid(address indexed user, uint256 reward);
-    // event RewardsDurationUpdated(uint256 newDuration);
-    // event Recovered(address token, uint256 amount);
+  
 }
