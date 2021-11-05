@@ -35,7 +35,7 @@ module.exports = async (hre) => {
 
     log('  Deploying GenericBridge Upgrade...');
     const GenericBridge = await ethers.getContractFactory('GenericBridgeUpgrade');
-    const genericBridge = await upgrades.upgradeProxy(genericBridgeAddress,GenericBridge, [], { unsafeAllow: ['delegatecall'],unsafeAllowCustomTypes: true, kind: 'uups', gasLimit: 1000000 })
+    const genericBridge = await upgrades.upgradeProxy(genericBridgeAddress,GenericBridge, { unsafeAllow: ['delegatecall'],unsafeAllowCustomTypes: true, kind: 'uups', gasLimit: 1000000 })
 
     log('  - GenericBridge Upgrade:         ', genericBridge.address);
     deployData['GenericBridgeUpgrade'] = {

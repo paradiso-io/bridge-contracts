@@ -2,7 +2,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // for WETH
 import "../lib/BlackholePrevention.sol";
 import "../interfaces/IDTOTokenBridge.sol";
 import "./Governable.sol";
