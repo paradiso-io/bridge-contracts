@@ -52,7 +52,7 @@ contract DTOVesting is Initializable, Ownable, BlackholePrevention {
     }
 
     function unlock(address _addr) public {
-        require(startVestingTime > block.timestamp, "not claimable yet");
+        require(startVestingTime < block.timestamp, "not claimable yet");
         uint256 l = vestings[_addr].length;
         for (uint256 i = 0; i < l; i++) {
             uint256 unlockable = getUnlockableVesting(_addr, i);
