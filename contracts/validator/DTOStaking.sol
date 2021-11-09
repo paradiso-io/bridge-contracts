@@ -58,7 +58,8 @@ contract DTOStaking is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeabl
     }
 
     /* ========== CONSTRUCTOR ========== */
-  // constructor() initializer {}
+        /// @custom:oz-upgrades-unsafe-allow constructor
+   constructor() initializer {}
    function _authorizeUpgrade(address) internal override onlyOwner {}
     /* ========== VIEWS ========== */
 
@@ -114,9 +115,7 @@ contract DTOStaking is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeabl
         emit Withdrawn(msg.sender, amount);
     }
 
-    function getUnlock(address _addr, uint256 index) public {
-         stakingTokenLock.unlock(_addr,index);
-    }
+    
     function getReward() public nonReentrant updateReward(msg.sender) {
         uint256 reward = rewards[msg.sender];
         if (reward > 0) {
@@ -181,6 +180,40 @@ contract DTOStaking is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeabl
         }
         _;
     }
+ /* ==========  ========== */
+
+    function getUnlock(address _addr, uint256 index) public {
+         stakingTokenLock.unlock(_addr,index);
+    }
+    function getLockInfo(address _user)   external
+        view
+        returns (
+            bool[] memory isWithdrawns,
+            address[] memory tokens,
+            uint256[] memory unlockableAts,
+            uint256[] memory amounts
+        ){
+            return stakingTokenLock.getLockInfo(_user);
+        }
+    function getLockInfoByIndexes(address _addr, uint256[] memory _indexes)
+        external
+        view
+        returns (
+            bool[] memory isWithdrawns,
+            address[] memory tokens,
+            uint256[] memory unlockableAts,
+            uint256[] memory amounts
+        )
+    {
+        return stakingTokenLock.getLockInfoByIndexes(_addr, _indexes);
+    }
+     function getLockInfoLength(address _addr)
+        external
+        view
+        returns (uint256)
+    {
+        return stakingTokenLock.getLockInfoLength(_addr);
+    }    
 
     /* ========== EVENTS ========== */
 

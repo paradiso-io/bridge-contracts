@@ -15,6 +15,11 @@
       "address": "0xf9ce113b8920dB844Ff3BEDc1C79B382237e3058",
       "txHash": "0x50f6434f3b728dc48afe448a88846749c8f45d80b156494b7c9c729ea660eeab",
       "kind": "uups"
+    },
+    {
+      "address": "0x8242F6C6d57c3e5dfBA0D16756a980e7F99041D1",
+      "txHash": "0x2eeed4aa654e17e6da7255704c9c256734562605b853abd13055661c7d758590",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -644,6 +649,196 @@
           {
             "contract": "DTOStakingUpgrade",
             "label": "stakingTokenLock",
+            "type": "t_contract(IStakingTokenLock)1976",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:23"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "rewardsToken",
+            "type": "t_contract(IERC20Upgradeable)938",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:24"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "stakingToken",
+            "type": "t_contract(IERC20Upgradeable)938",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:25"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "periodFinish",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:26"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "rewardRate",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:27"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "rewardsDuration",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:28"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "lastUpdateTime",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:29"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "rewardPerTokenStored",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:30"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "userRewardPerTokenPaid",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:32"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "rewards",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:33"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "_totalSupply",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:35"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "_balances",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:36"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "stakingLockTime",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:37"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "rewardsDistribution",
+            "type": "t_address",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:39"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "number",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStakingUpgrade.sol:46"
+          }
+        ],
+        "types": {
+          "t_contract(IStakingTokenLock)1976": {
+            "label": "contract IStakingTokenLock"
+          },
+          "t_contract(IERC20Upgradeable)938": {
+            "label": "contract IERC20Upgradeable"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "79fc5f747b468506d32bca088e72a9b8e5b847671454419dc27732072a2ed565": {
+      "address": "0xC59d886E2dB650bd17144C2e28B6bB5A267a9b2F",
+      "txHash": "0x7cc992ebf6d79c9eeab29bde418380eae6fc2481ecf70476c83f88a0a9474cbc",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:37"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:67"
+          },
+          {
+            "contract": "ERC1967UpgradeUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:214"
+          },
+          {
+            "contract": "UUPSUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:80"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "_paused",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:28"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:96"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:21"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:77"
+          },
+          {
+            "contract": "DTOStakingUpgrade",
+            "label": "stakingTokenLock",
             "type": "t_contract(IStakingTokenLock)7356",
             "src": "contracts/validator/DTOStakingUpgrade.sol:23"
           },
@@ -730,6 +925,190 @@
             "label": "number",
             "type": "t_uint256",
             "src": "contracts/validator/DTOStakingUpgrade.sol:46"
+          }
+        ],
+        "types": {
+          "t_contract(IStakingTokenLock)7356": {
+            "label": "contract IStakingTokenLock"
+          },
+          "t_contract(IERC20Upgradeable)938": {
+            "label": "contract IERC20Upgradeable"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "ce82662927e52b9ee6edcd8b4462c743c02db0a4da8bfbe292b99b191a68d667": {
+      "address": "0x27511c78D6EcB985940F76bDD44072cbC1e23842",
+      "txHash": "0x31468d397d9e804817ff4d8558c614b704ff55f868800ebc2328540cc5f2313c",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:37"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:67"
+          },
+          {
+            "contract": "ERC1967UpgradeUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:214"
+          },
+          {
+            "contract": "UUPSUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:80"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "_paused",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:28"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:96"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:21"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:77"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "stakingTokenLock",
+            "type": "t_contract(IStakingTokenLock)7356",
+            "src": "contracts/validator/DTOStaking.sol:23"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "rewardsToken",
+            "type": "t_contract(IERC20Upgradeable)938",
+            "src": "contracts/validator/DTOStaking.sol:24"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "stakingToken",
+            "type": "t_contract(IERC20Upgradeable)938",
+            "src": "contracts/validator/DTOStaking.sol:25"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "periodFinish",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStaking.sol:26"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "rewardRate",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStaking.sol:27"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "rewardsDuration",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStaking.sol:28"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "lastUpdateTime",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStaking.sol:29"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "rewardPerTokenStored",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStaking.sol:30"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "userRewardPerTokenPaid",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/validator/DTOStaking.sol:32"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "rewards",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/validator/DTOStaking.sol:33"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "_totalSupply",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStaking.sol:35"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "_balances",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/validator/DTOStaking.sol:36"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "stakingLockTime",
+            "type": "t_uint256",
+            "src": "contracts/validator/DTOStaking.sol:37"
+          },
+          {
+            "contract": "DTOStaking",
+            "label": "rewardsDistribution",
+            "type": "t_address",
+            "src": "contracts/validator/DTOStaking.sol:39"
           }
         ],
         "types": {

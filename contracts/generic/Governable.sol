@@ -1,8 +1,15 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Governable is Ownable {
-	modifier onlyGovernance() {
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+contract Governable is Initializable,OwnableUpgradeable {
+
+	function __Governable_init() internal initializer {
+      __Ownable_init();
+    }
+	 modifier onlyGovernance() {
 		require(msg.sender == owner(), "!onlyGovernance");
 		_;
 	}

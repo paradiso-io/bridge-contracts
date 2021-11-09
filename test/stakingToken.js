@@ -5,7 +5,7 @@ const BigNumber = ethers.BigNumber
 
 
 describe('Staking Token', async function () {
-    const [owner, ,user1, user2, user3, user4, user5, user6,user7,user8,user9,user10,user11,user12] = await ethers.getSigners()
+    const [owner, ,user1, user2, user3, user4, user5, user6,user7,user8,user9,user10,user11,user12,user13] = await ethers.getSigners()
     provider = ethers.provider;
     let dtoStaking,erc20Mock,stakingTokenLock,dto;
     beforeEach(async () => {
@@ -64,13 +64,13 @@ describe('Staking Token', async function () {
     it("notifyRewardAmount", async function (){
         await dto.connect(owner).transfer(user1.address,5000);
         await dto.connect(owner).transfer(user2.address,10000);
+
         await erc20Mock.connect(owner).transfer(dtoStaking.address,1000000000)
         await dto.connect(user1).approve(dtoStaking.address,5000);
         await dtoStaking.connect(user1).stake(5000);
         await dto.connect(user2).approve(dtoStaking.address,10000);
         await dtoStaking.connect(user2).stake(10000);
        
-        await dtoStaking.connect(owner).notifyRewardAmount(1000);
         await dtoStaking.notifyRewardAmount(1000000000);
 
         expect( await erc20Mock.balanceOf(user1.address)).to.be.equal(0);
@@ -85,7 +85,7 @@ describe('Staking Token', async function () {
        expect(user2Balance ).to.be.equal(user1Balance *2);
     })
     it("stake, withdraw multip", async function (){
-        const users = [user3, user4, user5, user6,user7,user8,user9,user10,user11,user12];
+        const users = [ user4, user5, user6,user7,user8,user9,user10,user11,user12,user13];
         //stake
         for(var i = 0; i<users.length;i++){
             await dto.connect(owner).transfer(users[i].address,1000);
@@ -111,10 +111,12 @@ describe('Staking Token', async function () {
         }
           // getReward 
         await erc20Mock.connect(owner).transfer(dtoStaking.address,10000000000)
-        await dtoStaking.notifyRewardAmount(1000000000);
+        await dtoStaking.notifyRewardAmount(10000000);
         for(var i = 0; i<users.length;i++){ 
             await dtoStaking.connect(users[i]).getReward();
             expect(await erc20Mock.balanceOf(users[i].address) ).to.above(0);
+            //console.log((await erc20Mock.balanceOf(users[i].address)).toString())
+
         }
            //withdraw 
         for(var i = 0; i<users.length;i++){
@@ -124,12 +126,17 @@ describe('Staking Token', async function () {
         expect(await dtoStaking.totalSupply()).to.be.equal(0);
         expect(await dto.balanceOf(dtoStaking.address)).to.be.equal(0);
 
-        await ethers.provider.send('evm_increaseTime', [4 *86400]); // 4 days
-  
-        for(var i = 0; i<users.length;i++){ 
-            await dtoStaking.connect(users[i]).getReward();
-            expect(await erc20Mock.balanceOf(users[i].address) ).to.above(0);
+       await ethers.provider.send('evm_increaseTime', [3 *86400]); // 3 days
+        
+       for(var i = 0; i<users.length;i++){ 
+        await  dtoStaking.connect(users[i]).getUnlock(users[i].address,0)
+        expect(await dto.balanceOf(users[i].address)).to.be.equal(1000)
         }
+        // for(var i = 0; i<users.length;i++){ 
+        //     await dtoStaking.connect(users[i]).getReward();
+        //     expect(await erc20Mock.balanceOf(users[i].address) ).to.above(0);
+        //     console.log(i,((await erc20Mock.balanceOf(users[i].address)).toString()))
+        // }
     })
     it("upgrade contract", async function (){ 
         const DtoStaking = await ethers.getContractFactory('DTOStakingUpgrade')
@@ -137,4 +144,5 @@ describe('Staking Token', async function () {
        await  dtoStaking.setNumbetTest(123)
        expect(await dtoStaking.getNumberTest()).to.be.equal(123);
     })
+
 })

@@ -1,33 +1,36 @@
 pragma solidity ^0.8.0;
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // for WETH
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"; // for WETH
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "../lib/BlackholePrevention.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 import "./DTOBridgeToken.sol";
 import "../interfaces/IDTOTokenBridge.sol";
 import "./Governable.sol";
 import "../lib/ChainIdHolding.sol";
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+
 contract GenericBridge is
-    Ownable,
-    ReentrancyGuard,
+    Initializable, 
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
     BlackholePrevention,
     Governable,
     ChainIdHolding
 {
-    using SafeMath for uint256;
-    using SafeERC20 for IERC20;
-    using Address for address payable;
-
+    using SafeMathUpgradeable for uint256;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
+    using AddressUpgradeable for address payable;
     struct TokenInfo {
         address addr;
         uint256 chainId;
     }
 
-    address public constant NATIVE_TOKEN_ADDRESS =
-        0x1111111111111111111111111111111111111111;
+    address public  NATIVE_TOKEN_ADDRESS;
     mapping(bytes32 => bool) public alreadyClaims;
     address[] public bridgeApprovers;
     mapping(address => bool) public approverMap; //easily check approver signature
@@ -63,14 +66,15 @@ contract GenericBridge is
         uint256 _index,
         bytes32 _claimId
     );
-
-    constructor() public {
+    function initialize() public initializer {
+        __Governable_init();
+        __ChainIdHolding_init();
+        NATIVE_TOKEN_ADDRESS =0x1111111111111111111111111111111111111111;
         supportedChainIds[chainId] = true;
         minApprovers = 2;
         claimFee = 0;
         governance = owner();
-
-        uint24[12] memory _chainIds = [
+         uint24[12] memory _chainIds = [
             1,
             3,
             4,
@@ -89,6 +93,12 @@ contract GenericBridge is
         }
     }
 
+    /* ========== CONSTRUCTOR ========== */
+        /// @custom:oz-upgrades-unsafe-allow constructor
+   constructor() initializer {}
+   function _authorizeUpgrade(address) internal override onlyOwner {}
+
+   
     function setMinApprovers(uint256 _val) public onlyGovernance {
         require(_val >= 2, "!min set approver");
         minApprovers = _val;
@@ -177,7 +187,7 @@ contract GenericBridge is
                 tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
             }
         } else {
-            ERC20Burnable(_tokenAddress).burnFrom(msg.sender, _amount);
+            ERC20BurnableUpgradeable(_tokenAddress).burnFrom(msg.sender, _amount);
             address _originToken = tokenMapReverse[_tokenAddress].addr;
             emit RequestBridge(
                 _originToken,
@@ -381,29 +391,29 @@ contract GenericBridge is
 	|          Only Admin               |
 	|      (blackhole prevention)       |
 	|__________________________________*/
-    function withdrawEther(address payable receiver, uint256 amount)
-        external
-        virtual
-        onlyGovernance
-    {
-        _withdrawEther(receiver, amount);
-    }
+    // function withdrawEther(address payable receiver, uint256 amount)
+    //     external
+    //     virtual
+    //     onlyGovernance
+    // {
+    //     _withdrawEther(receiver, amount);
+    // }
 
-    function withdrawERC20(
-        address payable receiver,
-        address tokenAddress,
-        uint256 amount
-    ) external virtual onlyGovernance {
-        _withdrawERC20(receiver, tokenAddress, amount);
-    }
+    // function withdrawERC20(
+    //     address payable receiver,
+    //     address tokenAddress,
+    //     uint256 amount
+    // ) external virtual onlyGovernance {
+    //     _withdrawERC20(receiver, tokenAddress, amount);
+    // }
 
-    function withdrawERC721(
-        address payable receiver,
-        address tokenAddress,
-        uint256 tokenId
-    ) external virtual onlyGovernance {
-        _withdrawERC721(receiver, tokenAddress, tokenId);
-    }
+    // function withdrawERC721(
+    //     address payable receiver,
+    //     address tokenAddress,
+    //     uint256 tokenId
+    // ) external virtual onlyGovernance {
+    //     _withdrawERC721(receiver, tokenAddress, tokenId);
+    // }
 
     function isBridgeToken(address _token) public view returns (bool) {
         return bridgeTokens[_token];
@@ -417,7 +427,7 @@ contract GenericBridge is
         if (_token == NATIVE_TOKEN_ADDRESS) {
             require(msg.value == _amount, "invalid bridge amount");
         } else {
-            IERC20 erc20 = IERC20(_token);
+            IERC20Upgradeable erc20 = IERC20Upgradeable(_token);
             uint256 balBefore = erc20.balanceOf(address(this));
             erc20.safeTransferFrom(_from, address(this), _amount);
             require(
@@ -435,7 +445,7 @@ contract GenericBridge is
         if (_token == NATIVE_TOKEN_ADDRESS) {
             payable(_to).sendValue(_amount);
         } else {
-            IERC20 erc20 = IERC20(_token);
+            IERC20Upgradeable erc20 = IERC20Upgradeable(_token);
             uint256 balBefore = erc20.balanceOf(address(this));
             erc20.safeTransfer(_to, _amount);
             require(
