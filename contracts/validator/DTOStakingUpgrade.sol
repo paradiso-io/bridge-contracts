@@ -15,7 +15,13 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../interfaces/IStakingTokenLock.sol";
 
 // https://docs.synthetix.io/contracts/source/contracts/stakingrewards
-contract DTOStakingUpgrade is Initializable, ReentrancyGuardUpgradeable, UUPSUpgradeable,PausableUpgradeable,OwnableUpgradeable{
+contract DTOStakingUpgrade is
+    Initializable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
+    PausableUpgradeable,
+    OwnableUpgradeable
+{
     using SafeMathUpgradeable for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -37,18 +43,22 @@ contract DTOStakingUpgrade is Initializable, ReentrancyGuardUpgradeable, UUPSUpg
     uint256 public stakingLockTime;
 
     address public rewardsDistribution;
-     function initialize() public initializer {
+
+    function initialize() public initializer {
         __Ownable_init();
     }
 
-      constructor() initializer {}
+    constructor() initializer {}
+
     function _authorizeUpgrade(address) internal override onlyOwner {}
-     uint256 public number ;
-  function setNumbetTest (uint256 _number)   external {
-      number = _number;
-  } 
-  function getNumberTest () external view returns (uint256) {
-      return number;
-  }
-  
+
+    uint256 public number;
+
+    function setNumbetTest(uint256 _number) external {
+        number = _number;
+    }
+
+    function getNumberTest() external view returns (uint256) {
+        return number;
+    }
 }

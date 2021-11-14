@@ -59,7 +59,7 @@ module.exports = async (hre) => {
     await dtoVesting.initialize(dtoAddress, startVestingTime)
 
     log('  - Adding vesting A         ');
-    let privateSales = require(`./vesting/${chainId}.json`)
+    let privateSales = require(`../data/vesting/${chainId}.json`)
     let privateAAddresses = []
     let privateAAmounts = []
     for(const p of privateSales.privateA) {

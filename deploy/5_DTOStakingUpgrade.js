@@ -35,17 +35,17 @@ const {
     log('  - Trusted Forwarder: ', trustedForwarder);
     log(' ');
     
-    log('  Deploying DTO  Staking Upgrade...');
-    const DTOStaking = await ethers.getContractFactory('DTOStakingUpgrade');
-    const dtoStaking = await upgrades.upgradeProxy(DTOStakingAddress,DTOStaking, ["0x09567080ec07d1b007108f2abe5b08d27299c286", DTOAddress, stakingTokenLockAddress,0,0,7*86400,3*86400], { unsafeAllow: ['delegatecall'],unsafeAllowCustomTypes: true, kind: 'uups', gasLimit: 1000000 })
-    log('  - DTOStaking:         ', dtoStaking.address);
-    deployData['DTOStakingUpgrade'] = {
-      abi: getContractAbi('DTOStakingUpgrade'),
-      address: dtoStaking.address,
-      deployTransaction: dtoStaking.deployTransaction,
-    }
+    // log('  Deploying DTO  Staking Upgrade...');
+    // const DTOStaking = await ethers.getContractFactory('DTOStakingUpgrade');
+    // const dtoStaking = await upgrades.upgradeProxy(DTOStakingAddress,DTOStaking, ["0x09567080ec07d1b007108f2abe5b08d27299c286", DTOAddress, stakingTokenLockAddress,0,0,7*86400,3*86400], { unsafeAllow: ['delegatecall'],unsafeAllowCustomTypes: true, kind: 'uups', gasLimit: 1000000 })
+    // log('  - DTOStaking:         ', dtoStaking.address);
+    // deployData['DTOStakingUpgrade'] = {
+    //   abi: getContractAbi('DTOStakingUpgrade'),
+    //   address: dtoStaking.address,
+    //   deployTransaction: dtoStaking.deployTransaction,
+    // }
     
-    saveDeploymentData(chainId, deployData);
+    // saveDeploymentData(chainId, deployData);
     log('\n  Contract Deployment Data saved to "deployments" directory.');
 
     log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
