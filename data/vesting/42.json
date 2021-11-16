@@ -1,0 +1,22 @@
+{
+    "privateA": [
+        {
+            "address": "0x122011206098fAcBa7e24F57412402E9b497D519",
+            "totalAmount": "1000000"
+        },
+        {
+            "address": "0x00481E0dE32FecFF1C7ce3AF19cb03E01aFC0e48",
+            "totalAmount": "500000"
+        }
+    ],
+    "privateB": [
+        {
+            "address": "0xbE3ab443e16fdF70DfB35C73b45962CB56F9d9A6",
+            "totalAmount": "50000"
+        },
+        {
+            "address": "0x00481E0dE32FecFF1C7ce3AF19cb03E01aFC0e48",
+            "totalAmount": "200000"
+        }
+    ]
+}

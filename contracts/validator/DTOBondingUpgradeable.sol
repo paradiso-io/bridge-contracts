@@ -11,7 +11,7 @@ import "../lib/SafeTransferHelper.sol";
 import "../interfaces/IBonding.sol";
 import "./LockingTokenValidator.sol";
 
-contract DTOBonding is Initializable, Governable, ChainIdHolding, IBonding, UUPSUpgradeable {
+contract DTOBondingUpgradeable is Initializable, Governable, ChainIdHolding, IBonding, UUPSUpgradeable {
     using SafeMathUpgradeable for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -25,25 +25,6 @@ contract DTOBonding is Initializable, Governable, ChainIdHolding, IBonding, UUPS
     uint256 public MAX_LOCKING_TOKEN;
     uint256 public POOL_LOCKED_TIME;
     LockingTokenValidator public lockingtoken;
-
-    function initialize(
-        address _dtoToken,
-        address _lockingtoken,
-        uint256 _bondingAmount,
-        uint256 _minwaiting,
-        uint256 _aprovePercentThreshold,
-        uint256 _maxLockingToken,
-        uint256 _poolLockedTime
-        ) public initializer {
-        __Ownable_init();
-        dtoToken = _dtoToken;
-        lockingtoken = LockingTokenValidator(_lockingtoken);
-        BONDING_AMOUNT = _bondingAmount;
-        MINIMUM_WAITING = _minwaiting;
-        APPROVE_PERCENT_THRESHOLD = _aprovePercentThreshold;
-        MAX_LOCKING_TOKEN = _maxLockingToken;
-        POOL_LOCKED_TIME = _poolLockedTime;
-    }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
     
@@ -161,5 +142,12 @@ contract DTOBonding is Initializable, Governable, ChainIdHolding, IBonding, UUPS
 
     function getLockInfoLength(address _addr) external view returns (uint256) {
         return lockingtoken.getLockInfoLength(_addr);
+    } 
+
+    function setMaxLockingToken (uint256 _maxlockingtoken)   external {
+        MAX_LOCKING_TOKEN = _maxlockingtoken;
+    } 
+    function getMaxLockingToken () external view returns (uint256) {
+        return MAX_LOCKING_TOKEN;
     }    
 }

@@ -362,6 +362,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getMaxLockingToken",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -430,49 +443,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_dtoToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_lockingtoken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_bondingAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_minwaiting",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_aprovePercentThreshold",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_maxLockingToken",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_poolLockedTime",
-        "type": "uint256"
-      }
-    ],
-    "name": "initialize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -600,6 +570,19 @@
       }
     ],
     "name": "setGovernance",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_maxlockingtoken",
+        "type": "uint256"
+      }
+    ],
+    "name": "setMaxLockingToken",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

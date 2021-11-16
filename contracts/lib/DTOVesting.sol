@@ -30,7 +30,9 @@ contract DTOVesting is Initializable, Ownable, BlackholePrevention {
         initializer
     {
         token = IERC20(_token);
-        startVestingTime = _startVestingTime;
+        startVestingTime = _startVestingTime == 0
+            ? block.timestamp
+            : _startVestingTime;
     }
 
     function addVesting(
@@ -52,14 +54,14 @@ contract DTOVesting is Initializable, Ownable, BlackholePrevention {
     }
 
     function unlock(address _addr) public {
-        require(startVestingTime > block.timestamp, "not claimable yet");
+        require(startVestingTime < block.timestamp, "not claimable yet");
         uint256 l = vestings[_addr].length;
         for (uint256 i = 0; i < l; i++) {
             uint256 unlockable = getUnlockableVesting(_addr, i);
             if (unlockable > 0) {
                 vestings[_addr][i].releasedAmount = vestings[_addr][i]
                     .releasedAmount
-                    .sub(unlockable);
+                    .add(unlockable);
                 token.safeTransfer(_addr, unlockable);
                 emit Unlock(_addr, unlockable);
             }
