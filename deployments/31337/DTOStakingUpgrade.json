@@ -17,6 +17,26 @@
 				}
 			],
 			"name": "AdminChanged",
+			"type": "constructor",
+			"stateMutability": "nonpayable"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "previousAdmin",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "newAdmin",
+					"type": "address"
+				}
+			],
+			"name": "AdminChanged",
 			"type": "event"
 		},
 		{
@@ -26,6 +46,12 @@
 					"indexed": true,
 					"internalType": "address",
 					"name": "beacon",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "newOwner",
 					"type": "address"
 				}
 			],
@@ -78,7 +104,6 @@
 			"type": "event"
 		},
 		{
-			"anonymous": false,
 			"inputs": [
 				{
 					"indexed": true,
@@ -88,7 +113,16 @@
 				}
 			],
 			"name": "Upgraded",
-			"type": "event"
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "event",
+			"anonymous": false
 		},
 		{
 			"inputs": [],
@@ -106,7 +140,13 @@
 		{
 			"inputs": [],
 			"name": "initialize",
-			"outputs": [],
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -178,7 +218,13 @@
 		{
 			"inputs": [],
 			"name": "renounceOwnership",
-			"outputs": [],
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -196,7 +242,13 @@
 			"type": "function"
 		},
 		{
-			"inputs": [],
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
 			"name": "rewardRate",
 			"outputs": [
 				{
@@ -254,7 +306,13 @@
 			"type": "function"
 		},
 		{
-			"inputs": [],
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_number",
+					"type": "uint256"
+				}
+			],
 			"name": "rewardsToken",
 			"outputs": [
 				{
@@ -275,7 +333,13 @@
 				}
 			],
 			"name": "setNumbetTest",
-			"outputs": [],
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -306,7 +370,13 @@
 			"type": "function"
 		},
 		{
-			"inputs": [],
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "newOwner",
+					"type": "address"
+				}
+			],
 			"name": "stakingTokenLock",
 			"outputs": [
 				{
@@ -337,6 +407,11 @@
 					"internalType": "address",
 					"name": "newImplementation",
 					"type": "address"
+				},
+				{
+					"internalType": "bytes",
+					"name": "data",
+					"type": "bytes"
 				}
 			],
 			"name": "upgradeTo",
@@ -358,7 +433,13 @@
 				}
 			],
 			"name": "upgradeToAndCall",
-			"outputs": [],
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
 			"stateMutability": "payable",
 			"type": "function"
 		},
@@ -382,19 +463,19 @@
 			"type": "function"
 		}
 	],
-	"address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+	"address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
 	"deployTransaction": {
-		"hash": "0x089e7439a2c93454590cf8a67c9f019e0b7db1dea10fd488064e01786332321f",
+		"hash": "0xa30d1a72e631ef67222918c39e0e004057f943d6caa20da2d2ea393b5e2c1ed6",
 		"type": 2,
 		"accessList": [],
-		"blockHash": "0xade2dcdd728862a1f7d9c9308a3bbf1870e5fab400d61de1a700465a130c20bd",
-		"blockNumber": 11,
+		"blockHash": "0xfbb33f1a58dd8906c26afee7bd6814fc4ea4bd262a1c0396b7c70480163421f2",
+		"blockNumber": 14,
 		"transactionIndex": 0,
 		"confirmations": 1,
 		"from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
 		"gasPrice": {
 			"type": "BigNumber",
-			"hex": "0x4afca51b"
+			"hex": "0x4621a5f8"
 		},
 		"maxPriorityFeePerGas": {
 			"type": "BigNumber",
@@ -402,21 +483,21 @@
 		},
 		"maxFeePerGas": {
 			"type": "BigNumber",
-			"hex": "0x5a5e8036"
+			"hex": "0x50a881f0"
 		},
 		"gasLimit": {
 			"type": "BigNumber",
 			"hex": "0x01bad9d8"
 		},
-		"to": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+		"to": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
 		"value": {
 			"type": "BigNumber",
 			"hex": "0x00"
 		},
-		"nonce": 10,
-		"data": "0x3659cfe60000000000000000000000008a791620dd6260079bf849dc5567adc3f2fdc318",
-		"r": "0x659e5ec14fecae10424ec7e4ee13f7a2c40f80b05cd4c913b9ae4af11c8cdaf6",
-		"s": "0x2118c951edeb2ec93b619b4bd9917e843a445a6cd143ea647226a90b85fd2718",
+		"nonce": 13,
+		"data": "0x3659cfe6000000000000000000000000a51c1fc2f0d1a1b8494ed1fe312d7c3a78ed91c0",
+		"r": "0x0b433d83a1cfb82c72c2f3548f4cb8a0ca530eee3b552674a10e359a4d02bedd",
+		"s": "0x59ef764556cdf8fa40796e790f28a4af2aec21fceee7746d58a33409b6a08dbb",
 		"v": 0,
 		"creates": null,
 		"chainId": 31337

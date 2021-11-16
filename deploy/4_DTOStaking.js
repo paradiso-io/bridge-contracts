@@ -19,6 +19,7 @@ const {
     const chainId = chainIdByName(network.name);
     //const alchemyTimeout = chainId === 31337 ? 0 : (chainId === 1 ? 5 : 3);
     const DTOAddress = require(`../deployments/${chainId}/DTO.json`).address
+    const rewardToken = require(`../deployments/${chainId}/ERC20Mock.json`).address
 
     log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
     log('DTO Staking Contract Deployment');
@@ -39,7 +40,7 @@ const {
 
     log('  Deploying DTO Staking...');
     const DTOStaking = await ethers.getContractFactory('DTOStaking');
-    const dtoStaking = await upgrades.deployProxy(DTOStaking, ["0x09567080ec07d1b007108f2abe5b08d27299c286", DTOAddress, stakingTokenLock.address,0,0,7*86400,3*86400], { unsafeAllow: ['delegatecall'],unsafeAllowCustomTypes: true, kind: 'uups', gasLimit: 1000000 })
+    const dtoStaking = await upgrades.deployProxy(DTOStaking, [rewardToken, DTOAddress, stakingTokenLock.address,0,0,7*86400,3*86400], { unsafeAllow: ['delegatecall'],unsafeAllowCustomTypes: true, kind: 'uups', gasLimit: 1000000 })
     await stakingTokenLock.initialize(dtoStaking.address)
     log('  - DTOStaking:         ', dtoStaking.address);
     deployData['DTOStaking'] = {
