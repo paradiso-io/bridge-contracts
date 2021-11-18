@@ -19,7 +19,7 @@ const {
     const chainId = chainIdByName(network.name);
     //const alchemyTimeout = chainId === 31337 ? 0 : (chainId === 1 ? 5 : 3);
     const DTOAddress = require(`../deployments/${chainId}/DTO.json`).address
-    const rewardToken = require(`../deployments/${chainId}/ERC20Mock.json`).address
+    const rewardToken = DTOAddress
 
     log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
     log('DTO Staking Contract Deployment');
