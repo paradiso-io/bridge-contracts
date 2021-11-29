@@ -66,7 +66,7 @@ module.exports = {
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_APIKEY}`,
-      gasPrice: 100e9,
+      gasPrice: 80e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY_MAINNET]
     },

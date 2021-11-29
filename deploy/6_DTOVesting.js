@@ -46,17 +46,17 @@ module.exports = async (hre) => {
     }
 
     const DTOVesting = await ethers.getContractFactory('DTOVesting');
-    const DTOVestingInstance = await DTOVesting.deploy()
-    const dtoVesting = await DTOVestingInstance.deployed()
-    log('  - DTOVesting:         ', dtoVesting.address);
-    deployData['DTOVesting'] = {
-      abi: getContractAbi('DTOVesting'),
-      address: dtoVesting.address,
-      deployTransaction: dtoVesting.deployTransaction,
-    }
+    //const DTOVestingInstance = await DTOVesting.deploy()
+    const dtoVesting = await DTOVesting.attach('0xaA78a345CB9814C2AAff2a702c1f7e7741371326')
+    // log('  - DTOVesting:         ', dtoVesting.address);
+    // deployData['DTOVesting'] = {
+    //   abi: getContractAbi('DTOVesting'),
+    //   address: dtoVesting.address,
+    //   deployTransaction: dtoVesting.deployTransaction,
+    // }
 
-    log('  - Initializing         ');
-    await dtoVesting.initialize(dtoAddress, startVestingTime)
+    // log('  - Initializing         ');
+    // await dtoVesting.initialize(dtoAddress, startVestingTime)
 
     log('  - Adding vesting A         ');
     let privateSales = require(`../data/vesting/${chainId}.json`)
@@ -64,7 +64,7 @@ module.exports = async (hre) => {
     let privateAAmounts = []
     for(const p of privateSales.privateA) {
       privateAAddresses.push(p.address)
-      privateAAmounts.push(ethers.utils.parseEther(p.totalAmount))
+      privateAAmounts.push(ethers.utils.parseEther(`${p.totalAmount}`))
     }
     await dtoVesting.addVesting(privateAAddresses, privateAAmounts, true)
 
@@ -74,7 +74,7 @@ module.exports = async (hre) => {
     for(const p of privateSales.privateB) {
       console.log(p)
       privateBAddresses.push(p.address)
-      privateBAmounts.push(ethers.utils.parseEther(p.totalAmount))
+      privateBAmounts.push(ethers.utils.parseEther(`${p.totalAmount}`))
     }
 
     await dtoVesting.addVesting(privateBAddresses, privateBAmounts, false)
