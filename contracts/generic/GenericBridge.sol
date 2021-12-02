@@ -7,6 +7,7 @@ import "./DTOBridgeToken.sol";
 import "../interfaces/IDTOTokenBridge.sol";
 import "./Governable.sol";
 import "../lib/ChainIdHolding.sol";
+import "../lib/DTOUpgradeableBase.sol";
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -15,9 +16,8 @@ import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
 contract GenericBridge is
-    Initializable, 
+    DTOUpgradeableBase,
     ReentrancyGuardUpgradeable,
-    UUPSUpgradeable,
     BlackholePrevention,
     Governable,
     ChainIdHolding
@@ -30,7 +30,7 @@ contract GenericBridge is
         uint256 chainId;
     }
 
-    address public  NATIVE_TOKEN_ADDRESS;
+    address public NATIVE_TOKEN_ADDRESS;
     mapping(bytes32 => bool) public alreadyClaims;
     address[] public bridgeApprovers;
     mapping(address => bool) public approverMap; //easily check approver signature
@@ -66,15 +66,17 @@ contract GenericBridge is
         uint256 _index,
         bytes32 _claimId
     );
+
     function initialize() public initializer {
-        __Governable_init();
+        __DTOUpgradeableBase_initialize();
+        __Governable_initialize();
         __ChainIdHolding_init();
-        NATIVE_TOKEN_ADDRESS =0x1111111111111111111111111111111111111111;
+        NATIVE_TOKEN_ADDRESS = 0x1111111111111111111111111111111111111111;
         supportedChainIds[chainId] = true;
         minApprovers = 2;
         claimFee = 0;
         governance = owner();
-         uint24[12] memory _chainIds = [
+        uint24[12] memory _chainIds = [
             1,
             3,
             4,
@@ -93,12 +95,6 @@ contract GenericBridge is
         }
     }
 
-    /* ========== CONSTRUCTOR ========== */
-        /// @custom:oz-upgrades-unsafe-allow constructor
-   constructor() initializer {}
-   function _authorizeUpgrade(address) internal override onlyOwner {}
-
-   
     function setMinApprovers(uint256 _val) public onlyGovernance {
         require(_val >= 2, "!min set approver");
         minApprovers = _val;
@@ -187,7 +183,10 @@ contract GenericBridge is
                 tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
             }
         } else {
-            ERC20BurnableUpgradeable(_tokenAddress).burnFrom(msg.sender, _amount);
+            ERC20BurnableUpgradeable(_tokenAddress).burnFrom(
+                msg.sender,
+                _amount
+            );
             address _originToken = tokenMapReverse[_tokenAddress].addr;
             emit RequestBridge(
                 _originToken,
@@ -387,34 +386,6 @@ contract GenericBridge is
         }
     }
 
-    /***********************************|
-	|          Only Admin               |
-	|      (blackhole prevention)       |
-	|__________________________________*/
-    // function withdrawEther(address payable receiver, uint256 amount)
-    //     external
-    //     virtual
-    //     onlyGovernance
-    // {
-    //     _withdrawEther(receiver, amount);
-    // }
-
-    // function withdrawERC20(
-    //     address payable receiver,
-    //     address tokenAddress,
-    //     uint256 amount
-    // ) external virtual onlyGovernance {
-    //     _withdrawERC20(receiver, tokenAddress, amount);
-    // }
-
-    // function withdrawERC721(
-    //     address payable receiver,
-    //     address tokenAddress,
-    //     uint256 tokenId
-    // ) external virtual onlyGovernance {
-    //     _withdrawERC721(receiver, tokenAddress, tokenId);
-    // }
-
     function isBridgeToken(address _token) public view returns (bool) {
         return bridgeTokens[_token];
     }
@@ -453,13 +424,5 @@ contract GenericBridge is
                 "!transfer to"
             );
         }
-    }
-
-    //migrate to a new contract
-    function migrateOwnership(address _token, address _newOwner)
-        public
-        onlyGovernance
-    {
-        Ownable(_token).transferOwnership(_newOwner);
     }
 }
