@@ -57,7 +57,7 @@ const chainNameById = (chainId) => {
 };
 
 const supportedChainIds = [1, 3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89]
-const approvers = ["0x51DA78da1758B6F5D5320BD7Ba7DCeb9B3472e9C", "0x117cA9A7030E36AA0A55D0Da61261025c0578eD1"]
+const approvers = ["0x41B23C77C92124710228e82e7e8c719710bdD6eB", "0x32be6857240D241d1c388999a191d0fB7531BcF9"]
 
 const blockTimeFromDate = (dateStr) => {
   return Date.parse(dateStr) / 1000;

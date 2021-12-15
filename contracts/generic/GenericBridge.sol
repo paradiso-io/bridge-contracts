@@ -49,7 +49,7 @@ contract GenericBridge is
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestBridge(
         address indexed _token,
-        address indexed _addr,
+        address indexed _toAddr,
         uint256 _amount,
         uint256 _originChainId,
         uint256 _fromChainId,
@@ -58,7 +58,7 @@ contract GenericBridge is
     );
     event ClaimToken(
         address indexed _token,
-        address indexed _addr,
+        address indexed _toAddr,
         uint256 _amount,
         uint256 _originChainId,
         uint256 _fromChainId,
@@ -152,6 +152,7 @@ contract GenericBridge is
 
     function requestBridge(
         address _tokenAddress,
+        address _toAddr,
         uint256 _amount,
         uint256 _toChainId
     ) public payable nonReentrant {
@@ -165,7 +166,7 @@ contract GenericBridge is
             safeTransferIn(_tokenAddress, msg.sender, _amount);
             emit RequestBridge(
                 _tokenAddress,
-                msg.sender,
+                _toAddr,
                 _amount,
                 chainId,
                 chainId,
@@ -190,7 +191,7 @@ contract GenericBridge is
             address _originToken = tokenMapReverse[_tokenAddress].addr;
             emit RequestBridge(
                 _originToken,
-                msg.sender,
+                _toAddr,
                 _amount,
                 tokenMapReverse[_tokenAddress].chainId,
                 chainId,
@@ -200,6 +201,57 @@ contract GenericBridge is
             index++;
         }
     }
+
+//    function requestBridge(
+//         address _tokenAddress,
+//         uint256 _amount,
+//         uint256 _toChainId
+//     ) public payable nonReentrant {
+//         require(
+//             chainId != _toChainId,
+//             "source and target chain ids must be different"
+//         );
+//         require(supportedChainIds[_toChainId], "unsupported chainId");
+//         if (!isBridgeToken(_tokenAddress)) {
+//             //transfer and lock token here
+//             safeTransferIn(_tokenAddress, msg.sender, _amount);
+//             emit RequestBridge(
+//                 _tokenAddress,
+//                 msg.sender,
+//                 _amount,
+//                 chainId,
+//                 chainId,
+//                 _toChainId,
+//                 index
+//             );
+//             index++;
+
+//             if (tokenMapList[_tokenAddress].length == 0) {
+//                 originTokenList.push(_tokenAddress);
+//             }
+
+//             if (!tokenMapSupportCheck[_tokenAddress][_toChainId]) {
+//                 tokenMapList[_tokenAddress].push(_toChainId);
+//                 tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
+//             }
+//         } else {
+//             ERC20BurnableUpgradeable(_tokenAddress).burnFrom(
+//                 msg.sender,
+//                 _amount
+//             );
+//             address _originToken = tokenMapReverse[_tokenAddress].addr;
+//             emit RequestBridge(
+//                 _originToken,
+//                 msg.sender,
+//                 _amount,
+//                 tokenMapReverse[_tokenAddress].chainId,
+//                 chainId,
+//                 _toChainId,
+//                 index
+//             );
+//             index++;
+//         }
+//     }
 
     function verifySignatures(
         bytes32[] memory r,
@@ -241,7 +293,7 @@ contract GenericBridge is
     //_chainIdsIndex: length = 4, _chainIdsIndex[0] = originChainId, _chainIdsIndex[1] => fromChainId, _chainIdsIndex[2] = toChainId = this chainId, _chainIdsIndex[3] = index
     function claimToken(
         address _originToken,
-        address _to,
+        address _toAddr,
         uint256 _amount,
         uint256[] memory _chainIdsIndex,
         bytes32 _txHash,
@@ -259,7 +311,7 @@ contract GenericBridge is
         bytes32 _claimId = keccak256(
             abi.encode(
                 _originToken,
-                _to,
+                _toAddr,
                 _amount,
                 _chainIdsIndex,
                 _txHash,
@@ -298,14 +350,14 @@ contract GenericBridge is
                 IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken])
                     .claimBridgeToken(
                         _originToken,
-                        _to,
+                        _toAddr,
                         _amount,
                         _chainIdsIndex,
                         _txHash
                     );
                 emit ClaimToken(
                     _originToken,
-                    _to,
+                    _toAddr,
                     _amount,
                     _chainIdsIndex[0],
                     _chainIdsIndex[1],
@@ -315,10 +367,10 @@ contract GenericBridge is
                 );
             } else {
                 //claiming original token
-                safeTransferOut(_originToken, _to, _amount);
+                safeTransferOut(_originToken, _toAddr, _amount);
                 emit ClaimToken(
                     _originToken,
-                    _to,
+                    _toAddr,
                     _amount,
                     _chainIdsIndex[0],
                     _chainIdsIndex[1],
@@ -348,14 +400,14 @@ contract GenericBridge is
             IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken])
                 .claimBridgeToken(
                     _originToken,
-                    _to,
+                    _toAddr,
                     _amount,
                     _chainIdsIndex,
                     _txHash
                 );
             emit ClaimToken(
                 _originToken,
-                _to,
+                _toAddr,
                 _amount,
                 _chainIdsIndex[0],
                 _chainIdsIndex[1],
@@ -365,10 +417,10 @@ contract GenericBridge is
             );
         } else {
             //claiming original token
-            safeTransferOut(_originToken, _to, _amount);
+            safeTransferOut(_originToken, _toAddr, _amount);
             emit ClaimToken(
                 _originToken,
-                _to,
+                _toAddr,
                 _amount,
                 _chainIdsIndex[0],
                 _chainIdsIndex[1],
@@ -410,15 +462,15 @@ contract GenericBridge is
 
     function safeTransferOut(
         address _token,
-        address _to,
+        address _toAddr,
         uint256 _amount
     ) internal {
         if (_token == NATIVE_TOKEN_ADDRESS) {
-            payable(_to).sendValue(_amount);
+            payable(_toAddr).sendValue(_amount);
         } else {
             IERC20Upgradeable erc20 = IERC20Upgradeable(_token);
             uint256 balBefore = erc20.balanceOf(address(this));
-            erc20.safeTransfer(_to, _amount);
+            erc20.safeTransfer(_toAddr, _amount);
             require(
                 balBefore.sub(erc20.balanceOf(address(this))) == _amount,
                 "!transfer to"
