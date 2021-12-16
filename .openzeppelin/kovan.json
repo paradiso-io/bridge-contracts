@@ -20,6 +20,11 @@
       "address": "0x8242F6C6d57c3e5dfBA0D16756a980e7F99041D1",
       "txHash": "0x2eeed4aa654e17e6da7255704c9c256734562605b853abd13055661c7d758590",
       "kind": "uups"
+    },
+    {
+      "address": "0x020D6695754058CE52E98E21Fd00238513CD8699",
+      "txHash": "0x7ae1d700a5917d9f954f9e4582e86d0bcc494243054bddf7f427f30f9fac22ab",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -1132,6 +1137,227 @@
           },
           "t_bool": {
             "label": "bool"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "cab00bd29e67ad94b6c8cafc89cd8ea5e16f030fe3d7f7a0d728db18fa67bd50": {
+      "address": "0xF51faFF21Aff38DC8617bEA11Ea927184d9e5995",
+      "txHash": "0xf07363504cb3970813855d3180fba4f72c36aa675a15b1c4dc4a8b93ffeb5329",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "ERC1967UpgradeUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:215"
+          },
+          {
+            "contract": "UUPSUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:81"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:82"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:68"
+          },
+          {
+            "contract": "Governable",
+            "label": "governance",
+            "type": "t_address",
+            "src": "contracts/generic/Governable.sol:17"
+          },
+          {
+            "contract": "ChainIdHolding",
+            "label": "chainId",
+            "type": "t_uint256",
+            "src": "contracts/lib/ChainIdHolding.sol:5"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "NATIVE_TOKEN_ADDRESS",
+            "type": "t_address",
+            "src": "contracts/generic/GenericBridge.sol:33"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "alreadyClaims",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "src": "contracts/generic/GenericBridge.sol:34"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "bridgeApprovers",
+            "type": "t_array(t_address)dyn_storage",
+            "src": "contracts/generic/GenericBridge.sol:35"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "approverMap",
+            "type": "t_mapping(t_address,t_bool)",
+            "src": "contracts/generic/GenericBridge.sol:36"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "supportedChainIds",
+            "type": "t_mapping(t_uint256,t_bool)",
+            "src": "contracts/generic/GenericBridge.sol:37"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "tokenMapList",
+            "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+            "src": "contracts/generic/GenericBridge.sol:38"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "tokenMapSupportCheck",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_bool))",
+            "src": "contracts/generic/GenericBridge.sol:39"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "tokenMap",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_address))",
+            "src": "contracts/generic/GenericBridge.sol:40"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "tokenMapReverse",
+            "type": "t_mapping(t_address,t_struct(TokenInfo)5181_storage)",
+            "src": "contracts/generic/GenericBridge.sol:41"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "bridgeTokens",
+            "type": "t_mapping(t_address,t_bool)",
+            "src": "contracts/generic/GenericBridge.sol:42"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "originTokenList",
+            "type": "t_array(t_address)dyn_storage",
+            "src": "contracts/generic/GenericBridge.sol:43"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "claimFee",
+            "type": "t_uint256",
+            "src": "contracts/generic/GenericBridge.sol:44"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "index",
+            "type": "t_uint256",
+            "src": "contracts/generic/GenericBridge.sol:46"
+          },
+          {
+            "contract": "GenericBridge",
+            "label": "minApprovers",
+            "type": "t_uint256",
+            "src": "contracts/generic/GenericBridge.sol:47"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_mapping(t_uint256,t_bool)": {
+            "label": "mapping(uint256 => bool)"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(address => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_bool))": {
+            "label": "mapping(address => mapping(uint256 => bool))"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_address))": {
+            "label": "mapping(uint256 => mapping(address => address))"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)"
+          },
+          "t_mapping(t_address,t_struct(TokenInfo)5181_storage)": {
+            "label": "mapping(address => struct GenericBridge.TokenInfo)"
+          },
+          "t_struct(TokenInfo)5181_storage": {
+            "label": "struct GenericBridge.TokenInfo",
+            "members": [
+              {
+                "label": "addr",
+                "type": "t_address"
+              },
+              {
+                "label": "chainId",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
           },
           "t_array(t_uint256)50_storage": {
             "label": "uint256[50]"
