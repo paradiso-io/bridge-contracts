@@ -33,7 +33,7 @@ task(
   "Runs the coverage report",
   async (args, hre, runSuper) => {
     await hre.run('compile');
-    await hre.deployments.fixture();
+    await deployments.fixture();
     return runSuper({...args, noCompile: true});
   }
 );
@@ -47,59 +47,65 @@ module.exports = {
     hardhat: {
     },
     kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.INFURA_APIKEY}`,
+      url: `https://kovan.infura.io/v3/51b37822bf064fdb8f0004abcabcfbba`,
       gasPrice: 10e9,
       blockGasLimit: 12400000,
-      accounts: [process.env.PRIVATE_KEY]
+      accounts: ["b87a675b5c74acf4ae4a5ee0087cbfeeaad0f121791ca9b3d431482e3a158a79"]
     },
-    bsc: {
-      url: `https://bsc-dataseed.binance.org/`,
-      gasPrice: 6e9,
-      blockGasLimit: 22400000,
-      accounts: [process.env.PRIVATE_KEY]
+    ropsten: {
+      url: `https://ropsten.infura.io/v3/51b37822bf064fdb8f0004abcabcfbba`,
+      gasPrice: 10e9,
+      blockGasLimit: 12400000,
+      accounts: ["b87a675b5c74acf4ae4a5ee0087cbfeeaad0f121791ca9b3d431482e3a158a79"]
     },
+    // bsc: {
+    //   url: `https://bsc-dataseed.binance.org/`,
+    //   gasPrice: 6e9,
+    //   blockGasLimit: 22400000,
+    //   accounts: [process.env.PRIVATE_KEY]
+    // },
     bsctestnet: {
       url: `https://data-seed-prebsc-1-s1.binance.org:8545/`,
       gasPrice: 20e9,
       blockGasLimit: 22400000,
-      accounts: [process.env.PRIVATE_KEY]
+      accounts: ["b87a675b5c74acf4ae4a5ee0087cbfeeaad0f121791ca9b3d431482e3a158a79"]
     },
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.INFURA_APIKEY}`,
-      gasPrice: 80e9,
-      blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY_MAINNET]
-    },
-    moonbeamtestnet: {
-      url: `https://rpc.testnet.moonbeam.network/`,
-      gasPrice: 5e9,
-      blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY]
-    },
-    fantomtestnet: {
-      url: `https://rpc.testnet.fantom.network`,
-      gasPrice: 22e9,
-      blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY]
-    },
-    mumbaitestnet: {  //matic
-      url: `https://rpc-mumbai.maticvigil.com/`,
-      gasPrice: 20e9,
-      blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY]
-    },
-    fujitestnet: {  //avalanche
-      url: `https://api.avax-test.network/ext/bc/C/rpc`,
-      gasPrice: 225e9,
-      blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY]
-    },
-    tomotestnet: {
-      url: `https://rpc.testnet.tomochain.com`,
-      gasPrice: 1e9,
-      blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY]
-    },
+    // mainnet: {
+    //   url: `https://mainnet.infura.io/v3/${process.env.INFURA_APIKEY}`,
+    //   gasPrice: 80e9,
+    //   blockGasLimit: 12487794,
+    //   accounts: [process.env.PRIVATE_KEY_MAINNET]
+    // },
+    // moonbeamtestnet: {
+    //   url: `https://rpc.testnet.moonbeam.network/`,
+    //   gasPrice: 5e9,
+    //   blockGasLimit: 12487794,
+    //   accounts: [process.env.PRIVATE_KEY]
+    // },
+    // fantomtestnet: {
+    //   url: `https://rpc.testnet.fantom.network`,
+    //   gasPrice: 22e9,
+    //   blockGasLimit: 12487794,
+    //   accounts: [process.env.PRIVATE_KEY]
+    // },
+    // mumbaitestnet: {  //matic
+    //   url: `https://rpc-mumbai.maticvigil.com/`,
+    //   gasPrice: 20e9,
+    //   blockGasLimit: 12487794,
+    //   accounts: [process.env.PRIVATE_KEY]
+    // },
+    // fujitestnet: {  //avalanche
+    //   url: `https://api.avax-test.network/ext/bc/C/rpc`,
+    //   gasPrice: 225e9,
+    //   blockGasLimit: 12487794,
+    //   accounts: [process.env.PRIVATE_KEY]
+    // },
+    // tomotestnet: {
+    //   url: `https://rpc.testnet.tomochain.com`,
+    //   gasPrice: 1e9,
+    //   blockGasLimit: 12487794,
+    //   accounts: [process.env.PRIVATE_KEY]
+    // },
   },
   solidity: {
     version: "0.8.2",
@@ -129,7 +135,6 @@ module.exports = {
     tests: "./test",
     cache: "./cache",
     artifacts: "./build/artifacts",
-    deploy: './deploy',
     deployments: './deployments'
   },
   mocha: {
