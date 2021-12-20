@@ -1,11 +1,6 @@
 {
 	"abi": [
 		{
-			"inputs": [],
-			"stateMutability": "nonpayable",
-			"type": "constructor"
-		},
-		{
 			"anonymous": false,
 			"inputs": [
 				{
@@ -19,42 +14,6 @@
 					"internalType": "address",
 					"name": "newAdmin",
 					"type": "address"
-				},
-				{
-					"indexed": false,
-					"internalType": "uint256",
-					"name": "_amount",
-					"type": "uint256"
-				},
-				{
-					"indexed": false,
-					"internalType": "uint256",
-					"name": "_originChainId",
-					"type": "uint256"
-				},
-				{
-					"indexed": false,
-					"internalType": "uint256",
-					"name": "_fromChainId",
-					"type": "uint256"
-				},
-				{
-					"indexed": false,
-					"internalType": "uint256",
-					"name": "_toChainId",
-					"type": "uint256"
-				},
-				{
-					"indexed": false,
-					"internalType": "uint256",
-					"name": "_index",
-					"type": "uint256"
-				},
-				{
-					"indexed": false,
-					"internalType": "bytes32",
-					"name": "_claimId",
-					"type": "bytes32"
 				}
 			],
 			"name": "AdminChanged",
@@ -67,12 +26,6 @@
 					"indexed": true,
 					"internalType": "address",
 					"name": "beacon",
-					"type": "address"
-				},
-				{
-					"indexed": true,
-					"internalType": "address",
-					"name": "newOwner",
 					"type": "address"
 				}
 			],
@@ -148,12 +101,6 @@
 					"internalType": "address",
 					"name": "newOwner",
 					"type": "address"
-				},
-				{
-					"indexed": false,
-					"internalType": "uint256",
-					"name": "amount",
-					"type": "uint256"
 				}
 			],
 			"name": "OwnershipTransferred",
@@ -216,18 +163,13 @@
 					"internalType": "address",
 					"name": "implementation",
 					"type": "address"
-				},
-				{
-					"indexed": false,
-					"internalType": "uint256",
-					"name": "amount",
-					"type": "uint256"
 				}
 			],
 			"name": "Upgraded",
 			"type": "event"
 		},
 		{
+			"anonymous": false,
 			"inputs": [
 				{
 					"indexed": true,
@@ -249,24 +191,16 @@
 				}
 			],
 			"name": "WithdrawStuckERC20",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "",
-					"type": "address"
-				}
-			],
-			"stateMutability": "view",
-			"type": "event",
-			"anonymous": false
+			"type": "event"
 		},
 		{
+			"anonymous": false,
 			"inputs": [
 				{
+					"indexed": true,
 					"internalType": "address",
 					"name": "receiver",
-					"type": "address",
-					"indexed": true
+					"type": "address"
 				},
 				{
 					"indexed": true,
@@ -282,18 +216,16 @@
 				}
 			],
 			"name": "WithdrawStuckERC721",
-			"outputs": [],
-			"stateMutability": "nonpayable",
-			"type": "event",
-			"anonymous": false
+			"type": "event"
 		},
 		{
+			"anonymous": false,
 			"inputs": [
 				{
+					"indexed": true,
 					"internalType": "address",
 					"name": "receiver",
-					"type": "address",
-					"indexed": true
+					"type": "address"
 				},
 				{
 					"indexed": false,
@@ -303,19 +235,10 @@
 				}
 			],
 			"name": "WithdrawStuckEther",
-			"outputs": [],
-			"stateMutability": "nonpayable",
-			"type": "event",
-			"anonymous": false
+			"type": "event"
 		},
 		{
-			"inputs": [
-				{
-					"internalType": "bytes32",
-					"name": "",
-					"type": "bytes32"
-				}
-			],
+			"inputs": [],
 			"name": "NATIVE_TOKEN_ADDRESS",
 			"outputs": [
 				{
@@ -336,13 +259,7 @@
 				}
 			],
 			"name": "addApprover",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -355,13 +272,7 @@
 				}
 			],
 			"name": "addApprovers",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "",
-					"type": "address"
-				}
-			],
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -428,56 +339,6 @@
 					"internalType": "address",
 					"name": "",
 					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_to",
-					"type": "address"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_amount",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256[]",
-					"name": "_chainIdsIndex",
-					"type": "uint256[]"
-				},
-				{
-					"internalType": "bytes32",
-					"name": "_txHash",
-					"type": "bytes32"
-				},
-				{
-					"internalType": "bytes32[]",
-					"name": "r",
-					"type": "bytes32[]"
-				},
-				{
-					"internalType": "bytes32[]",
-					"name": "s",
-					"type": "bytes32[]"
-				},
-				{
-					"internalType": "uint8[]",
-					"name": "v",
-					"type": "uint8[]"
-				},
-				{
-					"internalType": "string",
-					"name": "_name",
-					"type": "string"
-				},
-				{
-					"internalType": "string",
-					"name": "_symbol",
-					"type": "string"
-				},
-				{
-					"internalType": "uint8",
-					"name": "_decimals",
-					"type": "uint8"
 				}
 			],
 			"name": "bridgeTokens",
@@ -576,29 +437,12 @@
 				}
 			],
 			"name": "claimToken",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
+			"outputs": [],
 			"stateMutability": "payable",
 			"type": "function"
 		},
 		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "_token",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_newOwner",
-					"type": "address"
-				}
-			],
+			"inputs": [],
 			"name": "governance",
 			"outputs": [
 				{
@@ -624,21 +468,9 @@
 			"type": "function"
 		},
 		{
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
+			"inputs": [],
 			"name": "initialize",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "",
-					"type": "address"
-				}
-			],
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -662,24 +494,6 @@
 			"type": "function"
 		},
 		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "_token",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_newOwner",
-					"type": "address"
-				}
-			],
-			"name": "migrateOwnership",
-			"outputs": [],
-			"stateMutability": "nonpayable",
-			"type": "function"
-		},
-		{
 			"inputs": [],
 			"name": "minApprovers",
 			"outputs": [
@@ -698,16 +512,6 @@
 					"internalType": "uint256",
 					"name": "",
 					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_amount",
-					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "_toChainId",
-					"type": "uint256"
 				}
 			],
 			"name": "originTokenList",
@@ -722,13 +526,7 @@
 			"type": "function"
 		},
 		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "_gov",
-					"type": "address"
-				}
-			],
+			"inputs": [],
 			"name": "owner",
 			"outputs": [
 				{
@@ -754,13 +552,7 @@
 			"type": "function"
 		},
 		{
-			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "_val",
-					"type": "uint256"
-				}
-			],
+			"inputs": [],
 			"name": "renounceOwnership",
 			"outputs": [],
 			"stateMutability": "nonpayable",
@@ -795,11 +587,6 @@
 					"internalType": "address",
 					"name": "_gov",
 					"type": "address"
-				},
-				{
-					"internalType": "bool",
-					"name": "_val",
-					"type": "bool"
 				}
 			],
 			"name": "setGovernance",
@@ -816,13 +603,7 @@
 				}
 			],
 			"name": "setGovernanceFee",
-			"outputs": [
-				{
-					"internalType": "bool",
-					"name": "",
-					"type": "bool"
-				}
-			],
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -832,21 +613,10 @@
 					"internalType": "uint256",
 					"name": "_val",
 					"type": "uint256"
-				},
-				{
-					"internalType": "address",
-					"name": "",
-					"type": "address"
 				}
 			],
 			"name": "setMinApprovers",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "",
-					"type": "address"
-				}
-			],
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -864,13 +634,7 @@
 				}
 			],
 			"name": "setSupportedChainId",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
@@ -888,28 +652,12 @@
 				}
 			],
 			"name": "setSupportedChainIds",
-			"outputs": [
-				{
-					"internalType": "address",
-					"name": "addr",
-					"type": "address"
-				},
-				{
-					"internalType": "uint256",
-					"name": "chainId",
-					"type": "uint256"
-				}
-			],
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
 			"inputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				},
 				{
 					"internalType": "uint256",
 					"name": "",
@@ -962,11 +710,6 @@
 					"internalType": "uint256",
 					"name": "",
 					"type": "uint256"
-				},
-				{
-					"internalType": "uint256",
-					"name": "amount",
-					"type": "uint256"
 				}
 			],
 			"name": "tokenMapList",
@@ -986,16 +729,6 @@
 					"internalType": "address",
 					"name": "",
 					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "tokenAddress",
-					"type": "address"
-				},
-				{
-					"internalType": "uint256",
-					"name": "tokenId",
-					"type": "uint256"
 				}
 			],
 			"name": "tokenMapReverse",
@@ -1092,7 +825,7 @@
 		"blockNumber": null,
 		"transactionIndex": null,
 		"confirmations": 0,
-		"from": "0xdE9E851919433F343eA7C3cA3023574897f9E8EF",
+		"from": "0x00481E0dE32FecFF1C7ce3AF19cb03E01aFC0e48",
 		"gasPrice": {
 			"type": "BigNumber",
 			"hex": "0x04a817c800"

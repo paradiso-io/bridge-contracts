@@ -4,19 +4,19 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract Governable is Initializable,OwnableUpgradeable {
-
-	function __Governable_init() internal initializer {
-      __Ownable_init();
+contract Governable is Initializable, OwnableUpgradeable {
+    function __Governable_initialize() internal initializer {
+        __Ownable_init();
     }
-	 modifier onlyGovernance() {
-		require(msg.sender == owner(), "!onlyGovernance");
-		_;
-	}
 
-	address public governance;
+    modifier onlyGovernance() {
+        require(msg.sender == owner(), "!onlyGovernance");
+        _;
+    }
 
-	function setGovernance(address _gov) public onlyGovernance {
-		governance = _gov;
-	}
+    address public governance;
+
+    function setGovernance(address _gov) public onlyGovernance {
+        governance = _gov;
+    }
 }
