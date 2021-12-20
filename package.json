@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "redeployall": "rm -rf deployments && hardhat deploy --network bsctestnet && hardhat deploy --network fantomtestnet && hardhat deploy --network fujitestnet && hardhat deploy --network kovan && hardhat deploy --network moonbeamtestnet && hardhat deploy --network mumbaitestnet && hardhat deploy --network tomotestnet",
+    "redeployallprotocol": "rm -rf deployments && hardhat deploy --network bsctestnet --tags protocol && hardhat deploy --network fantomtestnet --tags protocol && hardhat deploy --network fujitestnet --tags protocol && hardhat deploy --network kovan --tags protocol && hardhat deploy --network moonbeamtestnet --tags protocol && hardhat deploy --network mumbaitestnet --tags protocol&& hardhat deploy --network tomotestnet --tags protocol ",
+
     "compile": "npx hardhat compile",
     "deploymockerc20": "hardhat deploy --tags mockerc20"
   },
