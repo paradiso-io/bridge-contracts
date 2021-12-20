@@ -2,7 +2,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "../lib/BlackholePrevention.sol";
+import "../lib/BlackholePreventionUpgrade.sol";
 import "./DTOBridgeToken.sol";
 import "../interfaces/IDTOTokenBridge.sol";
 import "./Governable.sol";
@@ -18,7 +18,7 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 contract GenericBridge is
     DTOUpgradeableBase,
     ReentrancyGuardUpgradeable,
-    BlackholePrevention,
+    BlackholePreventionUpgrade,
     Governable,
     ChainIdHolding
 {
@@ -201,57 +201,6 @@ contract GenericBridge is
             index++;
         }
     }
-
-//    function requestBridge(
-//         address _tokenAddress,
-//         uint256 _amount,
-//         uint256 _toChainId
-//     ) public payable nonReentrant {
-//         require(
-//             chainId != _toChainId,
-//             "source and target chain ids must be different"
-//         );
-//         require(supportedChainIds[_toChainId], "unsupported chainId");
-//         if (!isBridgeToken(_tokenAddress)) {
-//             //transfer and lock token here
-//             safeTransferIn(_tokenAddress, msg.sender, _amount);
-//             emit RequestBridge(
-//                 _tokenAddress,
-//                 msg.sender,
-//                 _amount,
-//                 chainId,
-//                 chainId,
-//                 _toChainId,
-//                 index
-//             );
-//             index++;
-
-//             if (tokenMapList[_tokenAddress].length == 0) {
-//                 originTokenList.push(_tokenAddress);
-//             }
-
-//             if (!tokenMapSupportCheck[_tokenAddress][_toChainId]) {
-//                 tokenMapList[_tokenAddress].push(_toChainId);
-//                 tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
-//             }
-//         } else {
-//             ERC20BurnableUpgradeable(_tokenAddress).burnFrom(
-//                 msg.sender,
-//                 _amount
-//             );
-//             address _originToken = tokenMapReverse[_tokenAddress].addr;
-//             emit RequestBridge(
-//                 _originToken,
-//                 msg.sender,
-//                 _amount,
-//                 tokenMapReverse[_tokenAddress].chainId,
-//                 chainId,
-//                 _toChainId,
-//                 index
-//             );
-//             index++;
-//         }
-//     }
 
     function verifySignatures(
         bytes32[] memory r,
@@ -477,4 +426,32 @@ contract GenericBridge is
             );
         }
     }
+    /***********************************|
+	|          Only Admin               |
+	|      (blackhole prevention)       |
+	|__________________________________*/
+    function withdrawEther(address payable receiver, uint256 amount)
+        external
+        virtual
+        onlyGovernance
+    {
+        _withdrawEther(receiver, amount);
+    }
+
+    function withdrawERC20(
+        address payable receiver,
+        address tokenAddress,
+        uint256 amount
+    ) external virtual onlyGovernance {
+        _withdrawERC20(receiver, tokenAddress, amount);
+    }
+
+    function withdrawERC721(
+        address payable receiver,
+        address tokenAddress,
+        uint256 tokenId
+    ) external virtual onlyGovernance {
+        _withdrawERC721(receiver, tokenAddress, tokenId);
+    }
+
 }

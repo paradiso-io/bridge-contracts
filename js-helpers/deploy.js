@@ -57,7 +57,7 @@ const chainNameById = (chainId) => {
 };
 
 const supportedChainIds = [1, 3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89]
-const approvers = ["0x41B23C77C92124710228e82e7e8c719710bdD6eB", "0x32be6857240D241d1c388999a191d0fB7531BcF9"]
+const approvers = ["0xcb02ea995b810802a2800a911e8eb56d233bb199", "0x18b5123d0a1b1a851dec08a29c081eda09b812e1","0xa3582c9183bcc50d886db0960b81b33b6d232a9c","0x889c8cb1b3dcc6380b3d936162865d68d6bac158","0xe6802aacac2020322eb26e8cb821b82a1e08cd28","0x901e950633929b62be3e35cc3c6e0deab3210a0a","0x5113a11eaad3c5c5a3edb2910193d1965c123ea8"]
 
 const blockTimeFromDate = (dateStr) => {
   return Date.parse(dateStr) / 1000;
@@ -118,114 +118,7 @@ const getActualTxGasCost = async (txData) => {
   return `${gasCost} ETH Used.  (Estimated: ${gasCostEst} ETH)`;
 };
 
-const presets = {
-  // ChargedParticles: {
-  //   tempLockExpiryBlocks: toBN('5760'), // 1 Day == 86400 / 15
-  //   maxDeposits: [ // Temporary limit; remove after launch proves successful
-  //     {assetTokenId: 'Aave.v2.dai', amount: toWei('10000')}, // DAI
-  //   ]
-  // },
-  // Lepton: {
-  //   maxMintPerTx: toBN('25'),
-
-  //   // V2 Type Definitions
-  //   types: [
-  //     {
-  //       name        : 'Electron Neutrino',
-  //       tokenUri    : 'https://gateway.pinata.cloud/ipfs/QmcWuHx4MgywyEMzsqT9J3boJu1gk7GdtAMQ1pyQYRR3XS',
-  //       price       : {1: toWei('0.3'), 42: toWei('0.0000003'), 31337: toWei('0.000000003')},
-  //       supply      : {1: toBN('721'), 42: toBN('40'), 31337: toBN('40')},
-  //       multiplier  : toBN('110'),  // 1.1%
-  //       bonus       : toBN('0'),
-  //     },
-  //     {
-  //       name        : 'Muon Neutrino',
-  //       tokenUri    : 'https://gateway.pinata.cloud/ipfs/QmccGhGhvi37QScB4u2VmuVwENtEsMpx6hAKUqu3x3nU9V',
-  //       price       : {1: toWei('0.9'), 42: toWei('0.0000009'), 31337: toWei('0.000000009')},
-  //       supply      : {1: toBN('401'), 42: toBN('20'), 31337: toBN('20')},
-  //       multiplier  : toBN('130'),  // 1.3%
-  //       bonus       : toBN('1'),
-  //     },
-  //     {
-  //       name        : 'Tau Neutrino',
-  //       tokenUri    : 'https://gateway.pinata.cloud/ipfs/Qma2ZPnCM95AYZ1wPxZdDVvRiS114Svrw2J632ZpLiX7JV',
-  //       price       : {1: toWei('1.7'), 42: toWei('0.0000017'), 31337: toWei('0.000000017')},
-  //       supply      : {1: toBN('301'), 42: toBN('12'), 31337: toBN('12')},
-  //       multiplier  : toBN('150'),  // 1.5%
-  //       bonus       : toBN('2'),
-  //     },
-  //     {
-  //       name        : 'Electron',
-  //       tokenUri    : 'https://gateway.pinata.cloud/ipfs/QmNRKJsUwqEE9zYK6sEND8HDGa4cHFkkC2ntjQA5bFL6jJ',
-  //       price       : {1: toWei('2.9'), 42: toWei('0.000029'), 31337: toWei('0.00000029')},
-  //       supply      : {1: toBN('201'), 42: toBN('8'), 31337: toBN('8')},
-  //       multiplier  : toBN('180'),  // 1.8%
-  //       bonus       : toBN('4'),
-  //     },
-  //     {
-  //       name        : 'Muon',
-  //       tokenUri    : 'https://gateway.pinata.cloud/ipfs/QmWiH5F9yPp7yRzcqocmQKuhrA3KVY9fGJZxD9UKBDu5wr',
-  //       price       : {1: toWei('5.1'), 42: toWei('0.000051'), 31337: toWei('0.00000051')},
-  //       supply      : {1: toBN('88'), 42: toBN('5'), 31337: toBN('5')},
-  //       multiplier  : toBN('230'),  // 2.3%
-  //       bonus       : toBN('8'),
-  //     },
-  //     {
-  //       name        : 'Tau',
-  //       tokenUri    : 'https://gateway.pinata.cloud/ipfs/QmUkCXgyguBSxnGRtfBAvofAkyhFbRCwS7HPaoytAZvemt',
-  //       price       : {1: toWei('21'), 42: toWei('0.00021'), 31337: toWei('0.0000021')},
-  //       supply      : {1: toBN('21'), 42: toBN('2'), 31337: toBN('2')},
-  //       multiplier  : toBN('510'),  // 5.1%
-  //       bonus       : toBN('16'),
-  //     },
-  //   ]
-  // },
-  // Ion: {
-  //   universeMaxSupply: toWei('40000000'), // 40% of 100 Million (Community Liquidity Mining Portion)
-  //   rewardsForAssetTokens: [
-  //     {assetTokenId: 'Aave.v2.dai', multiplier: '5000'}, // DAI (50% of Interest in Ion)
-  //   ],
-  //   timelocks: [
-  //     {
-  //       receiver: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',  // Testing - Account 3
-  //       portions: [
-  //         {amount: weiPerEth.mul('1000'), releaseDate: blockTimeFromDate('27 Dec 2021 00:00:00 GMT')},
-  //         {amount: weiPerEth.mul('1000'), releaseDate: blockTimeFromDate('28 Dec 2021 00:00:00 GMT')},
-  //         {amount: weiPerEth.mul('1000'), releaseDate: blockTimeFromDate('29 Dec 2021 00:00:00 GMT')},
-  //       ]
-  //     },
-  //     {
-  //       receiver: '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65',  // Testing - Account 4
-  //       portions: [
-  //         {amount: weiPerEth.mul('5000'), releaseDate: blockTimeFromDate('27 Dec 2021 00:00:00 GMT')},
-  //         {amount: weiPerEth.mul('5000'), releaseDate: blockTimeFromDate('28 Dec 2021 00:00:00 GMT')},
-  //         {amount: weiPerEth.mul('5000'), releaseDate: blockTimeFromDate('29 Dec 2021 00:00:00 GMT')},
-  //       ]
-  //     },
-  //   ],
-  // },
-  // Aave: {
-  //   referralCode: {
-  //     1: '',
-  //     42: '',
-  //     31337: '',
-  //   },
-  //   v2: {
-  //     dai: {
-  //       1: '0x6B175474E89094C44Da98b954EedeAC495271d0F', // mainnet
-  //       42: '0xFf795577d9AC8bD7D90Ee22b6C1703490b6512FD', // kovan
-  //       31337: '0x6B175474E89094C44Da98b954EedeAC495271d0F', // Hardhat - Forked Mainnet
-  //     },
-  //     lendingPoolProvider: {
-  //       1: '0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5', // mainnet
-  //       42: '0x652B2937Efd0B5beA1c8d54293FC1289672AFC6b', // kovan
-  //       31337: '0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5', // Hardhat - Forked Mainnet
-  //     }
-  //   }
-  // }
-};
-
-
+  
 module.exports = {
   txOverrides,
   chainNameById,
@@ -236,7 +129,6 @@ module.exports = {
   getTxGasCost,
   getActualTxGasCost,
   log,
-  presets,
   toWei,
   toEth,
   toBN,
