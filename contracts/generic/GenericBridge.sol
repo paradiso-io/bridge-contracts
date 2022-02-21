@@ -66,6 +66,15 @@ contract GenericBridge is
         uint256 _index,
         bytes32 _claimId
     );
+    event RequestBridgeToNonEVM(
+        address indexed _token,
+        bytes indexed _toAddr,
+        uint256 _amount,
+        uint256 _originChainId,
+        uint256 _fromChainId,
+        uint256 _toChainId,
+        uint256 _index
+    );
 
     function initialize() public initializer {
         __DTOUpgradeableBase_initialize();
@@ -190,6 +199,58 @@ contract GenericBridge is
             );
             address _originToken = tokenMapReverse[_tokenAddress].addr;
             emit RequestBridge(
+                _originToken,
+                _toAddr,
+                _amount,
+                tokenMapReverse[_tokenAddress].chainId,
+                chainId,
+                _toChainId,
+                index
+            );
+            index++;
+        }
+    }
+
+    function requestBridgeToNonEMV(
+        address _tokenAddress,
+        bytes memory _toAddr,
+        uint256 _amount,
+        uint256 _toChainId
+    ) public payable nonReentrant {
+        require(
+            chainId != _toChainId,
+            "source and target chain ids must be different"
+        );
+        require(supportedChainIds[_toChainId], "unsupported chainId");
+        if (!isBridgeToken(_tokenAddress)) {
+            //transfer and lock token here
+            safeTransferIn(_tokenAddress, msg.sender, _amount);
+            emit RequestBridgeToNonEVM(
+                _tokenAddress,
+                _toAddr,
+                _amount,
+                chainId,
+                chainId,
+                _toChainId,
+                index
+            );
+            index++;
+
+            if (tokenMapList[_tokenAddress].length == 0) {
+                originTokenList.push(_tokenAddress);
+            }
+
+            if (!tokenMapSupportCheck[_tokenAddress][_toChainId]) {
+                tokenMapList[_tokenAddress].push(_toChainId);
+                tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
+            }
+        } else {
+            ERC20BurnableUpgradeable(_tokenAddress).burnFrom(
+                msg.sender,
+                _amount
+            );
+            address _originToken = tokenMapReverse[_tokenAddress].addr;
+            emit RequestBridgeToNonEVM(
                 _originToken,
                 _toAddr,
                 _amount,
