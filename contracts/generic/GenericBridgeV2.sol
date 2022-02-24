@@ -90,23 +90,38 @@ contract GenericBridgeV2 is
         }
     }
 
-	function changeBridgeValidator(address _newValidator, uint256 deadline, bytes32 r, bytes32 s, uint8 v) external {
-		bytes32 signedData = keccak256(
-            abi.encode(address(this), "changeBridgeValidator", chainId, _newValidator, deadline)
+    function changeBridgeValidator(
+        address _newValidator,
+        uint256 deadline,
+        bytes32 r,
+        bytes32 s,
+        uint8 v
+    ) external {
+        bytes32 signedData = keccak256(
+            abi.encode(
+                address(this),
+                "changeBridgeValidator",
+                chainId,
+                _newValidator,
+                deadline
+            )
         );
 
-		require(
+        require(
             verifyValidatorSignature(signedData, r, s, v),
             "changeBridgeValidator: Invalid validator signature"
         );
-		bridgeValidator = _newValidator;
-	}
+        bridgeValidator = _newValidator;
+    }
 
-	function initValidator(address _validator) external onlyGovernance {
-		require(bridgeValidator == address(0), "validator must not be set initially");
-		require(_validator != address(0), "validator must not be zero");
-		bridgeValidator = _validator;
-	}
+    function initValidator(address _validator) external onlyGovernance {
+        require(
+            bridgeValidator == address(0),
+            "validator must not be set initially"
+        );
+        require(_validator != address(0), "validator must not be zero");
+        bridgeValidator = _validator;
+    }
 
     function setMinApprovers(uint256 _val) public onlyGovernance {
         require(_val >= 2, "!min set approver");
@@ -145,7 +160,13 @@ contract GenericBridgeV2 is
         uint256 deadline
     ) external {
         bytes32 signedData = keccak256(
-            abi.encode(address(this), "addApproverMPC", chainId, _addr, deadline)
+            abi.encode(
+                address(this),
+                "addApproverMPC",
+                chainId,
+                _addr,
+                deadline
+            )
         );
         require(
             verifyValidatorSignature(signedData, r, s, v),
@@ -167,7 +188,13 @@ contract GenericBridgeV2 is
         require(approverMap[_addr], "not approver");
 
         bytes32 signedData = keccak256(
-            abi.encode(address(this), "removeApprover", chainId, _addr, deadline)
+            abi.encode(
+                address(this),
+                "removeApprover",
+                chainId,
+                _addr,
+                deadline
+            )
         );
         require(
             verifyValidatorSignature(signedData, r, s, v),
@@ -347,12 +374,12 @@ contract GenericBridgeV2 is
             //claim
             IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken])
                 .claimBridgeToken(
-                _originToken,
-                _to,
-                _amount,
-                _chainIdsIndex,
-                _txHash
-            );
+                    _originToken,
+                    _to,
+                    _amount,
+                    _chainIdsIndex,
+                    _txHash
+                );
             emit ClaimToken(
                 _originToken,
                 _to,
@@ -454,12 +481,12 @@ contract GenericBridgeV2 is
             //claim
             IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken])
                 .claimBridgeToken(
-                _originToken,
-                _to,
-                _amount,
-                _chainIdsIndex,
-                _txHash
-            );
+                    _originToken,
+                    _to,
+                    _amount,
+                    _chainIdsIndex,
+                    _txHash
+                );
             emit ClaimToken(
                 _originToken,
                 _to,

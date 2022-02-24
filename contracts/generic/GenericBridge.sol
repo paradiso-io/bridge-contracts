@@ -49,7 +49,7 @@ contract GenericBridge is
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestBridge(
         address indexed _token,
-        bytes indexed _toAddr,
+        bytes _toAddr,
         uint256 _amount,
         uint256 _originChainId,
         uint256 _fromChainId,

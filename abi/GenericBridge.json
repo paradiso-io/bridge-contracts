@@ -115,10 +115,10 @@
         "type": "address"
       },
       {
-        "indexed": true,
-        "internalType": "address",
+        "indexed": false,
+        "internalType": "bytes",
         "name": "_toAddr",
-        "type": "address"
+        "type": "bytes"
       },
       {
         "indexed": false,
@@ -565,9 +565,9 @@
         "type": "address"
       },
       {
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "_toAddr",
-        "type": "address"
+        "type": "bytes"
       },
       {
         "internalType": "uint256",
