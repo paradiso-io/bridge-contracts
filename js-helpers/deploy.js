@@ -12,7 +12,7 @@ const toBN = ethers.BigNumber.from;
 const toStr = (val) => ethers.utils.toUtf8String(val).replace(/\0/g, '');
 const weiPerEth = ethers.constants.WeiPerEther;
 
-const txOverrides = (options = {}) => ({gasLimit: 15000000, ...options});
+const txOverrides = (options = {}) => ({ gasLimit: 15000000, ...options });
 
 const log = (...args) => {
   console.log(...args);
@@ -57,7 +57,16 @@ const chainNameById = (chainId) => {
 };
 
 const supportedChainIds = [1, 3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89]
-const approvers = ["0xcb02ea995b810802a2800a911e8eb56d233bb199", "0x18b5123d0a1b1a851dec08a29c081eda09b812e1","0xa3582c9183bcc50d886db0960b81b33b6d232a9c","0x889c8cb1b3dcc6380b3d936162865d68d6bac158","0xe6802aacac2020322eb26e8cb821b82a1e08cd28","0x901e950633929b62be3e35cc3c6e0deab3210a0a","0x5113a11eaad3c5c5a3edb2910193d1965c123ea8"]
+const approvers = ["0x3cdC0b9A2383770C24ce335C07DdD5f09EE3E199",
+  "0x6D378C3dc2Eb8D433C3dDD6a62A6D41D44c18426",
+  "0xC91B38d5Bf1d2047529446cF575855e0744e9334",
+  "0x99F3dF513d1A13316CEA132B1431223d9612caEd",
+  "0x6A61A3cEd260433ddD6F8E181644d55753A5051d",
+  "0x58D337a11F1F439839bd2b97E0eE8e6D753be5d7",
+  "0x9c76F50A0fFD21525b1E6406e306b628F492c4be",
+  "0x6A96EaCff97c98c1D449D4E3634805241d85807f",
+  "0x0cCacdd7c2F6bEbE61E80E77b24e5DE4d3B4C68B",
+  "0xbE3ab443e16fdF70DfB35C73b45962CB56F9d9A6"]
 
 const blockTimeFromDate = (dateStr) => {
   return Date.parse(dateStr) / 1000;
@@ -106,7 +115,7 @@ const getDeployData = (contractName, chainId = 31337) => {
   return contractJson;
 }
 
-const getTxGasCost = ({deployTransaction}) => {
+const getTxGasCost = ({ deployTransaction }) => {
   const gasCost = toEth(deployTransaction.gasLimit.mul(deployTransaction.gasPrice));
   return `${gasCost} ETH`;
 };
@@ -118,7 +127,7 @@ const getActualTxGasCost = async (txData) => {
   return `${gasCost} ETH Used.  (Estimated: ${gasCostEst} ETH)`;
 };
 
-  
+
 module.exports = {
   txOverrides,
   chainNameById,

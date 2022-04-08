@@ -6,6 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "redeployall": "rm -rf deployments && hardhat deploy --network bsctestnet && hardhat deploy --network fantomtestnet && hardhat deploy --network fujitestnet && hardhat deploy --network kovan && hardhat deploy --network moonbeamtestnet && hardhat deploy --network mumbaitestnet && hardhat deploy --network tomotestnet",
     "redeployallprotocol": "rm -rf deployments && hardhat deploy --network bsctestnet --tags protocol && hardhat deploy --network fantomtestnet --tags protocol && hardhat deploy --network fujitestnet --tags protocol && hardhat deploy --network kovan --tags protocol && hardhat deploy --network moonbeamtestnet --tags protocol && hardhat deploy --network mumbaitestnet --tags protocol&& hardhat deploy --network tomotestnet --tags protocol ",
+    "upgradeallprotocol": "hardhat deploy --network bsctestnet --tags protocolupgrade && hardhat deploy --network fantomtestnet --tags protocolupgrade && hardhat deploy --network fujitestnet --tags protocolupgrade && hardhat deploy --network kovan --tags protocolupgrade && hardhat deploy --network moonbeamtestnet --tags protocolupgrade && hardhat deploy --network mumbaitestnet --tags protocolupgrade && hardhat deploy --network tomotestnet --tags protocolupgrade ",
     "compile": "npx hardhat compile",
     "deploymockerc20": "hardhat deploy --tags mockerc20"
   },
@@ -28,7 +29,7 @@
     "@openzeppelin/hardhat-upgrades": "^1.8.2",
     "async-mutex": "^0.3.2",
     "dotenv": "^10.0.0",
-    "hardhat-abi-exporter": "^2.2.1",
+    "hardhat-abi-exporter": "2.2.1",
     "hardhat-deploy": "^0.7.10",
     "hardhat-deploy-ethers": "*",
     "hardhat-gas-reporter": "^1.0.4",

@@ -26,6 +26,8 @@ lepton_data/
 .openzeppelin/.session
 deployments/hardhat/*.json
 
+solang-mac
+flatten
 
 # Code Coverage
 coverage
