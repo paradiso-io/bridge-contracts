@@ -99,6 +99,12 @@ module.exports = {
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY],
     },
+    huobitestnet: {
+      url: 'https://http-testnet.hecochain.com',
+      gasPrice: 1e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY],
+    }
   },
   solidity: {
     version: "0.8.3",

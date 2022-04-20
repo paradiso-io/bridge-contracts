@@ -40,7 +40,6 @@ contract GenericBridge is
     mapping(uint256 => mapping(address => address)) public tokenMap; //chainid => origin token => bridge token
     mapping(address => TokenInfo) public tokenMapReverse; //bridge token => chain id => origin token
     mapping(address => bool) public bridgeTokens; //mapping of bridge tokens on this chain
-    address[] public originTokenList;
     uint256 public claimFee; //fee paid in native token for nodes maintenance
 
     uint256 public index;
@@ -66,6 +65,7 @@ contract GenericBridge is
         uint256 _index,
         bytes32 _claimId
     );
+    event ValidatorSign(address _validator, bytes32 _claimId, uint256 _timestamp);
 
     function initialize() public initializer {
         __DTOUpgradeableBase_initialize();
@@ -175,10 +175,6 @@ contract GenericBridge is
             );
             index++;
 
-            if (tokenMapList[_tokenAddress].length == 0) {
-                originTokenList.push(_tokenAddress);
-            }
-
             if (!tokenMapSupportCheck[_tokenAddress][_toChainId]) {
                 tokenMapList[_tokenAddress].push(_toChainId);
                 tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
@@ -207,7 +203,7 @@ contract GenericBridge is
         bytes32[] memory s,
         uint8[] memory v,
         bytes32 signedData
-    ) internal view returns (bool) {
+    ) internal returns (bool) {
         require(minApprovers >= 2, "!min approvers");
         require(bridgeApprovers.length >= minApprovers, "!min approvers");
         uint256 successSigner = 0;
@@ -230,6 +226,7 @@ contract GenericBridge is
                 );
                 if (approverMap[signer]) {
                     successSigner++;
+                    emit ValidatorSign(signer, signedData, block.timestamp);
                 }
             }
         }
@@ -283,6 +280,7 @@ contract GenericBridge is
                 if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
                     DTOBridgeToken bt = new DTOBridgeToken(
                         _originToken,
+                        _chainIdsIndex[0],
                         _name,
                         _symbol,
                         _decimals
@@ -334,6 +332,7 @@ contract GenericBridge is
                 //create bridge token
                 DTOBridgeToken bt = new DTOBridgeToken(
                     _originToken,
+                    _chainIdsIndex[0],
                     _name,
                     _symbol,
                     _decimals
@@ -426,6 +425,15 @@ contract GenericBridge is
             );
         }
     }
+
+    function getSupportedChainsForToken(address _token) external view returns (uint256[] memory) {
+        return tokenMapList[_token];
+    }
+
+    function getBridgeApprovers() external view returns (address[] memory) {
+        return bridgeApprovers;
+    } 
+
     /***********************************|
 	|          Only Admin               |
 	|      (blackhole prevention)       |

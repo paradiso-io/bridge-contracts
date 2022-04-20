@@ -1,35 +1,37 @@
 pragma solidity ^0.8.0;
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // for WETH
-import "../lib/BlackholePrevention.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol"; // for WETH
 import "../interfaces/IDTOTokenBridge.sol";
 // import "./Governable.sol";
 import "../lib/ChainIdHolding.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 contract DTOBridgeToken is
-    ERC20Burnable,
-    BlackholePrevention,
+    ERC20BurnableUpgradeable,
     IDTOTokenBridge,
-    Ownable,
+    OwnableUpgradeable,
     ChainIdHolding
 {
-    using SafeMath for uint256;
+    using SafeMathUpgradeable for uint256;
     mapping(bytes32 => bool) public alreadyClaims;
     address public originalTokenAddress;
+    uint256 public originChainId;
     uint8 _decimals;
 
     constructor(
         address _originalTokenAddress,
+        uint256 _originChainId,
         string memory _tokenName,
         string memory _tokenSymbol,
         uint8 __decimals
-    ) public ERC20(_tokenName, _tokenSymbol) {
+    ) public {
         __ChainIdHolding_init();
+        __ERC20_init(_tokenName, _tokenSymbol);
         _decimals = __decimals;
         originalTokenAddress = _originalTokenAddress;
+        originChainId = _originChainId;
     }
 
     function decimals() public view virtual override returns (uint8) {
@@ -63,29 +65,5 @@ contract DTOBridgeToken is
 
         alreadyClaims[_claimId] = true;
         _mint(_to, _amount); //send token to bridge contract, which then distributes token and fee to user and governance
-    }
-
-    function withdrawEther(address payable receiver, uint256 amount)
-        external
-        virtual
-        onlyOwner
-    {
-        _withdrawEther(receiver, amount);
-    }
-
-    function withdrawERC20(
-        address payable receiver,
-        address tokenAddress,
-        uint256 amount
-    ) external virtual onlyOwner {
-        _withdrawERC20(receiver, tokenAddress, amount);
-    }
-
-    function withdrawERC721(
-        address payable receiver,
-        address tokenAddress,
-        uint256 tokenId
-    ) external virtual onlyOwner {
-        _withdrawERC721(receiver, tokenAddress, tokenId);
     }
 }
