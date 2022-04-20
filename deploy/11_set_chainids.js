@@ -34,23 +34,17 @@ module.exports = async (hre) => {
   log(' ');
 
   log('  Deploying GenericBridge...');
+  const GenericBridgeAddress = require(`../deployments/${chainId}/GenericBridge.json`).address
   const GenericBridge = await ethers.getContractFactory('GenericBridge');
-  const genericBridge = await upgrades.deployProxy(GenericBridge, [], { kind: 'uups', gasLimit: 8000000 })
+  const genericBridge = await GenericBridge.attach(GenericBridgeAddress)
 
   log('  - GenericBridge:         ', genericBridge.address);
-  deployData['GenericBridge'] = {
-    abi: getContractAbi('GenericBridge'),
-    address: genericBridge.address,
-    deployTransaction: genericBridge.deployTransaction,
-  }
-  await sleep(20000)
-  await genericBridge.setSupportedChainIds(supportedChainIds, true)
-  await genericBridge.addApprovers(approvers)
 
-  saveDeploymentData(chainId, deployData);
+  await genericBridge.setSupportedChainIds(supportedChainIds, true)
+
   log('\n  Contract Deployment Data saved to "deployments" directory.');
 
   log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
 };
 
-module.exports.tags = ['protocol']
+module.exports.tags = ['setchainids']

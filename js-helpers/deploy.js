@@ -58,7 +58,7 @@ const chainNameById = (chainId) => {
   }
 };
 
-const supportedChainIds = [1, 3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89]
+const supportedChainIds = [1, 3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89, 96945816564243]
 const approvers = ["0x3cdC0b9A2383770C24ce335C07DdD5f09EE3E199",
   "0x6D378C3dc2Eb8D433C3dDD6a62A6D41D44c18426",
   "0xC91B38d5Bf1d2047529446cF575855e0744e9334",
