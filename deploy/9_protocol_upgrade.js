@@ -37,9 +37,7 @@ module.exports = async (hre) => {
   const GenericBridgeAddress =
     require(`../deployments/${chainId}/GenericBridge.json`).address;
   const GenericBridge = await ethers.getContractFactory("GenericBridge");
-  await upgrades.upgradeProxy(GenericBridgeAddress, GenericBridge, [], {
-    unsafeAllow: ["delegatecall"],
-    unsafeAllowCustomTypes: true,
+  await upgrades.upgradeProxy(GenericBridgeAddress, GenericBridge, {
     kind: "uups",
     gasLimit: 1000000,
   });

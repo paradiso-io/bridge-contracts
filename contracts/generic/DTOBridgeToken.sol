@@ -20,13 +20,14 @@ contract DTOBridgeToken is
     uint256 public originChainId;
     uint8 _decimals;
 
-    constructor(
+    function initialize(
         address _originalTokenAddress,
         uint256 _originChainId,
         string memory _tokenName,
         string memory _tokenSymbol,
         uint8 __decimals
-    ) public {
+    ) external initializer {
+        __Ownable_init();
         __ChainIdHolding_init();
         __ERC20_init(_tokenName, _tokenSymbol);
         _decimals = __decimals;

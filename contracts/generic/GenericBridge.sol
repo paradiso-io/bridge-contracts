@@ -44,6 +44,10 @@ contract GenericBridge is
 
     uint256 public index;
     uint256 public minApprovers;
+    address payable public feeReceiver;
+    mapping(uint256 => mapping(address => uint256)) public feeForTokens;
+    uint256 public defaultFeePercentage;
+    uint256 public constant DEFAULT_FEE_DIVISOR = 10_000;
 
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestBridge(
@@ -65,7 +69,18 @@ contract GenericBridge is
         uint256 _index,
         bytes32 _claimId
     );
-    event ValidatorSign(address _validator, bytes32 _claimId, uint256 _timestamp);
+    event ValidatorSign(
+        address _validator,
+        bytes32 _claimId,
+        uint256 _timestamp
+    );
+
+    event SetFeeToken(
+        uint256 chainId,
+        address token,
+        uint256 fee,
+        uint256 timestamp
+    );
 
     function initialize() public initializer {
         __DTOUpgradeableBase_initialize();
@@ -93,11 +108,45 @@ contract GenericBridge is
         for (uint256 i = 0; i < _chainIds.length; i++) {
             supportedChainIds[_chainIds[i]] = true;
         }
+        defaultFeePercentage = 10;  //0.1 %
     }
 
     function setMinApprovers(uint256 _val) public onlyGovernance {
         require(_val >= 2, "!min set approver");
         minApprovers = _val;
+    }
+
+    function setFeeReceiver(address payable _feeReceiver)
+        external
+        onlyGovernance
+    {
+        feeReceiver = _feeReceiver;
+    }
+
+    //originTokens for this chain
+    function setFeeForTokens(
+        uint256[] memory chainIds,
+        address[] memory originTokens,
+        uint256[] memory fees
+    ) external onlyGovernance {
+        require(
+            chainIds.length == originTokens.length &&
+                originTokens.length == fees.length,
+            "!input"
+        );
+        for (uint256 i = 0; i < originTokens.length; i++) {
+            feeForTokens[chainIds[i]][originTokens[i]] = fees[i];
+            emit SetFeeToken(
+                chainIds[i],
+                originTokens[i],
+                fees[i],
+                block.timestamp
+            );
+        }
+    }
+
+    function setDefaultFeePercentage(uint256 _val) external onlyGovernance {
+        defaultFeePercentage = _val;
     }
 
     function addApprover(address _addr) public onlyGovernance {
@@ -163,6 +212,10 @@ contract GenericBridge is
         require(supportedChainIds[_toChainId], "unsupported chainId");
         if (!isBridgeToken(_tokenAddress)) {
             //transfer and lock token here
+            require(
+                _amount > feeForTokens[chainId][_tokenAddress],
+                "amount too small"
+            );
             safeTransferIn(_tokenAddress, msg.sender, _amount);
             emit RequestBridge(
                 _tokenAddress,
@@ -180,11 +233,16 @@ contract GenericBridge is
                 tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
             }
         } else {
+            uint256 _originChainId = tokenMapReverse[_tokenAddress].chainId;
+            address _originToken = tokenMapReverse[_tokenAddress].addr;
+            require(
+                _amount > feeForTokens[_originChainId][_originToken],
+                "amount too small"
+            );
             ERC20BurnableUpgradeable(_tokenAddress).burnFrom(
                 msg.sender,
                 _amount
             );
-            address _originToken = tokenMapReverse[_tokenAddress].addr;
             emit RequestBridge(
                 _originToken,
                 _toAddr,
@@ -278,7 +336,8 @@ contract GenericBridge is
                 //claim native token from another chain to the current chain
                 //check whether wrap token exist
                 if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
-                    DTOBridgeToken bt = new DTOBridgeToken(
+                    DTOBridgeToken bt = new DTOBridgeToken();
+                    bt.initialize(
                         _originToken,
                         _chainIdsIndex[0],
                         _name,
@@ -292,16 +351,13 @@ contract GenericBridge is
                     });
                     bridgeTokens[address(bt)] = true;
                 }
-
-                //claim
-                IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken])
-                    .claimBridgeToken(
-                        _originToken,
-                        _toAddr,
-                        _amount,
-                        _chainIdsIndex,
-                        _txHash
-                    );
+                _mintTokenForUser(
+                    _amount,
+                    _originToken,
+                    _chainIdsIndex,
+                    _txHash,
+                    _toAddr
+                );
                 emit ClaimToken(
                     _originToken,
                     _toAddr,
@@ -314,7 +370,13 @@ contract GenericBridge is
                 );
             } else {
                 //claiming original token
-                safeTransferOut(_originToken, _toAddr, _amount);
+                _transferOriginToken(
+                    _amount,
+                    _originToken,
+                    _chainIdsIndex,
+                    _toAddr
+                );
+
                 emit ClaimToken(
                     _originToken,
                     _toAddr,
@@ -330,7 +392,8 @@ contract GenericBridge is
             //claiming bridge token
             if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
                 //create bridge token
-                DTOBridgeToken bt = new DTOBridgeToken(
+                DTOBridgeToken bt = new DTOBridgeToken();
+                bt.initialize(
                     _originToken,
                     _chainIdsIndex[0],
                     _name,
@@ -344,15 +407,15 @@ contract GenericBridge is
                 });
                 bridgeTokens[address(bt)] = true;
             }
+
             //claim
-            IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken])
-                .claimBridgeToken(
-                    _originToken,
-                    _toAddr,
-                    _amount,
-                    _chainIdsIndex,
-                    _txHash
-                );
+            _mintTokenForUser(
+                _amount,
+                _originToken,
+                _chainIdsIndex,
+                _txHash,
+                _toAddr
+            );
             emit ClaimToken(
                 _originToken,
                 _toAddr,
@@ -365,7 +428,12 @@ contract GenericBridge is
             );
         } else {
             //claiming original token
-            safeTransferOut(_originToken, _toAddr, _amount);
+            _transferOriginToken(
+                _amount,
+                _originToken,
+                _chainIdsIndex,
+                _toAddr
+            );
             emit ClaimToken(
                 _originToken,
                 _toAddr,
@@ -377,6 +445,48 @@ contract GenericBridge is
                 _claimId
             );
         }
+    }
+
+    function _mintTokenForUser(
+        uint256 _amount,
+        address _originToken,
+        uint256[] memory _chainIdsIndex,
+        bytes32 _txHash,
+        address _toAddr
+    ) internal {
+        (uint256 forUser, uint256 forFee) = getAmountsToSend(
+            _amount,
+            _originToken,
+            _chainIdsIndex[0]
+        );
+
+        IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken])
+            .claimBridgeToken(
+                _originToken,
+                address(this),
+                _amount,
+                _chainIdsIndex,
+                _txHash
+            );
+        IERC20Upgradeable(tokenMap[_chainIdsIndex[0]][_originToken])
+            .safeTransfer(_toAddr, forUser);
+        IERC20Upgradeable(tokenMap[_chainIdsIndex[0]][_originToken])
+            .safeTransfer(getFeeRecipientAddress(), forFee);
+    }
+
+    function _transferOriginToken(
+        uint256 _amount,
+        address _originToken,
+        uint256[] memory _chainIdsIndex,
+        address _toAddr
+    ) internal {
+        //claiming original token
+        (uint256 forUser, uint256 forFee) = getAmountsToSend(
+            _amount,
+            _originToken,
+            _chainIdsIndex[0]
+        );
+        safeTransferOut(_originToken, _toAddr, forUser, forFee);
     }
 
     function payClaimFee(uint256 _amount) internal {
@@ -411,28 +521,81 @@ contract GenericBridge is
     function safeTransferOut(
         address _token,
         address _toAddr,
-        uint256 _amount
+        uint256 _forUser,
+        uint256 _forFee
     ) internal {
         if (_token == NATIVE_TOKEN_ADDRESS) {
-            payable(_toAddr).sendValue(_amount);
+            payable(_toAddr).sendValue(_forUser);
+            payable(getFeeRecipientAddress()).sendValue(_forFee);
         } else {
             IERC20Upgradeable erc20 = IERC20Upgradeable(_token);
             uint256 balBefore = erc20.balanceOf(address(this));
-            erc20.safeTransfer(_toAddr, _amount);
+            erc20.safeTransfer(_toAddr, _forUser);
+            erc20.safeTransfer(getFeeRecipientAddress(), _forFee);
             require(
-                balBefore.sub(erc20.balanceOf(address(this))) == _amount,
+                balBefore.sub(erc20.balanceOf(address(this))) ==
+                    _forUser + _forFee,
                 "!transfer to"
             );
         }
     }
 
-    function getSupportedChainsForToken(address _token) external view returns (uint256[] memory) {
+    function getAmountsToSend(
+        uint256 amount,
+        address originToken,
+        uint256 originChainId
+    ) internal view returns (uint256 forUser, uint256 forFee) {
+        if (feeForTokens[originChainId][originToken] == 0) {
+            forUser =
+                (amount * (DEFAULT_FEE_DIVISOR - defaultFeePercentage)) /
+                DEFAULT_FEE_DIVISOR;
+            forFee = amount - forUser;
+        } else {
+            if (amount < feeForTokens[originChainId][originToken]) {
+                forUser = 0;
+                forFee = amount;
+            } else {
+                forUser = amount - feeForTokens[originChainId][originToken];
+                forFee = feeForTokens[originChainId][originToken];
+            }
+        }
+    }
+
+    function getFeeInfo(address token)
+        external
+        view
+        returns (uint256 feeAmount, uint256 feePercent)
+    {
+        if (!isBridgeToken(token)) {
+            //token on this chain
+            feeAmount = feeForTokens[chainId][token];
+            feePercent = defaultFeePercentage;
+        } else {
+            TokenInfo memory tokenInfo = tokenMapReverse[token];
+            feeAmount = feeForTokens[tokenInfo.chainId][tokenInfo.addr];
+            feePercent = defaultFeePercentage;
+        }
+    }
+
+    function getFeeRecipientAddress()
+        internal
+        view
+        returns (address payable ret)
+    {
+        ret = feeReceiver == address(0) ? payable(owner()) : feeReceiver;
+    }
+
+    function getSupportedChainsForToken(address _token)
+        external
+        view
+        returns (uint256[] memory)
+    {
         return tokenMapList[_token];
     }
 
     function getBridgeApprovers() external view returns (address[] memory) {
         return bridgeApprovers;
-    } 
+    }
 
     /***********************************|
 	|          Only Admin               |
@@ -461,5 +624,4 @@ contract GenericBridge is
     ) external virtual onlyGovernance {
         _withdrawERC721(receiver, tokenAddress, tokenId);
     }
-
 }

@@ -81,7 +81,7 @@ module.exports = {
     },
     mumbaitestnet: {
       //matic
-      url: `https://rpc-mumbai.maticvigil.com/`,
+      url: `https://speedy-nodes-nyc.moralis.io/6f1c50d092cad31805b2371f/polygon/mumbai`,
       gasPrice: 20e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY],
