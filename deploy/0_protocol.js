@@ -34,8 +34,11 @@ module.exports = async (hre) => {
   log(' ');
 
   log('  Deploying GenericBridge...');
+  let mainnet = false
+  if (chainId == 1 || chainId == 56) mainnet = true
+  console.log('supportedChainIds(chainId)', supportedChainIds(chainId))
   const GenericBridge = await ethers.getContractFactory('GenericBridge');
-  const genericBridge = await upgrades.deployProxy(GenericBridge, [], { kind: 'uups', gasLimit: 8000000 })
+  const genericBridge = await upgrades.deployProxy(GenericBridge, [supportedChainIds(chainId)], { kind: 'uups', gasLimit: 8000000 })
 
   log('  - GenericBridge:         ', genericBridge.address);
   deployData['GenericBridge'] = {
@@ -44,12 +47,10 @@ module.exports = async (hre) => {
     deployTransaction: genericBridge.deployTransaction,
   }
   await sleep(20000)
-  await genericBridge.setSupportedChainIds(supportedChainIds, true)
   await genericBridge.addApprovers(approvers)
 
   saveDeploymentData(chainId, deployData);
   log('\n  Contract Deployment Data saved to "deployments" directory.');
-
   log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
 };
 

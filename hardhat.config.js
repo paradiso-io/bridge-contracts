@@ -63,9 +63,9 @@ module.exports = {
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_APIKEY}`,
-      //gasPrice: 80e9,
+      gasPrice: 50e9,
       // blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY_MAINNET],
     },
     moonbeamtestnet: {
       url: `https://rpc.api.moonbase.moonbeam.network`,
@@ -153,7 +153,7 @@ module.exports = {
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://bscscan.com/
-    apiKey: process.env.BSC_APIKEY,
+    apiKey: process.env.ETHERSCAN_APIKEY,
   },
   namedAccounts: {
     deployer: {

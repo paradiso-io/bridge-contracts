@@ -48,6 +48,7 @@ contract GenericBridge is
     mapping(uint256 => mapping(address => uint256)) public feeForTokens;
     uint256 public defaultFeePercentage;
     uint256 public constant DEFAULT_FEE_DIVISOR = 10_000;
+    uint256 public constant DEFAULT_FEE_PERCENTAGE = 10; //0.1%
 
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestBridge(
@@ -82,7 +83,7 @@ contract GenericBridge is
         uint256 timestamp
     );
 
-    function initialize() public initializer {
+    function initialize(uint256[] memory _chainIds) public initializer {
         __DTOUpgradeableBase_initialize();
         __Governable_initialize();
         __ChainIdHolding_init();
@@ -91,24 +92,11 @@ contract GenericBridge is
         minApprovers = 2;
         claimFee = 0;
         governance = owner();
-        uint24[12] memory _chainIds = [
-            1,
-            3,
-            4,
-            42,
-            31337,
-            56,
-            97,
-            1287,
-            4002,
-            80001,
-            43113,
-            89
-        ];
+
         for (uint256 i = 0; i < _chainIds.length; i++) {
             supportedChainIds[_chainIds[i]] = true;
         }
-        defaultFeePercentage = 10;  //0.1 %
+        defaultFeePercentage = DEFAULT_FEE_PERCENTAGE; //0.1 %
     }
 
     function setMinApprovers(uint256 _val) public onlyGovernance {
@@ -212,15 +200,26 @@ contract GenericBridge is
         require(supportedChainIds[_toChainId], "unsupported chainId");
         if (!isBridgeToken(_tokenAddress)) {
             //transfer and lock token here
-            require(
-                _amount > feeForTokens[chainId][_tokenAddress],
-                "amount too small"
-            );
+            // require(
+            //     _amount > feeForTokens[chainId][_tokenAddress],
+            //     "amount too small"
+            // );
+
+            uint256 feePercent = defaultFeePercentage == 0
+                ? DEFAULT_FEE_PERCENTAGE
+                : defaultFeePercentage;
+            uint256 forUser =
+                (_amount * (DEFAULT_FEE_DIVISOR - feePercent)) /
+                DEFAULT_FEE_DIVISOR;
+            uint256 forFee = _amount - forUser;
+
             safeTransferIn(_tokenAddress, msg.sender, _amount);
+            safeTransferOut(_tokenAddress, msg.sender, 0, forFee);
+
             emit RequestBridge(
                 _tokenAddress,
                 _toAddr,
-                _amount,
+                forUser,
                 chainId,
                 chainId,
                 _toChainId,
@@ -233,12 +232,12 @@ contract GenericBridge is
                 tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
             }
         } else {
-            uint256 _originChainId = tokenMapReverse[_tokenAddress].chainId;
+            //uint256 _originChainId = tokenMapReverse[_tokenAddress].chainId;
             address _originToken = tokenMapReverse[_tokenAddress].addr;
-            require(
-                _amount > feeForTokens[_originChainId][_originToken],
-                "amount too small"
-            );
+            // require(
+            //     _amount > feeForTokens[_originChainId][_originToken],
+            //     "amount too small"
+            // );
             ERC20BurnableUpgradeable(_tokenAddress).burnFrom(
                 msg.sender,
                 _amount
@@ -454,24 +453,14 @@ contract GenericBridge is
         bytes32 _txHash,
         address _toAddr
     ) internal {
-        (uint256 forUser, uint256 forFee) = getAmountsToSend(
-            _amount,
-            _originToken,
-            _chainIdsIndex[0]
-        );
-
         IDTOTokenBridge(tokenMap[_chainIdsIndex[0]][_originToken])
             .claimBridgeToken(
                 _originToken,
-                address(this),
+                _toAddr,
                 _amount,
                 _chainIdsIndex,
                 _txHash
             );
-        IERC20Upgradeable(tokenMap[_chainIdsIndex[0]][_originToken])
-            .safeTransfer(_toAddr, forUser);
-        IERC20Upgradeable(tokenMap[_chainIdsIndex[0]][_originToken])
-            .safeTransfer(getFeeRecipientAddress(), forFee);
     }
 
     function _transferOriginToken(
@@ -530,8 +519,12 @@ contract GenericBridge is
         } else {
             IERC20Upgradeable erc20 = IERC20Upgradeable(_token);
             uint256 balBefore = erc20.balanceOf(address(this));
-            erc20.safeTransfer(_toAddr, _forUser);
-            erc20.safeTransfer(getFeeRecipientAddress(), _forFee);
+            if (_forUser > 0) {
+                erc20.safeTransfer(_toAddr, _forUser);
+            }
+            if (_forFee > 0) {
+                erc20.safeTransfer(getFeeRecipientAddress(), _forFee);
+            }
             require(
                 balBefore.sub(erc20.balanceOf(address(this))) ==
                     _forUser + _forFee,
@@ -545,20 +538,27 @@ contract GenericBridge is
         address originToken,
         uint256 originChainId
     ) internal view returns (uint256 forUser, uint256 forFee) {
-        if (feeForTokens[originChainId][originToken] == 0) {
-            forUser =
-                (amount * (DEFAULT_FEE_DIVISOR - defaultFeePercentage)) /
-                DEFAULT_FEE_DIVISOR;
-            forFee = amount - forUser;
-        } else {
-            if (amount < feeForTokens[originChainId][originToken]) {
-                forUser = 0;
-                forFee = amount;
-            } else {
-                forUser = amount - feeForTokens[originChainId][originToken];
-                forFee = feeForTokens[originChainId][originToken];
-            }
-        }
+        uint256 feePercent = defaultFeePercentage == 0
+            ? DEFAULT_FEE_PERCENTAGE
+            : defaultFeePercentage;
+        forUser =
+            (amount * (DEFAULT_FEE_DIVISOR - feePercent)) /
+            DEFAULT_FEE_DIVISOR;
+        forFee = amount - forUser;
+        // if (feeForTokens[originChainId][originToken] == 0) {
+        //     forUser =
+        //         (amount * (DEFAULT_FEE_DIVISOR - defaultFeePercentage)) /
+        //         DEFAULT_FEE_DIVISOR;
+        //     forFee = amount - forUser;
+        // } else {
+        //     if (amount < feeForTokens[originChainId][originToken]) {
+        //         forUser = 0;
+        //         forFee = amount;
+        //     } else {
+        //         forUser = amount - feeForTokens[originChainId][originToken];
+        //         forFee = feeForTokens[originChainId][originToken];
+        //     }
+        // }
     }
 
     function getFeeInfo(address token)
@@ -566,15 +566,18 @@ contract GenericBridge is
         view
         returns (uint256 feeAmount, uint256 feePercent)
     {
-        if (!isBridgeToken(token)) {
-            //token on this chain
-            feeAmount = feeForTokens[chainId][token];
-            feePercent = defaultFeePercentage;
-        } else {
-            TokenInfo memory tokenInfo = tokenMapReverse[token];
-            feeAmount = feeForTokens[tokenInfo.chainId][tokenInfo.addr];
-            feePercent = defaultFeePercentage;
-        }
+        feePercent = defaultFeePercentage == 0
+            ? DEFAULT_FEE_PERCENTAGE
+            : defaultFeePercentage;
+        // if (!isBridgeToken(token)) {
+        //     //token on this chain
+        //     feeAmount = feeForTokens[chainId][token];
+        //     feePercent = defaultFeePercentage;
+        // } else {
+        //     TokenInfo memory tokenInfo = tokenMapReverse[token];
+        //     feeAmount = feeForTokens[tokenInfo.chainId][tokenInfo.addr];
+        //     feePercent = defaultFeePercentage;
+        // }
     }
 
     function getFeeRecipientAddress()
