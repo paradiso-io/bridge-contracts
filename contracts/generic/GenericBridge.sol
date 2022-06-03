@@ -604,27 +604,27 @@ contract GenericBridge is
 	|          Only Admin               |
 	|      (blackhole prevention)       |
 	|__________________________________*/
-    function withdrawEther(address payable receiver, uint256 amount)
-        external
-        virtual
-        onlyGovernance
-    {
-        _withdrawEther(receiver, amount);
-    }
+    // function withdrawEther(address payable receiver, uint256 amount)
+    //     external
+    //     virtual
+    //     onlyGovernance
+    // {
+    //     _withdrawEther(receiver, amount);
+    // }
 
-    function withdrawERC20(
-        address payable receiver,
-        address tokenAddress,
-        uint256 amount
-    ) external virtual onlyGovernance {
-        _withdrawERC20(receiver, tokenAddress, amount);
-    }
+    // function withdrawERC20(
+    //     address payable receiver,
+    //     address tokenAddress,
+    //     uint256 amount
+    // ) external virtual onlyGovernance {
+    //     _withdrawERC20(receiver, tokenAddress, amount);
+    // }
 
-    function withdrawERC721(
-        address payable receiver,
-        address tokenAddress,
-        uint256 tokenId
-    ) external virtual onlyGovernance {
-        _withdrawERC721(receiver, tokenAddress, tokenId);
-    }
+    // function withdrawERC721(
+    //     address payable receiver,
+    //     address tokenAddress,
+    //     uint256 tokenId
+    // ) external virtual onlyGovernance {
+    //     _withdrawERC721(receiver, tokenAddress, tokenId);
+    // }
 }
