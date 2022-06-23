@@ -53,7 +53,7 @@ module.exports = {
       url: `https://bsc-dataseed.binance.org/`,
       gasPrice: 6e9,
       blockGasLimit: 22400000,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY_MAINNET],
     },
     bsctestnet: {
       url: `https://data-seed-prebsc-1-s1.binance.org:8545/`,
@@ -104,6 +104,18 @@ module.exports = {
       gasPrice: 1e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY],
+    },
+    avalaunche: {
+      url: 'https://api.avax.network/ext/bc/C/rpc',
+      gasPrice: 30e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY_MAINNET],
+    },
+    moonbeam: {
+      url: 'https://rpc.api.moonbeam.network',
+      gasPrice: 101e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY_MAINNET],
     }
   },
   solidity: {
