@@ -37,6 +37,7 @@ const chainIdByName = (chainName) => {
     case 'avalaunche': return 43114;
     case 'tomotestnet': return 89;
     case 'huobitestnet': return 256;
+    case 'okc': return 66;
     default: return 0;
   }
 };
@@ -58,6 +59,7 @@ const chainNameById = (chainId) => {
     case 1284: return 'moonbeam';
     case 89: return 'TomoTestnet';
     case 256: return 'HuobiTestnet';
+    case 66: return "OKChain";
     default: return 'Unknown';
   }
 };
@@ -66,7 +68,7 @@ const chainNameById = (chainId) => {
 const supportedChainIds = (mainnet) => {
   if (!mainnet) return [3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89, 96945816564243]
   //support ethereum and casper initially
-  return [1, 131614895977472, 56, 1284, 43114]
+  return [1, 131614895977472, 56, 1284, 43114, 66]
 }
 const approvers = ["0x8e03b2f204a64E3AC0A627C16A2eB64962eD1Cb0", "0xd5D61992B9cEEEB0b2fBeaa3F796eD515A42f029", "0xb86DBF025E873F5AdC87C20f95627352C7762070", "0x45Ff52d6529A9EE855C1B2c4C0A90b1c13Bb32A9", "0x581e803a18d7F2B280E954050E1722eE8DF81df8", "0x0b733C3Af0D9376cfca9D6c1Dc5f26e2D1778e0a", "0xFCDd3d5447030aD57d613978bdAf40BC8B13CC6F", "0x4DfeCcc8eA948986776429aDeC30540A45705015"]
 

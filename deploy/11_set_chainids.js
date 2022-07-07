@@ -20,7 +20,7 @@ module.exports = async (hre) => {
 
   const chainId = chainIdByName(network.name);
   const alchemyTimeout = chainId === 31337 ? 0 : (chainId === 1 ? 5 : 3);
-
+  console.log("chainid", chainId)
   log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
   log('DTO Multichain Bridge Protocol - Contract Deployment');
   log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
@@ -34,13 +34,13 @@ module.exports = async (hre) => {
   log(' ');
 
   log('  Deploying GenericBridge...');
-  const GenericBridgeAddress = require(`../deployments/${chainId}/GenericBridge.json`).address
-  const GenericBridge = await ethers.getContractFactory('GenericBridge');
-  const genericBridge = await GenericBridge.attach(GenericBridgeAddress)
+  // const GenericBridgeAddress = require(`../deployments/${chainId}/GenericBridge.json`).address
+  // const GenericBridge = await ethers.getContractFactory('GenericBridge');
+  // const genericBridge = await GenericBridge.attach(GenericBridgeAddress)
 
-  log('  - GenericBridge:         ', genericBridge.address);
+  // log('  - GenericBridge:         ', genericBridge.address);
 
-  await genericBridge.setSupportedChainIds(supportedChainIds, true)
+  // await genericBridge.setSupportedChainIds(supportedChainIds, true)
 
   log('\n  Contract Deployment Data saved to "deployments" directory.');
 
