@@ -1,43 +1,33 @@
 pragma solidity ^0.8.0;
-//import "../lib/BlackholePreventionUpgrade.sol";
-//import "./DTOBridgeNFT721.sol";
-//import "./DTOBridgeNFT1155.sol";
-import "../interfaces/IDTONFT721Bridge.sol";
+import "../lib/BlackholePreventionUpgrade.sol";
+import "./DTOBridgeNFT1155.sol";
 import "../interfaces/IDTONFT1155Bridge.sol";
-import "../interfaces/IERC721.sol";
 import "./Governable.sol";
 import "./CheckNftType.sol";
 import "../lib/ChainIdHolding.sol";
 import "../lib/DTOUpgradeableBase.sol";
 
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
-contract NFTBridge is
+contract NFT1155Bridge is
     CheckNftType,
     DTOUpgradeableBase,
     ReentrancyGuardUpgradeable,
-//    BlackholePreventionUpgrade,
+    BlackholePreventionUpgrade,
     Governable,
     ChainIdHolding
     {
     using SafeMathUpgradeable for uint256;
     using AddressUpgradeable for address payable;
 
-    enum NFTTokenType {
-        NFT721,
-        NFT1155
-    }
 
     struct TokenInfo {
         address addr;
         uint256 chainId;
-        NFTTokenType nftTokenType;
     }
 
     function checkSupportToken(address _tokenAddress) public view returns (bool) {
@@ -47,7 +37,6 @@ contract NFTBridge is
         return false;
     }
 
-    address public NATIVE_TOKEN_ADDRESS;
     mapping(bytes32 => bool) public alreadyClaims;
     address[] public bridgeApprovers;
     mapping(address => bool) public approverMap; //easily check approver signature
@@ -68,15 +57,6 @@ contract NFTBridge is
     uint256 public constant DEFAULT_FEE_PERCENTAGE = 10; //0.1%
 
     //_token is the origin token, regardless it's bridging from or to the origini token
-    event RequestNFT721Bridge(
-        address indexed _token,
-        bytes _toAddr,
-        uint256 _tokenId,
-        uint256 _originChainId,
-        uint256 _fromChainId,
-        uint256 _toChainId,
-        uint256 _index
-    );
     event RequestNFT1155Bridge(
         address indexed _token,
         bytes _toAddr,
@@ -86,16 +66,6 @@ contract NFTBridge is
         uint256 _fromChainId,
         uint256 _toChainId,
         uint256 _index
-    );
-    event ClaimNFT721(
-        address indexed _token,
-        address indexed _toAddr,
-        uint256 _tokenId,
-        uint256 _originChainId,
-        uint256 _fromChainId,
-        uint256 _toChainId,
-        uint256 _index,
-        bytes32 _claimId
     );
     event ClaimNFT1155(
         address indexed _token,
@@ -118,7 +88,6 @@ contract NFTBridge is
         __DTOUpgradeableBase_initialize();
         __Governable_initialize();
         __ChainIdHolding_init();
-        NATIVE_TOKEN_ADDRESS = 0x1111111111111111111111111111111111111111;
         supportedChainIds[chainId] = true;
         minApprovers = 2;
         nativeFee = 0;
@@ -136,8 +105,8 @@ contract NFTBridge is
     }
 
     function setFeeReceiver(address payable _feeReceiver)
-        external
-        onlyGovernance
+    external
+    onlyGovernance
     {
         feeReceiver = _feeReceiver;
     }
@@ -163,7 +132,7 @@ contract NFTBridge is
         for (uint256 i = 0; i < bridgeApprovers.length; i++) {
             if (bridgeApprovers[i] == _addr) {
                 bridgeApprovers[i] = bridgeApprovers[
-                    bridgeApprovers.length - 1
+                bridgeApprovers.length - 1
                 ];
                 bridgeApprovers.pop();
                 approverMap[_addr] = false;
@@ -173,15 +142,15 @@ contract NFTBridge is
     }
 
     function setSupportedChainId(uint256 _chainId, bool _val)
-        public
-        onlyGovernance
+    public
+    onlyGovernance
     {
         supportedChainIds[_chainId] = _val;
     }
 
     function setSupportedChainIds(uint256[] memory _chainIds, bool _val)
-        public
-        onlyGovernance
+    public
+    onlyGovernance
     {
         for (uint256 i = 0; i < _chainIds.length; i++) {
             supportedChainIds[_chainIds[i]] = _val;
@@ -192,81 +161,6 @@ contract NFTBridge is
         nativeFee = _fee;
     }
 
-    function requestNFT721Bridge(
-        address _tokenAddress,
-        bytes memory _toAddr,
-        uint256 _tokenId,
-        uint256 _toChainId
-    ) public payable nonReentrant {
-        require(
-            chainId != _toChainId,
-            "source and target chain ids must be different"
-        );
-        require(checkSupportToken(_tokenAddress), "unsupported this token");
-        require(msg.value >= nativeFee, "fee is low");
-        feeReceiver.transfer(msg.value);
-
-        require(supportedChainIds[_toChainId], "unsupported chainId");
-        if (!isBridgeToken(_tokenAddress)) {
-            IERC721(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId);
-
-            emit RequestNFT721Bridge(
-                _tokenAddress,
-                _toAddr,
-                _tokenId,
-                chainId,
-                chainId,
-                _toChainId,
-                index
-            );
-            index++;
-
-            if (!tokenMapSupportCheck[_tokenAddress][_toChainId]) {
-                tokenMapList[_tokenAddress].push(_toChainId);
-                tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
-            }
-        } else {
-            //uint256 _originChainId = tokenMapReverse[_tokenAddress].chainId;
-            address _originToken = tokenMapReverse[_tokenAddress].addr;
-
-            IERC721(_tokenAddress).safeTransferFrom(
-                msg.sender, address(this),
-                _tokenId
-            );
-            emit RequestNFT721Bridge(
-                _originToken,
-                _toAddr,
-                _tokenId,
-                tokenMapReverse[_tokenAddress].chainId,
-                chainId,
-                _toChainId,
-                index
-            );
-            index++;
-        }
-    }
-
-    function addTokenSupport(address _originToken, uint256 _originChainId, address _tokenAddress) public onlyGovernance {
-        if (isERC721(_tokenAddress)) {
-            tokenMap[_originChainId][_originToken] = _tokenAddress;
-            tokenMapReverse[_tokenAddress] = TokenInfo({
-                addr: _originToken,
-                chainId: _originChainId,
-                nftTokenType: NFTTokenType.NFT721
-            });
-            bridgeNFT721Tokens[_tokenAddress] = true;
-        } else if (isERC1155(_tokenAddress)) {
-            tokenMap[_originChainId][_originToken] = _tokenAddress;
-            tokenMapReverse[_tokenAddress] = TokenInfo({
-                addr: _originToken,
-                chainId: _originChainId,
-                nftTokenType: NFTTokenType.NFT1155
-            });
-            bridgeNFT1155Tokens[_tokenAddress] = true;
-        } else {
-            revert("unsupported token");
-        }
-    }
 
     function verifySignatures(
         bytes32[] memory r,
@@ -304,95 +198,7 @@ contract NFTBridge is
         return successSigner >= minApprovers;
     }
 
-    //@dev: _claimData: includex tx hash, event index, event data
-    //@dev _tokenInfos: contain token name and symbol of bridge token
-    //_chainIdsIndex: length = 4, _chainIdsIndex[0] = originChainId, _chainIdsIndex[1] => fromChainId, _chainIdsIndex[2] = toChainId = this chainId, _chainIdsIndex[3] = index
-    function claimNFT721Token(
-        address _originToken,
-        address _toAddr,
-        uint256 _tokenId,
-        uint256[] memory _chainIdsIndex,
-        bytes32 _txHash,
-        bytes32[] memory r,
-        bytes32[] memory s,
-        uint8[] memory v,
-        string memory _name,
-        string memory _symbol
-    ) external payable nonReentrant {
-        require(
-            _chainIdsIndex.length == 4 && chainId == _chainIdsIndex[2],
-            "!chain id claim"
-        );
-        bytes32 _claimId = keccak256(
-            abi.encode(
-                _originToken,
-                _toAddr,
-                _tokenId,
-                _chainIdsIndex,
-                _txHash,
-                _name,
-                _symbol
-            )
-        );
-        require(!alreadyClaims[_claimId], "already claim");
-        require(verifySignatures(r, s, v, _claimId), "invalid signatures");
 
-        alreadyClaims[_claimId] = true;
-
-        require(tokenMap[_chainIdsIndex[0]][_originToken] != address(0), "unsupported token");
-
-        //claim
-        _mintNFT721ForUser(
-            _tokenId,
-            _originToken,
-            _chainIdsIndex,
-            _toAddr,
-            _txHash
-        );
-        emit ClaimNFT721(
-            _originToken,
-            _toAddr,
-            _tokenId,
-            _chainIdsIndex[0],
-            _chainIdsIndex[1],
-            chainId,
-            _chainIdsIndex[3],
-            _claimId
-        );
-
-    }
-
-
-    function _mintNFT721ForUser(
-        uint256 _tokenId,
-        address _originToken,
-        uint256[] memory _chainIdsIndex,
-        address _toAddr,
-        bytes32 _txHash
-    ) internal {
-        IERC721 dt = IERC721(tokenMap[_chainIdsIndex[0]][_originToken]);
-        address _nftOwner = address(0);
-
-        try dt.ownerOf(_tokenId) returns (address _a) {
-            _nftOwner = _a;
-        } catch (bytes memory) {
-
-        }
-        if (_nftOwner != address(0)) {
-            dt.safeTransferFrom(address(this), _toAddr, _tokenId);
-        } else {
-
-            IDTONFT721Bridge(tokenMap[_chainIdsIndex[0]][_originToken])
-            .claimBridgeToken(
-                _originToken,
-                _toAddr,
-                _tokenId,
-                _chainIdsIndex,
-                _txHash
-            );
-        }
-
-    }
 
 
 
@@ -486,7 +292,23 @@ contract NFTBridge is
         alreadyClaims[_claimId] = true;
 
         if (tokenMapList[_originToken].length == 0) {
-            require(tokenMap[_chainIdsIndex[0]][_originToken] != address(0), "unsupported token");
+            //claiming bridge token
+            if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
+                //create bridge token
+                DTOBridgeNFT1155 bt = new DTOBridgeNFT1155();
+                bt.initialize(
+                    _originToken,
+                    _chainIdsIndex[0],
+                    _uri
+                );
+                tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
+                tokenMapReverse[address(bt)] = TokenInfo({
+                addr: _originToken,
+                chainId: _chainIdsIndex[0]
+                });
+                bridgeNFT1155Tokens[address(bt)] = true;
+            }
+
             //claim
             _mintNFT1155ForUser(
                 _id,
@@ -534,15 +356,15 @@ contract NFTBridge is
         address _toAddr
     ) internal {
         IDTONFT1155Bridge(tokenMap[_chainIdsIndex[0]][_originToken])
-            .claimBridgeToken(
-                _originToken,
-                _toAddr,
-                _id,
-                _amount,
-                _chainIdsIndex,
-                _txHash,
-                ""
-            );
+        .claimBridgeToken(
+            _originToken,
+            _toAddr,
+            _id,
+            _amount,
+            _chainIdsIndex,
+            _txHash,
+            ""
+        );
     }
 
     function isBridgeToken(address _token) public view returns (bool) {
@@ -553,9 +375,9 @@ contract NFTBridge is
     }
 
     function getSupportedChainsForToken(address _token)
-        external
-        view
-        returns (uint256[] memory)
+    external
+    view
+    returns (uint256[] memory)
     {
         return tokenMapList[_token];
     }

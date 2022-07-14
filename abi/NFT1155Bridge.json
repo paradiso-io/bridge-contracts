@@ -49,6 +49,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
       },
@@ -83,7 +89,7 @@
         "type": "bytes32"
       }
     ],
-    "name": "ClaimToken",
+    "name": "ClaimNFT1155",
     "type": "event"
   },
   {
@@ -123,6 +129,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
       },
@@ -151,38 +163,7 @@
         "type": "uint256"
       }
     ],
-    "name": "RequestBridge",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "chainId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "fee",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "SetFeeToken",
+    "name": "RequestNFT1155Bridge",
     "type": "event"
   },
   {
@@ -351,12 +332,51 @@
   },
   {
     "inputs": [],
-    "name": "NATIVE_TOKEN_ADDRESS",
+    "name": "IID_ICHECK",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "bytes4",
         "name": "",
-        "type": "address"
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "IID_IERC1155",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "IID_IERC165",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "IID_IERC721",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
       }
     ],
     "stateMutability": "view",
@@ -453,7 +473,26 @@
         "type": "address"
       }
     ],
-    "name": "bridgeTokens",
+    "name": "bridgeNFT1155Tokens",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "bridgeNFT721Tokens",
     "outputs": [
       {
         "internalType": "bool",
@@ -478,13 +517,19 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "claimFee",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_tokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "checkSupportToken",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -501,6 +546,11 @@
         "internalType": "address",
         "name": "_toAddr",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -534,21 +584,11 @@
       },
       {
         "internalType": "string",
-        "name": "_name",
+        "name": "_uri",
         "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_symbol",
-        "type": "string"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_decimals",
-        "type": "uint8"
       }
     ],
-    "name": "claimToken",
+    "name": "claimNFT1155Token",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
@@ -556,30 +596,6 @@
   {
     "inputs": [],
     "name": "defaultFeePercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "feeForTokens",
     "outputs": [
       {
         "internalType": "uint256",
@@ -611,30 +627,6 @@
         "internalType": "address[]",
         "name": "",
         "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
-    "name": "getFeeInfo",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "feeAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "feePercent",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -718,8 +710,59 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "nftAddress",
+        "type": "address"
+      }
+    ],
+    "name": "isERC1155",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "nftAddress",
+        "type": "address"
+      }
+    ],
+    "name": "isERC721",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "minApprovers",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nativeFee",
     "outputs": [
       {
         "internalType": "uint256",
@@ -777,6 +820,11 @@
       },
       {
         "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
       },
@@ -786,45 +834,9 @@
         "type": "uint256"
       }
     ],
-    "name": "requestBridge",
+    "name": "requestNFT1155Bridge",
     "outputs": [],
     "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_val",
-        "type": "uint256"
-      }
-    ],
-    "name": "setDefaultFeePercentage",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "chainIds",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "address[]",
-        "name": "originTokens",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "fees",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "setFeeForTokens",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -924,6 +936,25 @@
       }
     ],
     "name": "supportedChainIds",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "interfaceId",
+        "type": "bytes4"
+      }
+    ],
+    "name": "supportsInterface",
     "outputs": [
       {
         "internalType": "bool",
