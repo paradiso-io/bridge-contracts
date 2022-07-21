@@ -48,9 +48,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "_tokenId",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "_tokenIds",
+        "type": "uint256[]"
       },
       {
         "indexed": false,
@@ -83,7 +83,7 @@
         "type": "bytes32"
       }
     ],
-    "name": "ClaimNFT721",
+    "name": "ClaimMultiNFT721",
     "type": "event"
   },
   {
@@ -122,9 +122,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "_tokenId",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "_tokenIds",
+        "type": "uint256[]"
       },
       {
         "indexed": false,
@@ -151,7 +151,7 @@
         "type": "uint256"
       }
     ],
-    "name": "RequestNFT721Bridge",
+    "name": "RequestMultiNFT721Bridge",
     "type": "event"
   },
   {
@@ -517,9 +517,9 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "_tokenId",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "_tokenIds",
+        "type": "uint256[]"
       },
       {
         "internalType": "uint256[]",
@@ -557,7 +557,7 @@
         "type": "string"
       }
     ],
-    "name": "claimNFT721Token",
+    "name": "claimNMultiFT721Token",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
@@ -788,9 +788,9 @@
         "type": "bytes"
       },
       {
-        "internalType": "uint256",
-        "name": "_tokenId",
-        "type": "uint256"
+        "internalType": "uint256[]",
+        "name": "_tokenIds",
+        "type": "uint256[]"
       },
       {
         "internalType": "uint256",
@@ -798,7 +798,7 @@
         "type": "uint256"
       }
     ],
-    "name": "requestNFT721Bridge",
+    "name": "requestMultiNFT721Bridge",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
