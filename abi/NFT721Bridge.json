@@ -48,9 +48,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256[]",
+        "internalType": "bytes",
         "name": "_tokenIds",
-        "type": "uint256[]"
+        "type": "bytes"
       },
       {
         "indexed": false,
@@ -122,9 +122,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256[]",
+        "internalType": "bytes",
         "name": "_tokenIds",
-        "type": "uint256[]"
+        "type": "bytes"
       },
       {
         "indexed": false,

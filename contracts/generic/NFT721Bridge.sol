@@ -1,6 +1,7 @@
 pragma solidity ^0.8.0;
 import "../lib/BlackholePreventionUpgrade.sol";
 import "../interfaces/IDTONFT721Bridge.sol";
+import "../interfaces/IERC721.sol";
 import "./DTOBridgeNFT721.sol";
 import "./Governable.sol";
 import "./CheckNftType.sol";
@@ -56,7 +57,7 @@ contract NFT721Bridge is
     event RequestMultiNFT721Bridge(
         address indexed _token,
         bytes _toAddr,
-        uint256[] _tokenIds,
+        bytes _tokenIds,
         uint256 _originChainId,
         uint256 _fromChainId,
         uint256 _toChainId,
@@ -65,7 +66,7 @@ contract NFT721Bridge is
     event ClaimMultiNFT721(
         address indexed _token,
         address indexed _toAddr,
-        uint256[] _tokenIds,
+        bytes _tokenIds,
         uint256 _originChainId,
         uint256 _fromChainId,
         uint256 _toChainId,
@@ -172,13 +173,13 @@ contract NFT721Bridge is
         require(supportedChainIds[_toChainId], "unsupported chainId");
         if (!isBridgeToken(_tokenAddress)) {
             for (uint256 i = 0; i < _tokenIds.length; i++) {
-                IERC721Upgradeable(_tokenAddress).transferFrom(msg.sender, address(this), _tokenIds[i]);
+                IERC721(_tokenAddress).transferFrom(msg.sender, address(this), _tokenIds[i]);
             }
 
             emit RequestMultiNFT721Bridge(
                 _tokenAddress,
                 _toAddr,
-                _tokenIds,
+                abi.encode(_tokenIds),
                 chainId,
                 chainId,
                 _toChainId,
@@ -196,7 +197,7 @@ contract NFT721Bridge is
             address _originToken = tokenMapReverse[_tokenAddress].addr;
 
             for (uint256 i = 0; i < _tokenIds.length; i++) {
-                IERC721Upgradeable(_tokenAddress).transferFrom(
+                IERC721(_tokenAddress).transferFrom(
                     msg.sender, address(this),
                     _tokenIds[i]
                 );
@@ -204,7 +205,7 @@ contract NFT721Bridge is
             emit RequestMultiNFT721Bridge(
                 _originToken,
                 _toAddr,
-                _tokenIds,
+                abi.encode(_tokenIds),
                 tokenMapReverse[_tokenAddress].chainId,
                 chainId,
                 _toChainId,
@@ -264,6 +265,7 @@ contract NFT721Bridge is
         uint8[] memory v,
         string memory _name,
         string memory _symbol
+//        string memory _tokenURI
     ) external payable nonReentrant {
         require(
             _chainIdsIndex.length == 4 && chainId == _chainIdsIndex[2],
@@ -295,6 +297,7 @@ contract NFT721Bridge is
                 _chainIdsIndex[0],
                 _name,
                 _symbol
+//                _tokenURI
             );
             tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
             tokenMapReverse[address(bt)] = TokenInfo({
@@ -315,7 +318,7 @@ contract NFT721Bridge is
         emit ClaimMultiNFT721(
             _originToken,
             _toAddr,
-            _tokenIds,
+            abi.encode(_tokenIds),
             _chainIdsIndex[0],
             _chainIdsIndex[1],
             chainId,
