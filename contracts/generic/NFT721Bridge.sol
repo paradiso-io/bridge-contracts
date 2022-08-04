@@ -254,7 +254,7 @@ contract NFT721Bridge is
     //@dev: _claimData: includex tx hash, event index, event data
     //@dev _tokenInfos: contain token name and symbol of bridge token
     //_chainIdsIndex: length = 4, _chainIdsIndex[0] = originChainId, _chainIdsIndex[1] => fromChainId, _chainIdsIndex[2] = toChainId = this chainId, _chainIdsIndex[3] = index
-    function claimNMultiFT721Token(
+    function claimMultiNFT721Token(
         address _originToken,
         address _toAddr,
         uint256[] memory _tokenIds,

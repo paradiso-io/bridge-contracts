@@ -557,7 +557,7 @@
         "type": "string"
       }
     ],
-    "name": "claimNMultiFT721Token",
+    "name": "claimMultiNFT721Token",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
