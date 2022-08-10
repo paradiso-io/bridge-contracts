@@ -351,6 +351,35 @@ contract NFT721Bridge is
     }
 
 
+    function updateTokenURI(
+        address _originToken,
+        address _currentToken,
+        uint256 _originChainId,
+        bytes32[] memory r,
+        bytes32[] memory s,
+        uint8[] memory v,
+        string memory _uri,
+        string memory _suffix
+    ) external payable nonReentrant {
+        require(
+            chainId != _originChainId,
+            "!invalid originChainId"
+        );
+        bytes32 _messageHash = keccak256(
+            abi.encode(
+                _originToken,
+                _currentToken,
+                _originChainId,
+                _uri,
+                _suffix
+            )
+        );
+        require(verifySignatures(r, s, v, _messageHash), "invalid signatures");
+
+        IDTONFT721Bridge(_currentToken).updateBaseURI(_uri, _suffix);
+    }
+
+
     function _mintMultiNFT721ForUser(
         uint256[] memory _tokenIds,
         address _originToken,

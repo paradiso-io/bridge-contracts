@@ -18,7 +18,8 @@ contract DTOBridgeNFT721 is
     mapping(bytes32 => bool) public alreadyClaims;
     address public originalTokenAddress;
     uint256 public originChainId;
-//    string public baseURI;
+    string public baseURI;
+    string public suffix;
 
     function initialize(
         address _originalTokenAddress,
@@ -34,16 +35,21 @@ contract DTOBridgeNFT721 is
         originalTokenAddress = _originalTokenAddress;
         originChainId = _originChainId;
 //        baseURI = _tokenBaseURI;
-//    }
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
 //
-//    function _baseURI() internal view override returns (string memory) {
-//        return baseURI;
-//    }
-//
-//    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-//        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-//
-//        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+
+        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString()), suffix) : "";
+    }
+
+    function updateBaseURI(string memory _newURI, string memory _suffix) public override onlyOwner {
+        baseURI = _newURI;
+        suffix = _suffix;
     }
 
     function claimBridgeToken(
