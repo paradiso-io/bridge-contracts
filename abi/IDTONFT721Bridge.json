@@ -2,9 +2,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "_originToken",
-        "type": "address"
+        "type": "bytes"
       },
       {
         "internalType": "address",
@@ -28,6 +28,19 @@
       }
     ],
     "name": "claimBridgeToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_newURI",
+        "type": "string"
+      }
+    ],
+    "name": "updateBaseURI",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

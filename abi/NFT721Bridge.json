@@ -36,9 +36,9 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "_token",
-        "type": "address"
+        "type": "bytes"
       },
       {
         "indexed": true,
@@ -110,9 +110,9 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "_token",
-        "type": "address"
+        "type": "bytes"
       },
       {
         "indexed": false,
@@ -474,6 +474,19 @@
   },
   {
     "inputs": [],
+    "name": "casperChainId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "chainId",
     "outputs": [
       {
@@ -507,9 +520,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "_originToken",
-        "type": "address"
+        "type": "bytes"
       },
       {
         "internalType": "address",
@@ -604,9 +617,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "_originToken",
-        "type": "address"
+        "type": "bytes"
       },
       {
         "internalType": "address",
@@ -701,6 +714,11 @@
         "internalType": "uint256[]",
         "name": "_chainIds",
         "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_casperChainId",
+        "type": "uint256"
       }
     ],
     "name": "initialize",
@@ -828,9 +846,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "",
-        "type": "address"
+        "type": "bytes"
       }
     ],
     "name": "originChainTokens",
@@ -1039,9 +1057,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "",
-        "type": "address"
+        "type": "bytes"
       }
     ],
     "name": "tokenMap",
@@ -1090,9 +1108,9 @@
     "name": "tokenMapReverse",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "bytes",
         "name": "addr",
-        "type": "address"
+        "type": "bytes"
       },
       {
         "internalType": "uint256",
@@ -1138,6 +1156,49 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_originToken",
+        "type": "bytes"
+      },
+      {
+        "internalType": "address",
+        "name": "_currentToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_originChainId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "r",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "s",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "uint8[]",
+        "name": "v",
+        "type": "uint8[]"
+      },
+      {
+        "internalType": "string",
+        "name": "_uri",
+        "type": "string"
+      }
+    ],
+    "name": "updateTokenURI",
+    "outputs": [],
+    "stateMutability": "payable",
     "type": "function"
   },
   {
