@@ -6,7 +6,8 @@ const {
   getTxGasCost,
   log,
   supportedChainIds,
-  approvers
+  approvers,
+  getCasperChainId
 } = require("../js-helpers/deploy");
 
 const _ = require('lodash');
@@ -38,7 +39,7 @@ module.exports = async (hre) => {
   // if (chainId == 1 || chainId == 56 || chainId == 43114 || chainId) mainnet = true
   console.log('supportedChainIds(chainId)', supportedChainIds(false))
   const NFT721Bridge = await ethers.getContractFactory('NFT721Bridge');
-  const nft721Bridge = await upgrades.deployProxy(NFT721Bridge, [supportedChainIds(chainId)], { kind: 'uups', gasLimit: 8000000 })
+  const nft721Bridge = await upgrades.deployProxy(NFT721Bridge, [supportedChainIds(false)], { kind: 'uups', gasLimit: 8000000 })
 
   log('  - NFT721Bridge:         ', nft721Bridge.address);
   deployData['NFT721Bridge'] = {

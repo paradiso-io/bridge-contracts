@@ -266,6 +266,11 @@
         "internalType": "string",
         "name": "_tokenSymbol",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_tokenBaseURI",
+        "type": "string"
       }
     ],
     "name": "initialize",
