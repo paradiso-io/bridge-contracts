@@ -544,9 +544,9 @@
         "type": "string"
       },
       {
-        "internalType": "string",
-        "name": "_uri",
-        "type": "string"
+        "internalType": "string[]",
+        "name": "_uris",
+        "type": "string[]"
       }
     ],
     "name": "claimMultiNFT721Token",
@@ -1063,49 +1063,6 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "_originToken",
-        "type": "bytes"
-      },
-      {
-        "internalType": "address",
-        "name": "_currentToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_originChainId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "r",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "s",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "uint8[]",
-        "name": "v",
-        "type": "uint8[]"
-      },
-      {
-        "internalType": "string",
-        "name": "_uri",
-        "type": "string"
-      }
-    ],
-    "name": "updateTokenURI",
-    "outputs": [],
-    "stateMutability": "payable",
     "type": "function"
   },
   {

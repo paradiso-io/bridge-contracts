@@ -21,21 +21,19 @@ contract DTOBridgeNFT721 is
     bytes public originalTokenAddress;
     uint256 public originChainId;
     string public baseURI;
+    mapping(uint256 => string) public mappedTokenURIs;
 
     function initialize(
         bytes memory _originalTokenAddress,
-        address _miner,
         uint256 _originChainId,
         string memory _tokenName,
-        string memory _tokenSymbol,
-        string memory _tokenBaseURI
+        string memory _tokenSymbol
     ) external initializer {
         __Ownable_init();
         __ChainIdHolding_init();
         __ERC721_init(_tokenName, _tokenSymbol);
         originalTokenAddress = _originalTokenAddress;
         originChainId = _originChainId;
-        baseURI = _tokenBaseURI;
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -45,25 +43,29 @@ contract DTOBridgeNFT721 is
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, StringsUpgradeable.toString(tokenId))) : '';
+        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, StringsUpgradeable.toString(tokenId))) : mappedTokenURIs[tokenId];
     }
 
     function updateBaseURI(string memory _newURI) public override onlyOwner {
         baseURI = _newURI;
     }
 
+    function updateTokenURIIfDifferent(uint256 _tokenId, string memory _newURI) external override onlyOwner {
+        if (bytes(baseURI).length == 0) {
+            mappedTokenURIs[_tokenId] = _newURI;
+        }
+    }
+
     function claimBridgeToken(
         bytes memory _originToken,
         address _to,
         uint256 _tokenId,
-        uint256[] memory _chainIdsIndex,
-        bytes32 _txHash
+        string memory _tokenUri
     ) public override onlyOwner {
-        require(_chainIdsIndex.length == 4, "!_chainIdsIndex.length");
         require(keccak256(_originToken) == keccak256(originalTokenAddress), "!originalTokenAddress");
-        require(_chainIdsIndex[2] == chainId, "!invalid chainId");
         require(_to != address(0), "!invalid to");
 
         _mint(_to, _tokenId);
+        mappedTokenURIs[_tokenId] = _tokenUri;
     }
 }
