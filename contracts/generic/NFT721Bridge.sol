@@ -56,7 +56,7 @@ contract NFT721Bridge is
 
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestMultiNFT721Bridge(
-        bytes indexed _token,
+        bytes _token,
         bytes _toAddr,
         bytes _tokenIds,
         uint256 _originChainId,
@@ -65,7 +65,7 @@ contract NFT721Bridge is
         uint256 _index
     );
     event ClaimMultiNFT721(
-        bytes indexed _token,
+        bytes _token,
         address indexed _toAddr,
         bytes _tokenIds,
         uint256 _originChainId,
@@ -117,7 +117,7 @@ contract NFT721Bridge is
     }
 
     function removeApprover(address _addr) public onlyGovernance {
-        require(approverMap[_addr], "not approver");
+        require(approverMap[_addr], "!not approver");
         for (uint256 i = 0; i < bridgeApprovers.length; i++) {
             if (bridgeApprovers[i] == _addr) {
                 bridgeApprovers[i] = bridgeApprovers[
@@ -142,7 +142,7 @@ contract NFT721Bridge is
     function setGovernanceFee(uint256 _fee) public onlyGovernance {
         nativeFee = _fee;
     }
-    function bytesToAddress(bytes memory bys) private pure returns (address addr) {
+    function bytesToAddress(bytes memory bys) public view returns (address addr) {
         assembly {
             addr := mload(add(bys, 32))
         }
@@ -168,7 +168,7 @@ contract NFT721Bridge is
         }
         if (!isBridgeToken(_tokenAddress)) {
             emit RequestMultiNFT721Bridge(
-                abi.encodePacked(_tokenAddress),
+                abi.encode(_tokenAddress),
                 _toAddr,
                 abi.encode(_tokenIds),
                 chainId,
@@ -176,7 +176,7 @@ contract NFT721Bridge is
                 _toChainId,
                 index
             );
-            originChainTokens[abi.encodePacked(_tokenAddress)] = true;
+            originChainTokens[abi.encode(_tokenAddress)] = true;
 
             index++;
 
@@ -254,7 +254,7 @@ contract NFT721Bridge is
             _chainIdsIndex.length == 4 && chainId == _chainIdsIndex[2],
             "!chain id claim"
         );
-        require(_tokenIds.length == _uris.length, "invalid token uri input");
+        require(_tokenIds.length == _uris.length, "!invalid token uri input");
         bytes32 _claimId = keccak256(
             abi.encode(
                 _originToken,
@@ -268,9 +268,9 @@ contract NFT721Bridge is
             )
         );
         require(!alreadyClaims[_claimId], "already claim");
-        require(verifySignatures(r, s, v, _claimId), "invalid signatures");
+        require(verifySignatures(r, s, v, _claimId), "!invalid signatures");
 
-        alreadyClaims[_claimId] = true;
+//        alreadyClaims[_claimId] = true;
 
         //claiming bridge token
         if (chainId != _chainIdsIndex[0] && tokenMap[_chainIdsIndex[0]][_originToken] == address(0)){
@@ -310,34 +310,6 @@ contract NFT721Bridge is
         );
 
     }
-
-
-    // function updateTokenURI(
-    //     bytes memory _originToken,
-    //     address _currentToken,
-    //     uint256 _originChainId,
-    //     bytes32[] memory r,
-    //     bytes32[] memory s,
-    //     uint8[] memory v,
-    //     string memory _uri
-    // ) external payable nonReentrant {
-    //     require(
-    //         chainId != _originChainId,
-    //         "!invalid originChainId"
-    //     );
-    //     bytes32 _messageHash = keccak256(
-    //         abi.encode(
-    //             _originToken,
-    //             _currentToken,
-    //             _originChainId,
-    //             _uri
-    //         )
-    //     );
-    //     require(verifySignatures(r, s, v, _messageHash), "invalid signatures");
-
-    //     IDTONFT721Bridge(_currentToken).updateBaseURI(_uri);
-    // }
-
 
     function _mintOrTransferMultiNFT721ForUser(
         uint256[] memory _tokenIds,
