@@ -22,6 +22,7 @@ contract DTOBridgeNFT721 is
     uint256 public originChainId;
     string public baseURI;
     mapping(uint256 => string) public mappedTokenURIs;
+    mapping(uint256 => string) public mappedOriginTokenIds;
 
     function initialize(
         bytes memory _originalTokenAddress,
@@ -60,6 +61,7 @@ contract DTOBridgeNFT721 is
         bytes memory _originToken,
         address _to,
         uint256 _tokenId,
+        string memory _originTokenId,
         string memory _tokenUri
     ) public override onlyOwner {
         require(keccak256(_originToken) == keccak256(originalTokenAddress), "!originalTokenAddress");
@@ -67,5 +69,6 @@ contract DTOBridgeNFT721 is
 
         _mint(_to, _tokenId);
         mappedTokenURIs[_tokenId] = _tokenUri;
+        mappedOriginTokenIds[_tokenId] = _originTokenId;
     }
 }

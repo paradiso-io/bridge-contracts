@@ -6,7 +6,7 @@ const {
   getTxGasCost,
   log,
   supportedChainIds,
-  approvers,
+  approversTestnet,
   getCasperChainId
 } = require("../js-helpers/deploy");
 
@@ -48,7 +48,7 @@ module.exports = async (hre) => {
     deployTransaction: nft721Bridge.deployTransaction,
   }
   await sleep(20000)
-  await nft721Bridge.addApprovers(approvers)
+  await nft721Bridge.addApprovers(approversTestnet)
   await nft721Bridge.setFeeReceiver("0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af")
 
   saveDeploymentData(chainId, deployData);

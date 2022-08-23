@@ -21,17 +21,20 @@ contract NFT721Bridge is
     BlackholePreventionUpgrade,
     Governable,
     ChainIdHolding
-    {
+{
     using SafeMathUpgradeable for uint256;
     using AddressUpgradeable for address payable;
-
 
     struct TokenInfo {
         bytes addr;
         uint256 chainId;
     }
 
-    function checkSupportToken(address _tokenAddress) public view returns (bool) {
+    function checkSupportToken(address _tokenAddress)
+        public
+        view
+        returns (bool)
+    {
         return isERC721(_tokenAddress);
     }
 
@@ -101,8 +104,8 @@ contract NFT721Bridge is
     }
 
     function setFeeReceiver(address payable _feeReceiver)
-    external
-    onlyGovernance
+        external
+        onlyGovernance
     {
         feeReceiver = _feeReceiver;
     }
@@ -121,7 +124,7 @@ contract NFT721Bridge is
         for (uint256 i = 0; i < bridgeApprovers.length; i++) {
             if (bridgeApprovers[i] == _addr) {
                 bridgeApprovers[i] = bridgeApprovers[
-                bridgeApprovers.length - 1
+                    bridgeApprovers.length - 1
                 ];
                 bridgeApprovers.pop();
                 approverMap[_addr] = false;
@@ -131,8 +134,8 @@ contract NFT721Bridge is
     }
 
     function setSupportedChainIds(uint256[] memory _chainIds, bool _val)
-    public
-    onlyGovernance
+        public
+        onlyGovernance
     {
         for (uint256 i = 0; i < _chainIds.length; i++) {
             supportedChainIds[_chainIds[i]] = _val;
@@ -142,7 +145,12 @@ contract NFT721Bridge is
     function setGovernanceFee(uint256 _fee) public onlyGovernance {
         nativeFee = _fee;
     }
-    function bytesToAddress(bytes memory bys) public view returns (address addr) {
+
+    function bytesToAddress(bytes memory bys)
+        public
+        pure
+        returns (address addr)
+    {
         assembly {
             addr := mload(add(bys, 32))
         }
@@ -164,7 +172,11 @@ contract NFT721Bridge is
 
         require(supportedChainIds[_toChainId], "unsupported chainId");
         for (uint256 i = 0; i < _tokenIds.length; i++) {
-            IERC721(_tokenAddress).transferFrom(msg.sender, address(this), _tokenIds[i]);
+            IERC721(_tokenAddress).transferFrom(
+                msg.sender,
+                address(this),
+                _tokenIds[i]
+            );
         }
         if (!isBridgeToken(_tokenAddress)) {
             emit RequestMultiNFT721Bridge(
@@ -241,13 +253,13 @@ contract NFT721Bridge is
         bytes memory _originToken,
         address _toAddr,
         uint256[] memory _tokenIds,
+        string[] memory _originTokenIds,
         uint256[] memory _chainIdsIndex,
         bytes32 _txHash,
         bytes32[] memory r,
         bytes32[] memory s,
         uint8[] memory v,
-        string memory _name,
-        string memory _symbol,
+        string[2] memory _nameAndSymbol,
         string[] memory _uris
     ) external payable nonReentrant {
         require(
@@ -260,28 +272,27 @@ contract NFT721Bridge is
                 _originToken,
                 _toAddr,
                 _tokenIds,
+                _originTokenIds,
                 _chainIdsIndex,
                 _txHash,
-                _name,
-                _symbol,
+                _nameAndSymbol[0],
+                _nameAndSymbol[1],
                 _uris
             )
         );
         require(!alreadyClaims[_claimId], "already claim");
         require(verifySignatures(r, s, v, _claimId), "!invalid signatures");
 
-//        alreadyClaims[_claimId] = true;
+        alreadyClaims[_claimId] = true;
 
         //claiming bridge token
-        if (chainId != _chainIdsIndex[0] && tokenMap[_chainIdsIndex[0]][_originToken] == address(0)){
+        if (
+            chainId != _chainIdsIndex[0] &&
+            tokenMap[_chainIdsIndex[0]][_originToken] == address(0)
+        ) {
             //create bridge token
             DTOBridgeNFT721 bt = new DTOBridgeNFT721();
-            bt.initialize(
-                _originToken,
-                _chainIdsIndex[0],
-                _name,
-                _symbol
-            );
+            bt.initialize(_originToken, _chainIdsIndex[0], _nameAndSymbol[0], _nameAndSymbol[1]);
             tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
             tokenMapReverse[address(bt)] = TokenInfo({
                 addr: _originToken,
@@ -294,10 +305,12 @@ contract NFT721Bridge is
         _mintOrTransferMultiNFT721ForUser(
             _tokenIds,
             _originToken,
+            _originTokenIds,
             _chainIdsIndex,
             _toAddr,
             _uris
         );
+
         emit ClaimMultiNFT721(
             _originToken,
             _toAddr,
@@ -308,45 +321,49 @@ contract NFT721Bridge is
             _chainIdsIndex[3],
             _claimId
         );
-
     }
 
     function _mintOrTransferMultiNFT721ForUser(
         uint256[] memory _tokenIds,
         bytes memory _originToken,
+        string[] memory _originTokenIds,
         uint256[] memory _chainIdsIndex,
         address _toAddr,
         string[] memory _uris
     ) internal {
         if (originChainTokens[_originToken] && chainId == _chainIdsIndex[0]) {
             for (uint256 i = 0; i < _tokenIds.length; i++) {
-                IERC721Upgradeable(bytesToAddress(_originToken)).transferFrom(address(this), _toAddr, _tokenIds[i]);
+                IERC721Upgradeable(bytesToAddress(_originToken)).transferFrom(
+                    address(this),
+                    _toAddr,
+                    _tokenIds[i]
+                );
             }
         } else {
-            DTOBridgeNFT721 dt = DTOBridgeNFT721(tokenMap[_chainIdsIndex[0]][_originToken]);
+            DTOBridgeNFT721 dt = DTOBridgeNFT721(
+                tokenMap[_chainIdsIndex[0]][_originToken]
+            );
             address _nftOwner = address(0);
 
             for (uint256 i = 0; i < _tokenIds.length; i++) {
                 try dt.ownerOf(_tokenIds[i]) returns (address _a) {
                     _nftOwner = _a;
-                } catch (bytes memory) {
-
-                }
+                } catch (bytes memory) {}
                 if (_nftOwner != address(0)) {
                     dt.transferFrom(address(this), _toAddr, _tokenIds[i]);
                     dt.updateTokenURIIfDifferent(_tokenIds[i], _uris[i]);
                 } else {
                     IDTONFT721Bridge(tokenMap[_chainIdsIndex[0]][_originToken])
-                    .claimBridgeToken(
-                        _originToken,
-                        _toAddr,
-                        _tokenIds[i],
-                        _uris[i]
-                    );
+                        .claimBridgeToken(
+                            _originToken,
+                            _toAddr,
+                            _tokenIds[i],
+                            _originTokenIds[i],
+                            _uris[i]
+                        );
                 }
             }
         }
-
     }
 
     function isBridgeToken(address _token) public view returns (bool) {
@@ -354,9 +371,9 @@ contract NFT721Bridge is
     }
 
     function getSupportedChainsForToken(address _token)
-    external
-    view
-    returns (uint256[] memory)
+        external
+        view
+        returns (uint256[] memory)
     {
         return tokenMapList[_token];
     }
@@ -374,5 +391,4 @@ contract NFT721Bridge is
         //do nothing
         return bytes4("");
     }
-
 }

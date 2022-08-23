@@ -207,6 +207,11 @@
       },
       {
         "internalType": "string",
+        "name": "_originTokenId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "_tokenUri",
         "type": "string"
       }
@@ -282,6 +287,25 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "mappedOriginTokenIds",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",

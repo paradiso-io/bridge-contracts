@@ -18,6 +18,11 @@
       },
       {
         "internalType": "string",
+        "name": "_originTokenId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "tokenUri",
         "type": "string"
       }

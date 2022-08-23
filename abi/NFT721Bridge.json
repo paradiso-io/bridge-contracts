@@ -35,7 +35,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "bytes",
         "name": "_token",
         "type": "bytes"
@@ -109,7 +109,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "bytes",
         "name": "_token",
         "type": "bytes"
@@ -460,6 +460,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "bys",
+        "type": "bytes"
+      }
+    ],
+    "name": "bytesToAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "chainId",
     "outputs": [
@@ -509,6 +528,11 @@
         "type": "uint256[]"
       },
       {
+        "internalType": "string[]",
+        "name": "_originTokenIds",
+        "type": "string[]"
+      },
+      {
         "internalType": "uint256[]",
         "name": "_chainIdsIndex",
         "type": "uint256[]"
@@ -534,14 +558,9 @@
         "type": "uint8[]"
       },
       {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_symbol",
-        "type": "string"
+        "internalType": "string[2]",
+        "name": "_nameAndSymbol",
+        "type": "string[2]"
       },
       {
         "internalType": "string[]",
