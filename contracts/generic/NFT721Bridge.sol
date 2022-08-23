@@ -280,7 +280,8 @@ contract NFT721Bridge is
                 _originToken,
                 _chainIdsIndex[0],
                 _name,
-                _symbol
+                _symbol,
+                false
             );
             tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
             tokenMapReverse[address(bt)] = TokenInfo({
@@ -348,6 +349,87 @@ contract NFT721Bridge is
         }
 
     }
+
+    //@dev: _claimData: includex tx hash, event index, event data
+    //@dev _tokenInfos: contain token name and symbol of bridge token
+    //_chainIdsIndex: length = 4, _chainIdsIndex[0] = originChainId, _chainIdsIndex[1] => fromChainId, _chainIdsIndex[2] = toChainId = this chainId, _chainIdsIndex[3] = index
+    function claimMultiNFT721Token2(
+        bytes memory _originToken,
+        address _toAddr,
+        string[] memory _tokenIds,
+        uint256[] memory _chainIdsIndex,
+        bytes32 _txHash,
+        bytes32[] memory r,
+        bytes32[] memory s,
+        uint8[] memory v,
+        string memory _name,
+        string memory _symbol,
+        string[] memory _uris
+    ) external payable nonReentrant {
+        require(
+            _chainIdsIndex.length == 4 && chainId == _chainIdsIndex[2],
+            "!chain id claim"
+        );
+        require(_tokenIds.length == _uris.length, "!invalid token uri input");
+        bytes32 _claimId = keccak256(
+            abi.encode(
+                _originToken,
+                _toAddr,
+                _tokenIds,
+                _chainIdsIndex,
+                _txHash,
+                _name,
+                _symbol,
+                _uris
+            )
+        );
+        require(!alreadyClaims[_claimId], "already claim");
+        require(verifySignatures(r, s, v, _claimId), "!invalid signatures");
+
+        //        alreadyClaims[_claimId] = true;
+
+        //claiming bridge token
+        if (chainId != _chainIdsIndex[0] && tokenMap[_chainIdsIndex[0]][_originToken] == address(0)){
+            //create bridge token
+            DTOBridgeNFT721 bt = new DTOBridgeNFT721();
+            bt.initialize(
+                _originToken,
+                _chainIdsIndex[0],
+                _name,
+                _symbol,
+                true
+            );
+            tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
+            tokenMapReverse[address(bt)] = TokenInfo({
+            addr: _originToken,
+            chainId: _chainIdsIndex[0]
+            });
+            bridgeNFT721Tokens[address(bt)] = true;
+        }
+
+        //claim
+        for (uint256 i = 0; i < _tokenIds.length; i++) {
+            IDTONFT721Bridge(tokenMap[_chainIdsIndex[0]][_originToken])
+            .transferOrMint(
+                _originToken,
+                _toAddr,
+                _tokenIds[i],
+                _uris[i]
+            );
+        }
+        emit ClaimMultiNFT721(
+            _originToken,
+            _toAddr,
+            abi.encode(_tokenIds),
+            _chainIdsIndex[0],
+            _chainIdsIndex[1],
+            chainId,
+            _chainIdsIndex[3],
+            _claimId
+        );
+
+    }
+
 
     function isBridgeToken(address _token) public view returns (bool) {
         return bridgeNFT721Tokens[_token];

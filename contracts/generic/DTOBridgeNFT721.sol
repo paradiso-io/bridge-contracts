@@ -22,18 +22,23 @@ contract DTOBridgeNFT721 is
     uint256 public originChainId;
     string public baseURI;
     mapping(uint256 => string) public mappedTokenURIs;
+    bool public tokenIdIsString;
+    mapping (string => uint256) public mappedOriginTokenId;
+    uint256 private lastTokenId;
 
     function initialize(
         bytes memory _originalTokenAddress,
         uint256 _originChainId,
         string memory _tokenName,
-        string memory _tokenSymbol
+        string memory _tokenSymbol,
+        bool _tokenIdIsString
     ) external initializer {
         __Ownable_init();
         __ChainIdHolding_init();
         __ERC721_init(_tokenName, _tokenSymbol);
         originalTokenAddress = _originalTokenAddress;
         originChainId = _originChainId;
+        tokenIdIsString = _tokenIdIsString;
     }
 
     function _baseURI() internal view override returns (string memory) {
@@ -64,8 +69,33 @@ contract DTOBridgeNFT721 is
     ) public override onlyOwner {
         require(keccak256(_originToken) == keccak256(originalTokenAddress), "!originalTokenAddress");
         require(_to != address(0), "!invalid to");
+        require(tokenIdIsString, "cannot use this function for string tokenId");
 
         _mint(_to, _tokenId);
         mappedTokenURIs[_tokenId] = _tokenUri;
+    }
+
+    function transferOrMint(
+        bytes memory _originToken,
+        address _to,
+        string memory _tokenId,
+        string memory _tokenUri
+    ) public override onlyOwner {
+        require(keccak256(_originToken) == keccak256(originalTokenAddress), "!originalTokenAddress");
+        require(_to != address(0), "!invalid to");
+        require(!tokenIdIsString, "cannot use this function for uint256 tokenId");
+
+        uint256 currentId = mappedOriginTokenId[_tokenId];
+        if (currentId > 0) {
+            require(ownerOf(currentId) == msg.sender, "!invalid owner");
+            transferFrom(msg.sender, _to, currentId);
+            mappedTokenURIs[currentId] = _tokenUri;
+        } else {
+            lastTokenId = lastTokenId + 1;
+
+            mappedTokenURIs[lastTokenId] = _tokenUri;
+            mappedOriginTokenId[_tokenId] = lastTokenId;
+            _mint(_to, lastTokenId);
+        }
     }
 }
