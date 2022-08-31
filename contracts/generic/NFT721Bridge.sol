@@ -267,7 +267,7 @@ contract NFT721Bridge is
             "!chain id claim"
         );
         require(_tokenIds.length == _uris.length, "!invalid token uri input");
-        bytes32 _claimId = keccak256(
+        bytes32 _msgHash = keccak256(
             abi.encode(
                 _originToken,
                 _toAddr,
@@ -280,10 +280,22 @@ contract NFT721Bridge is
                 _uris
             )
         );
-        require(!alreadyClaims[_claimId], "already claim");
-        require(verifySignatures(r, s, v, _claimId), "!invalid signatures");
+        require(verifySignatures(r, s, v, _msgHash), "!invalid signatures");
 
-        alreadyClaims[_claimId] = true;
+        //recompute _msgHash to store as _msgHash should only take immutable on-chain data,
+        // nft name and metadata are mutable, should not be taken for computing an immutable message hash
+        _msgHash = keccak256(
+            abi.encode(
+                _originToken,
+                _toAddr,
+                _tokenIds,
+                _originTokenIds,
+                _chainIdsIndex,
+                _txHash
+            )
+        );
+        require(!alreadyClaims[_msgHash], "already claim");
+        alreadyClaims[_msgHash] = true;
 
         //claiming bridge token
         if (
@@ -292,7 +304,12 @@ contract NFT721Bridge is
         ) {
             //create bridge token
             DTOBridgeNFT721 bt = new DTOBridgeNFT721();
-            bt.initialize(_originToken, _chainIdsIndex[0], _nameAndSymbol[0], _nameAndSymbol[1]);
+            bt.initialize(
+                _originToken,
+                _chainIdsIndex[0],
+                _nameAndSymbol[0],
+                _nameAndSymbol[1]
+            );
             tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
             tokenMapReverse[address(bt)] = TokenInfo({
                 addr: _originToken,
@@ -319,7 +336,7 @@ contract NFT721Bridge is
             _chainIdsIndex[1],
             chainId,
             _chainIdsIndex[3],
-            _claimId
+            _msgHash
         );
     }
 
