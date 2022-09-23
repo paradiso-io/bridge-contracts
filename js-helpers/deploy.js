@@ -38,6 +38,9 @@ const chainIdByName = (chainName) => {
     case 'tomotestnet': return 89;
     case 'huobitestnet': return 256;
     case 'okc': return 66;
+    case 'okextestnet': return 65;
+    case 'gatetestnet': return 85;
+    case 'cubetestnet': return 1819;
     default: return 0;
   }
 };
@@ -60,6 +63,9 @@ const chainNameById = (chainId) => {
     case 89: return 'TomoTestnet';
     case 256: return 'HuobiTestnet';
     case 66: return "OKChain";
+    case 65: return "okextestnet";
+    case 85: return "gatetestnet";
+    case 1819: return "cubetestnet";
     default: return 'Unknown';
   }
 };
