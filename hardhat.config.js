@@ -16,6 +16,8 @@ require("hardhat-abi-exporter");
 require("solidity-coverage");
 require("hardhat-deploy-ethers");
 require("hardhat-deploy");
+require('hardhat-contract-sizer');
+
 
 // This must occur after hardhat-deploy!
 task(TASK_COMPILE_GET_COMPILER_INPUT).setAction(async (_, __, runSuper) => {
@@ -199,9 +201,10 @@ module.exports = {
     apiKey: {
       bscTestnet: process.env.BSC_APIKEY,
       ftmTestnet: process.env.FTM_APIKEY,
-      rinkeby: '6BS4A5H6PM5HD5SRCUDUU8NKTZVX6N3XF9',
+      rinkeby: process.env.ETHERSCAN_APIKEY,
       kovan: process.env.ETHERSCAN_APIKEY,
-      avalancheFujiTestnet: 'C7RB7R1H3H1JNFQGKU8JANFMYZUQDKI3JQ',
+      avalancheFujiTestnet: process.env.AVAX_APIKEY,
+      moonbaseAlpha: process.env.MOONBEAM_APIKEY,
     },
     // apiKey: process.env.INFURA_APIKEY
   },

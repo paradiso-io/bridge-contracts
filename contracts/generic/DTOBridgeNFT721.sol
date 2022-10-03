@@ -1,19 +1,20 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol"; // for WETH
 import "../interfaces/IDTONFT721Bridge.sol";
 // import "./Governable.sol";
-import "../lib/ChainIdHolding.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+//import "../lib/ChainIdHolding.sol";
+//import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
 contract DTOBridgeNFT721 is
-    ERC721BurnableUpgradeable,
+//    ERC721BurnableUpgradeable,
+    ERC721EnumerableUpgradeable,
     IDTONFT721Bridge,
-    OwnableUpgradeable,
-    ChainIdHolding
+    OwnableUpgradeable
+//    ChainIdHolding
 {
     using StringsUpgradeable for uint256;
     using SafeMathUpgradeable for uint256;
@@ -31,7 +32,7 @@ contract DTOBridgeNFT721 is
         string memory _tokenSymbol
     ) external initializer {
         __Ownable_init();
-        __ChainIdHolding_init();
+//        __ChainIdHolding_init();
         __ERC721_init(_tokenName, _tokenSymbol);
         originalTokenAddress = _originalTokenAddress;
         originChainId = _originChainId;
@@ -70,5 +71,10 @@ contract DTOBridgeNFT721 is
         _mint(_to, _tokenId);
         mappedTokenURIs[_tokenId] = _tokenUri;
         mappedOriginTokenIds[_tokenId] = _originTokenId;
+    }
+
+    function burn(uint256 tokenId) public virtual {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721Burnable: caller is not owner nor approved");
+        _burn(tokenId);
     }
 }

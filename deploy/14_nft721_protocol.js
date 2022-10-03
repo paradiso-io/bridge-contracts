@@ -48,8 +48,8 @@ module.exports = async (hre) => {
     deployTransaction: nft721Bridge.deployTransaction,
   }
   await sleep(20000)
-  await nft721Bridge.addApprovers(approversTestnet)
-  await nft721Bridge.setFeeReceiver("0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af")
+  await nft721Bridge.setApprovers(approversTestnet, true)
+  await nft721Bridge.setFeeReceiver("0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af", 0)
 
   saveDeploymentData(chainId, deployData);
   log('\n  Contract Deployment Data saved to "deployments" directory.');

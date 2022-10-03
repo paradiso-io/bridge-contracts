@@ -181,159 +181,14 @@
         "internalType": "bytes32",
         "name": "_claimId",
         "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_timestamp",
-        "type": "uint256"
       }
     ],
     "name": "ValidatorSign",
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "WithdrawStuckERC1155",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "WithdrawStuckERC20",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "WithdrawStuckERC721",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "WithdrawStuckEther",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "DEFAULT_FEE_DIVISOR",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "DEFAULT_FEE_PERCENTAGE",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "IID_ICHECK",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "IID_IERC1155",
     "outputs": [
       {
         "internalType": "bytes4",
@@ -368,19 +223,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "_addrs",
-        "type": "address[]"
-      }
-    ],
-    "name": "addApprovers",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -494,25 +336,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "checkSupportToken",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes",
         "name": "_originToken",
         "type": "bytes"
@@ -575,19 +398,6 @@
   },
   {
     "inputs": [],
-    "name": "defaultFeePercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "feeReceiver",
     "outputs": [
       {
@@ -633,19 +443,6 @@
   },
   {
     "inputs": [],
-    "name": "governance",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "index",
     "outputs": [
       {
@@ -668,44 +465,6 @@
     "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
-    ],
-    "name": "isBridgeToken",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "nftAddress",
-        "type": "address"
-      }
-    ],
-    "name": "isERC1155",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -820,19 +579,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_addr",
-        "type": "address"
-      }
-    ],
-    "name": "removeApprover",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
@@ -870,12 +616,17 @@
   {
     "inputs": [
       {
-        "internalType": "address payable",
-        "name": "_feeReceiver",
-        "type": "address"
+        "internalType": "address[]",
+        "name": "_addrs",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "_value",
+        "type": "bool"
       }
     ],
-    "name": "setFeeReceiver",
+    "name": "setApprovers",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -883,38 +634,22 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_gov",
+        "internalType": "address payable",
+        "name": "_feeReceiver",
         "type": "address"
-      }
-    ],
-    "name": "setGovernance",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "uint256",
         "name": "_fee",
         "type": "uint256"
-      }
-    ],
-    "name": "setGovernanceFee",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "_val",
+        "name": "_minApprovers",
         "type": "uint256"
       }
     ],
-    "name": "setMinApprovers",
+    "name": "setFeeAndMinApprovers",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

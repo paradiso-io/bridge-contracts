@@ -1,25 +1,23 @@
 pragma solidity ^0.8.0;
-import "../lib/BlackholePreventionUpgrade.sol";
+//import "../lib/BlackholePreventionUpgrade.sol";
 import "../interfaces/IDTONFT721Bridge.sol";
 import "../interfaces/IERC721.sol";
 import "./DTOBridgeNFT721.sol";
-import "./Governable.sol";
-import "./CheckNftType.sol";
+//import "./Governable.sol";
+import "./CheckNft721.sol";
 import "../lib/ChainIdHolding.sol";
 import "../lib/DTOUpgradeableBase.sol";
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
 contract NFT721Bridge is
-    CheckNftType,
+    CheckNft721,
     DTOUpgradeableBase,
     ReentrancyGuardUpgradeable,
-    BlackholePreventionUpgrade,
-    Governable,
+//    BlackholePreventionUpgrade,
+//    Governable,
     ChainIdHolding
 {
     using SafeMathUpgradeable for uint256;
@@ -28,14 +26,6 @@ contract NFT721Bridge is
     struct TokenInfo {
         bytes addr;
         uint256 chainId;
-    }
-
-    function checkSupportToken(address _tokenAddress)
-        public
-        view
-        returns (bool)
-    {
-        return isERC721(_tokenAddress);
     }
 
     mapping(bytes32 => bool) public alreadyClaims;
@@ -52,9 +42,9 @@ contract NFT721Bridge is
     uint256 public index;
     uint256 public minApprovers;
     address payable public feeReceiver;
-    uint256 public defaultFeePercentage;
-    uint256 public constant DEFAULT_FEE_DIVISOR = 10_000;
-    uint256 public constant DEFAULT_FEE_PERCENTAGE = 10; //0.1%
+//    uint256 public defaultFeePercentage;
+//    uint256 public constant DEFAULT_FEE_DIVISOR = 10_000;
+//    uint256 public constant DEFAULT_FEE_PERCENTAGE = 10; //0.1%
     mapping(bytes => bool) public originChainTokens; //mapping of origin tokens on this chain
 
     //_token is the origin token, regardless it's bridging from or to the origini token
@@ -79,71 +69,60 @@ contract NFT721Bridge is
     );
     event ValidatorSign(
         address _validator,
-        bytes32 _claimId,
-        uint256 _timestamp
+        bytes32 _claimId
     );
 
     function initialize(uint256[] memory _chainIds) public initializer {
         __DTOUpgradeableBase_initialize();
-        __Governable_initialize();
         __ChainIdHolding_init();
-        supportedChainIds[chainId] = true;
-        minApprovers = 2;
-        nativeFee = 0;
-        governance = owner();
 
+        minApprovers = 2;
+
+        supportedChainIds[chainId] = true;
         for (uint256 i = 0; i < _chainIds.length; i++) {
             supportedChainIds[_chainIds[i]] = true;
         }
-        defaultFeePercentage = DEFAULT_FEE_PERCENTAGE; //0.1 %
     }
 
-    function setMinApprovers(uint256 _val) public onlyGovernance {
-        require(_val >= 2, "!min set approver");
-        minApprovers = _val;
-    }
-
-    function setFeeReceiver(address payable _feeReceiver)
-        external
-        onlyGovernance
+    function setFeeAndMinApprovers(address payable _feeReceiver, uint256 _fee, uint256 _minApprovers)
+    public
+        onlyOwner
     {
         feeReceiver = _feeReceiver;
+        nativeFee = _fee;
+        require(_minApprovers >= 2, "required _minApprovers >= 2");
+        minApprovers = _minApprovers;
     }
 
-    function addApprovers(address[] memory _addrs) public onlyGovernance {
+    function setApprovers(address[] memory _addrs, bool _value) public onlyOwner {
         for (uint256 i = 0; i < _addrs.length; i++) {
-            if (!approverMap[_addrs[i]]) {
-                bridgeApprovers.push(_addrs[i]);
-                approverMap[_addrs[i]] = true;
-            }
-        }
-    }
-
-    function removeApprover(address _addr) public onlyGovernance {
-        require(approverMap[_addr], "!not approver");
-        for (uint256 i = 0; i < bridgeApprovers.length; i++) {
-            if (bridgeApprovers[i] == _addr) {
-                bridgeApprovers[i] = bridgeApprovers[
-                    bridgeApprovers.length - 1
-                ];
-                bridgeApprovers.pop();
-                approverMap[_addr] = false;
-                return;
+            if (_value) {
+                if (!approverMap[_addrs[i]]) {
+                    bridgeApprovers.push(_addrs[i]);
+                    approverMap[_addrs[i]] = true;
+                }
+            } else {
+                for (uint256 j = 0; j < bridgeApprovers.length; j++) {
+                    if (bridgeApprovers[j] == _addrs[i]) {
+                        bridgeApprovers[j] = bridgeApprovers[
+                        bridgeApprovers.length - 1
+                        ];
+                        bridgeApprovers.pop();
+                        approverMap[_addrs[i]] = false;
+                        continue;
+                    }
+                }
             }
         }
     }
 
     function setSupportedChainIds(uint256[] memory _chainIds, bool _val)
         public
-        onlyGovernance
+        onlyOwner
     {
         for (uint256 i = 0; i < _chainIds.length; i++) {
             supportedChainIds[_chainIds[i]] = _val;
         }
-    }
-
-    function setGovernanceFee(uint256 _fee) public onlyGovernance {
-        nativeFee = _fee;
     }
 
     function bytesToAddress(bytes memory bys)
@@ -166,9 +145,11 @@ contract NFT721Bridge is
             chainId != _toChainId,
             "source and target chain ids must be different"
         );
-        require(checkSupportToken(_tokenAddress), "unsupported this token");
+        require(isERC721(_tokenAddress), "unsupported this token");
         require(msg.value >= nativeFee, "fee is low");
-        feeReceiver.transfer(msg.value);
+        if (msg.value > 0) {
+            feeReceiver.transfer(msg.value);
+        }
 
         require(supportedChainIds[_toChainId], "unsupported chainId");
         for (uint256 i = 0; i < _tokenIds.length; i++) {
@@ -178,7 +159,7 @@ contract NFT721Bridge is
                 _tokenIds[i]
             );
         }
-        if (!isBridgeToken(_tokenAddress)) {
+        if (!bridgeNFT721Tokens[_tokenAddress]) {
             emit RequestMultiNFT721Bridge(
                 abi.encode(_tokenAddress),
                 _toAddr,
@@ -238,7 +219,7 @@ contract NFT721Bridge is
                 );
                 if (approverMap[signer]) {
                     successSigner++;
-                    emit ValidatorSign(signer, signedData, block.timestamp);
+                    emit ValidatorSign(signer, signedData);
                 }
             }
         }
@@ -350,7 +331,7 @@ contract NFT721Bridge is
     ) internal {
         if (originChainTokens[_originToken] && chainId == _chainIdsIndex[0]) {
             for (uint256 i = 0; i < _tokenIds.length; i++) {
-                IERC721Upgradeable(bytesToAddress(_originToken)).transferFrom(
+                IERC721(bytesToAddress(_originToken)).transferFrom(
                     address(this),
                     _toAddr,
                     _tokenIds[i]
@@ -381,10 +362,6 @@ contract NFT721Bridge is
                 }
             }
         }
-    }
-
-    function isBridgeToken(address _token) public view returns (bool) {
-        return bridgeNFT721Tokens[_token];
     }
 
     function getSupportedChainsForToken(address _token)
