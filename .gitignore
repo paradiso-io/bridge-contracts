@@ -22,8 +22,6 @@ cache
 lepton_data/
 
 # OpenZeppelin
-.openzeppelin
-.openzeppelin/.session
 deployments/hardhat/*.json
 
 solang-mac
