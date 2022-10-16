@@ -15,7 +15,7 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
-contract GenericBridgeWithValidator is
+contract GenericBridge2 is
     DTOUpgradeableBase,
     ReentrancyGuardUpgradeable,
     BlackholePreventionUpgrade,
@@ -50,6 +50,7 @@ contract GenericBridgeWithValidator is
     uint256 public constant DEFAULT_FEE_DIVISOR = 10_000;
     uint256 public constant DEFAULT_FEE_PERCENTAGE = 10; //0.1%
 
+    address public genericBridgeWithValidator;
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestBridge(
         address indexed _token,
@@ -83,6 +84,11 @@ contract GenericBridgeWithValidator is
         uint256 timestamp
     );
 
+    modifier onlyGenericBridgeWithValidatorContract() {
+        require(msg.sender == genericBridgeWithValidator, "!genericBridgeWithValidator");
+        _;
+    }
+
     function initialize(uint256[] memory _chainIds) public initializer {
         __DTOUpgradeableBase_initialize();
         __Governable_initialize();
@@ -99,10 +105,14 @@ contract GenericBridgeWithValidator is
         defaultFeePercentage = DEFAULT_FEE_PERCENTAGE; //0.1 %
     }
 
-    function setMinApprovers(uint256 _val) public onlyGovernance {
-        require(_val >= 2, "!min set approver");
-        minApprovers = _val;
+    function setGatewayContract(address _gateway) external onlyGovernance {
+        genericBridgeWithValidator = _gateway;
     }
+
+    // function setMinApprovers(uint256 _val) public onlyGovernance {
+    //     require(_val >= 2, "!min set approver");
+    //     minApprovers = _val;
+    // }
 
     function setFeeReceiver(address payable _feeReceiver)
         external
@@ -135,36 +145,6 @@ contract GenericBridgeWithValidator is
 
     function setDefaultFeePercentage(uint256 _val) external onlyGovernance {
         defaultFeePercentage = _val;
-    }
-
-    function addApprover(address _addr) public onlyGovernance {
-        require(!approverMap[_addr], "already approver");
-        require(_addr != address(0), "non zero address");
-        bridgeApprovers.push(_addr);
-        approverMap[_addr] = true;
-    }
-
-    function addApprovers(address[] memory _addrs) public onlyGovernance {
-        for (uint256 i = 0; i < _addrs.length; i++) {
-            if (!approverMap[_addrs[i]]) {
-                bridgeApprovers.push(_addrs[i]);
-                approverMap[_addrs[i]] = true;
-            }
-        }
-    }
-
-    function removeApprover(address _addr) public onlyGovernance {
-        require(approverMap[_addr], "not approver");
-        for (uint256 i = 0; i < bridgeApprovers.length; i++) {
-            if (bridgeApprovers[i] == _addr) {
-                bridgeApprovers[i] = bridgeApprovers[
-                    bridgeApprovers.length - 1
-                ];
-                bridgeApprovers.pop();
-                approverMap[_addr] = false;
-                return;
-            }
-        }
     }
 
     function setSupportedChainId(uint256 _chainId, bool _val)
@@ -255,53 +235,6 @@ contract GenericBridgeWithValidator is
         }
     }
 
-    function verifySignatures(
-        bytes32[] memory r,
-        bytes32[] memory s,
-        uint8[] memory v,
-        bytes32 signedData
-    ) internal returns (bool) {
-        require(minApprovers >= 2, "!min approvers");
-        require(bridgeApprovers.length >= minApprovers, "!min approvers");
-        address[] memory uniqueSigners = new address[](r.length);
-        uint256 successSigner = 0;
-        if (
-            r.length == s.length &&
-            s.length == v.length &&
-            v.length >= minApprovers
-        ) {
-            for (uint256 i = 0; i < r.length; i++) {
-                address signer = ecrecover(
-                    keccak256(
-                        abi.encodePacked(
-                            "\x19Ethereum Signed Message:\n32",
-                            signedData
-                        )
-                    ),
-                    v[i],
-                    r[i],
-                    s[i]
-                );
-                if (approverMap[signer]) {
-                    bool signerIsGood = true;
-                    for (uint256 k = 0; k < successSigner; k++) {
-                        if (uniqueSigners[k] == signer) {
-                            signerIsGood = false;
-                            break;
-                        }
-                    }
-                    if (signerIsGood) {
-                        uniqueSigners[successSigner] = signer;
-                        successSigner++;
-                    }
-                    emit ValidatorSign(signer, signedData, block.timestamp);
-                }
-            }
-        }
-
-        return successSigner >= minApprovers;
-    }
-
     //@dev: _claimData: includex tx hash, event index, event data
     //@dev _tokenInfos: contain token name and symbol of bridge token
     //_chainIdsIndex: length = 4, _chainIdsIndex[0] = originChainId, _chainIdsIndex[1] => fromChainId, _chainIdsIndex[2] = toChainId = this chainId, _chainIdsIndex[3] = index
@@ -311,17 +244,10 @@ contract GenericBridgeWithValidator is
         uint256 _amount,
         uint256[] memory _chainIdsIndex,
         bytes32 _txHash,
-        bytes32[] memory r,
-        bytes32[] memory s,
-        uint8[] memory v,
         string memory _name,
         string memory _symbol,
         uint8 _decimals
-    ) external payable nonReentrant {
-        require(
-            _chainIdsIndex.length == 4 && chainId == _chainIdsIndex[2],
-            "!chain id claim"
-        );
+    ) external payable nonReentrant onlyGenericBridgeWithValidatorContract {
         bytes32 _claimId = keccak256(
             abi.encode(
                 _originToken,
@@ -336,70 +262,70 @@ contract GenericBridgeWithValidator is
         );
         require(!alreadyClaims[_claimId], "already claim");
         alreadyClaims[_claimId] = true;
-        require(verifySignatures(r, s, v, _claimId), "invalid signatures");
 
         payClaimFee(msg.value);
 
         // alreadyClaims[_claimId] = true;
 
-        if (_originToken == NATIVE_TOKEN_ADDRESS) {
-            if (_chainIdsIndex[0] != chainId) {
-                //claim native token from another chain to the current chain
-                //check whether wrap token exist
-                if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
-                    DTOBridgeToken bt = new DTOBridgeToken();
-                    bt.initialize(
-                        _originToken,
-                        _chainIdsIndex[0],
-                        _name,
-                        _symbol,
-                        _decimals
-                    );
-                    tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
-                    tokenMapReverse[address(bt)] = TokenInfo({
-                        addr: _originToken,
-                        chainId: _chainIdsIndex[0]
-                    });
-                    bridgeTokens[address(bt)] = true;
-                }
-                _mintTokenForUser(
-                    _amount,
-                    _originToken,
-                    _chainIdsIndex,
-                    _txHash,
-                    _toAddr
-                );
-                emit ClaimToken(
-                    _originToken,
-                    _toAddr,
-                    _amount,
-                    _chainIdsIndex[0],
-                    _chainIdsIndex[1],
-                    chainId,
-                    _chainIdsIndex[3],
-                    _claimId
-                );
-            } else {
-                //claiming original token
-                _transferOriginToken(
-                    _amount,
-                    _originToken,
-                    _chainIdsIndex,
-                    _toAddr
-                );
+        // if (_originToken == NATIVE_TOKEN_ADDRESS) {
+        //     if (_chainIdsIndex[0] != chainId) {
+        //         //claim native token from another chain to the current chain
+        //         //check whether wrap token exist
+        //         if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
+        //             DTOBridgeToken bt = new DTOBridgeToken();
+        //             bt.initialize(
+        //                 _originToken,
+        //                 _chainIdsIndex[0],
+        //                 _name,
+        //                 _symbol,
+        //                 _decimals
+        //             );
+        //             tokenMap[_chainIdsIndex[0]][_originToken] = address(bt);
+        //             tokenMapReverse[address(bt)] = TokenInfo({
+        //                 addr: _originToken,
+        //                 chainId: _chainIdsIndex[0]
+        //             });
+        //             bridgeTokens[address(bt)] = true;
+        //         }
+        //         _mintTokenForUser(
+        //             _amount,
+        //             _originToken,
+        //             _chainIdsIndex,
+        //             _txHash,
+        //             _toAddr
+        //         );
+        //         emit ClaimToken(
+        //             _originToken,
+        //             _toAddr,
+        //             _amount,
+        //             _chainIdsIndex[0],
+        //             _chainIdsIndex[1],
+        //             chainId,
+        //             _chainIdsIndex[3],
+        //             _claimId
+        //         );
+        //     } else {
+        //         //claiming original token
+        //         _transferOriginToken(
+        //             _amount,
+        //             _originToken,
+        //             _chainIdsIndex,
+        //             _toAddr
+        //         );
 
-                emit ClaimToken(
-                    _originToken,
-                    _toAddr,
-                    _amount,
-                    _chainIdsIndex[0],
-                    _chainIdsIndex[1],
-                    chainId,
-                    _chainIdsIndex[3],
-                    _claimId
-                );
-            }
-        } else if (tokenMapList[_originToken].length == 0) {
+        //         emit ClaimToken(
+        //             _originToken,
+        //             _toAddr,
+        //             _amount,
+        //             _chainIdsIndex[0],
+        //             _chainIdsIndex[1],
+        //             chainId,
+        //             _chainIdsIndex[3],
+        //             _claimId
+        //         );
+        //     }
+        // } else 
+        if (_chainIdsIndex[0] != chainId) {
             //claiming bridge token
             if (tokenMap[_chainIdsIndex[0]][_originToken] == address(0)) {
                 //create bridge token
@@ -547,8 +473,8 @@ contract GenericBridgeWithValidator is
 
     function getAmountsToSend(
         uint256 amount,
-        address originToken,
-        uint256 originChainId
+        address,
+        uint256
     ) internal view returns (uint256 forUser, uint256 forFee) {
         uint256 feePercent = defaultFeePercentage == 0
             ? DEFAULT_FEE_PERCENTAGE
@@ -557,39 +483,17 @@ contract GenericBridgeWithValidator is
             (amount * (DEFAULT_FEE_DIVISOR - feePercent)) /
             DEFAULT_FEE_DIVISOR;
         forFee = amount - forUser;
-        // if (feeForTokens[originChainId][originToken] == 0) {
-        //     forUser =
-        //         (amount * (DEFAULT_FEE_DIVISOR - defaultFeePercentage)) /
-        //         DEFAULT_FEE_DIVISOR;
-        //     forFee = amount - forUser;
-        // } else {
-        //     if (amount < feeForTokens[originChainId][originToken]) {
-        //         forUser = 0;
-        //         forFee = amount;
-        //     } else {
-        //         forUser = amount - feeForTokens[originChainId][originToken];
-        //         forFee = feeForTokens[originChainId][originToken];
-        //     }
-        // }
     }
 
-    function getFeeInfo(address token)
+    function getFeeInfo(address)
         external
         view
-        returns (uint256 feeAmount, uint256 feePercent)
+        returns (uint256, uint256 feePercent)
     {
         feePercent = defaultFeePercentage == 0
             ? DEFAULT_FEE_PERCENTAGE
             : defaultFeePercentage;
-        // if (!isBridgeToken(token)) {
-        //     //token on this chain
-        //     feeAmount = feeForTokens[chainId][token];
-        //     feePercent = defaultFeePercentage;
-        // } else {
-        //     TokenInfo memory tokenInfo = tokenMapReverse[token];
-        //     feeAmount = feeForTokens[tokenInfo.chainId][tokenInfo.addr];
-        //     feePercent = defaultFeePercentage;
-        // }
+        return (0, feePercent);
     }
 
     function getFeeRecipientAddress()
@@ -610,6 +514,10 @@ contract GenericBridgeWithValidator is
 
     function getBridgeApprovers() external view returns (address[] memory) {
         return bridgeApprovers;
+    }
+
+    function getGatewayContract() external view returns (address) {
+        return genericBridgeWithValidator;
     }
 
     /***********************************|

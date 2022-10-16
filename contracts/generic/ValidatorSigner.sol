@@ -42,6 +42,8 @@ contract ValidatorSigner is
     mapping(bytes32 => bytes[]) public signatures;
     mapping(bytes32 => uint256) public messageToEpoch;
 
+    uint256 public epochCounter;
+
     event SignedMessage(address validator, uint256 epoch, bytes32 message, bytes data);
 
     function BlockSigner(uint256 _epochNumber) public {
@@ -94,7 +96,7 @@ contract ValidatorSigner is
         );
 
         require(
-            timestamp >= epochStart[epoch] && timestamp < epochStart[epoch + 1],
+            timestamp >= epochStart[epoch] && (timestamp < epochStart[epoch + 1] || epochStart[epoch + 1] == 0),
             "invalid epoch"
         );
 
@@ -134,8 +136,15 @@ contract ValidatorSigner is
         emit SignedMessage(sender, epoch, message, bytesSig);
     }
 
-    function setSignersForEpoch(uint256 epoch, address[] memory validators) external onlyOwner {
+    function setSignersForEpoch(uint256 epoch, address[] memory validators, uint256 epochStartTime) external onlyOwner {
+        epochCounter++;
+        require(epoch == epochCounter, "invalid epoch");
         signersForEpoch[epoch] = validators;
+        epochStart[epoch] = epochStartTime;
+        //validators must be in increasing order
+        for(uint256 i = 0; i < validators.length - 1; i++) {
+            require(validators[i] < validators[i + 1], "invalid increasing orders");
+        }
     }
 
     // getter

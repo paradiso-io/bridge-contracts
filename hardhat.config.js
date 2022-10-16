@@ -50,7 +50,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
     },
     bsc: {
-      url: `https://bsc.getblock.io/mainnet/?api_key=46a2dc7a-1cfe-4656-a4e4-5a57f1f66e22`,//`https://bsc-dataseed.binance.org/`,
+      url: `https://bsc-dataseed.binance.org/`,
       gasPrice: 6e9,
       blockGasLimit: 22400000,
       accounts: [process.env.PRIVATE_KEY_MAINNET],
@@ -171,7 +171,7 @@ module.exports = {
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://bscscan.com/
-    apiKey: process.env.MOONSCAN_APIKEY,
+    apiKey: process.env.BSC_APIKEY,
   },
   namedAccounts: {
     deployer: {
