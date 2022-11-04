@@ -42,32 +42,19 @@ contract ValidatorSigner is
     mapping(bytes32 => bytes[]) public signatures;
     mapping(bytes32 => uint256) public messageToEpoch;
 
-    uint256 public epochCounter;
+    uint256 public currentEpoch;
 
     event SignedMessage(address validator, uint256 epoch, bytes32 message, bytes data);
 
-    function BlockSigner(uint256 _epochNumber) public {
-        epochNumber = _epochNumber;
-    }
 
     function initialize(uint256 _epochNumber) public initializer {
-        epochNumber = _epochNumber;
+        currentEpoch = _epochNumber;
 
         __DTOUpgradeableBase_initialize();
         __Governable_initialize();
         __ChainIdHolding_init();
 
         governance = owner();
-    }
-
-    function sign(uint256 _blockNumber, bytes32 _blockHash) external {
-        // consensus should validate all senders are validators, gas = 0
-        require(block.number >= _blockNumber);
-        require(block.number <= _blockNumber.add(epochNumber * 2));
-        blocks[_blockNumber].push(_blockHash);
-        blockSigners[_blockHash].push(msg.sender);
-
-        emit Sign(msg.sender, _blockNumber, _blockHash);
     }
 
     function getSigners(bytes32 _blockHash)
@@ -137,8 +124,8 @@ contract ValidatorSigner is
     }
 
     function setSignersForEpoch(uint256 epoch, address[] memory validators, uint256 epochStartTime) external onlyOwner {
-        epochCounter++;
-        require(epoch == epochCounter, "invalid epoch");
+        currentEpoch++;
+        require(epoch == currentEpoch, "invalid epoch");
         signersForEpoch[epoch] = validators;
         epochStart[epoch] = epochStartTime;
         //validators must be in increasing order

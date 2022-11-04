@@ -191,19 +191,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_epochNumber",
-        "type": "uint256"
-      }
-    ],
-    "name": "BlockSigner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
@@ -264,7 +251,7 @@
   },
   {
     "inputs": [],
-    "name": "epochCounter",
+    "name": "currentEpoch",
     "outputs": [
       {
         "internalType": "uint256",
@@ -566,24 +553,6 @@
       }
     ],
     "name": "setSignersForEpoch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_blockNumber",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "_blockHash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "sign",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
