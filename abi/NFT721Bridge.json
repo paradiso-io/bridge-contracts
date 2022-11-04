@@ -168,25 +168,6 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_validator",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "_claimId",
-        "type": "bytes32"
-      }
-    ],
-    "name": "ValidatorSign",
-    "type": "event"
-  },
-  {
     "inputs": [],
     "name": "IID_ICHECK",
     "outputs": [
@@ -650,24 +631,6 @@
       }
     ],
     "name": "setFeeAndMinApprovers",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "_chainIds",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bool",
-        "name": "_val",
-        "type": "bool"
-      }
-    ],
-    "name": "setSupportedChainIds",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

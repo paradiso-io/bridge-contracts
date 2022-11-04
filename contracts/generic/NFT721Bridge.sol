@@ -67,10 +67,10 @@ contract NFT721Bridge is
         uint256 _index,
         bytes32 _claimId
     );
-    event ValidatorSign(
-        address _validator,
-        bytes32 _claimId
-    );
+    // event ValidatorSign(
+    //     address _validator,
+    //     bytes32 _claimId
+    // );
 
     function initialize(uint256[] memory _chainIds) public initializer {
         __DTOUpgradeableBase_initialize();
@@ -116,14 +116,14 @@ contract NFT721Bridge is
         }
     }
 
-    function setSupportedChainIds(uint256[] memory _chainIds, bool _val)
-        public
-        onlyOwner
-    {
-        for (uint256 i = 0; i < _chainIds.length; i++) {
-            supportedChainIds[_chainIds[i]] = _val;
-        }
-    }
+    // function setSupportedChainIds(uint256[] memory _chainIds, bool _val)
+    //     public
+    //     onlyOwner
+    // {
+    //     for (uint256 i = 0; i < _chainIds.length; i++) {
+    //         supportedChainIds[_chainIds[i]] = _val;
+    //     }
+    // }
 
     function bytesToAddress(bytes memory bys)
         public
@@ -151,7 +151,7 @@ contract NFT721Bridge is
             feeReceiver.transfer(msg.value);
         }
 
-        require(supportedChainIds[_toChainId], "unsupported chainId");
+        // require(supportedChainIds[_toChainId], "unsupported chainId");
         for (uint256 i = 0; i < _tokenIds.length; i++) {
             IERC721(_tokenAddress).transferFrom(
                 msg.sender,
@@ -196,7 +196,7 @@ contract NFT721Bridge is
         bytes32[] memory s,
         uint8[] memory v,
         bytes32 signedData
-    ) internal returns (bool) {
+    ) internal view returns (bool) {
         require(minApprovers >= 2, "!min approvers");
         require(bridgeApprovers.length >= minApprovers, "!min approvers");
         uint256 successSigner = 0;
@@ -205,6 +205,7 @@ contract NFT721Bridge is
             s.length == v.length &&
             v.length >= minApprovers
         ) {
+            address lastRecoveredSigner = address(0);
             for (uint256 i = 0; i < r.length; i++) {
                 address signer = ecrecover(
                     keccak256(
@@ -217,9 +218,11 @@ contract NFT721Bridge is
                     r[i],
                     s[i]
                 );
+                require(lastRecoveredSigner < signer, "signatures must be in increasing orders of signers");
+                lastRecoveredSigner = signer;
                 if (approverMap[signer]) {
                     successSigner++;
-                    emit ValidatorSign(signer, signedData);
+                    // emit ValidatorSign(signer, signedData);
                 }
             }
         }

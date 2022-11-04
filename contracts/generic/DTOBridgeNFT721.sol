@@ -4,17 +4,14 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "../interfaces/IDTONFT721Bridge.sol";
 // import "./Governable.sol";
 //import "../lib/ChainIdHolding.sol";
-//import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
 contract DTOBridgeNFT721 is
-//    ERC721BurnableUpgradeable,
     ERC721EnumerableUpgradeable,
     IDTONFT721Bridge,
     OwnableUpgradeable
-//    ChainIdHolding
 {
     using StringsUpgradeable for uint256;
     using SafeMathUpgradeable for uint256;

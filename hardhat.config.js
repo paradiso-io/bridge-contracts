@@ -64,7 +64,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
     },
     bsc: {
-      url: `https://bsc.getblock.io/mainnet/?api_key=46a2dc7a-1cfe-4656-a4e4-5a57f1f66e22`,//`https://bsc-dataseed.binance.org/`,
+      url: `https://bsc-dataseed.binance.org/`,
       gasPrice: 6e9,
       blockGasLimit: 22400000,
       accounts: [process.env.PRIVATE_KEY_MAINNET],
@@ -74,7 +74,7 @@ module.exports = {
       gasPrice: 10e9,
       gasLimit: 10000000,
       blockGasLimit: 22400000,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY_NFTBRIDGE_TESTNET],
     },
     sepolia: {
       url: `https://rpc.sepolia.dev`,
@@ -209,17 +209,18 @@ module.exports = {
     flat: true,
   },
   etherscan: {
+    apiKey: process.env.BSC_APIKEY
     // Your API key for Etherscan
     // Obtain one at https://bscscan.com/
-    apiKey: {
-      bscTestnet: process.env.BSC_APIKEY,
-      ftmTestnet: process.env.FTM_APIKEY,
-      rinkeby: process.env.ETHERSCAN_APIKEY,
-      kovan: process.env.ETHERSCAN_APIKEY,
-      avalancheFujiTestnet: process.env.AVAX_APIKEY,
-      moonbaseAlpha: process.env.MOONBEAM_APIKEY,
-    },
-    // apiKey: process.env.INFURA_APIKEY
+    // apiKey: {
+    //   bscTestnet: process.env.BSC_APIKEY,
+    //   bsc: process.env.BSC_APIKEY,
+    //   ftmTestnet: process.env.FTM_APIKEY,
+    //   rinkeby: process.env.ETHERSCAN_APIKEY,
+    //   kovan: process.env.ETHERSCAN_APIKEY,
+    //   avalancheFujiTestnet: process.env.AVAX_APIKEY,
+    //   moonbaseAlpha: process.env.MOONBEAM_APIKEY,
+    // }
   },
   namedAccounts: {
     deployer: {
