@@ -24,6 +24,7 @@ const chainIdByName = (chainName) => {
     case 'mainnet': return 1;
     case 'ropsten': return 3;
     case 'rinkeby': return 4;
+    case 'goerli': return 5;
     case 'kovan': return 42;
     case 'hardhat': return 31337;
     case 'coverage': return 31337;
@@ -41,6 +42,7 @@ const chainIdByName = (chainName) => {
     case 'okextestnet': return 65;
     case 'gatetestnet': return 85;
     case 'cubetestnet': return 1819;
+    case 'sepolia': return 11155111;
     default: return 0;
   }
 };
@@ -50,6 +52,7 @@ const chainNameById = (chainId) => {
     case 1: return 'Mainnet';
     case 3: return 'Ropsten';
     case 4: return 'Rinkeby';
+    case 5: return 'Goerli';
     case 42: return 'Kovan';
     case 31337: return 'Hardhat';
     case 56: return 'BSC';
@@ -66,13 +69,14 @@ const chainNameById = (chainId) => {
     case 65: return "okextestnet";
     case 85: return "gatetestnet";
     case 1819: return "cubetestnet";
+    case 11155111: return "sepolia";
     default: return 'Unknown';
   }
 };
 
 
 const supportedChainIds = (mainnet) => {
-  if (!mainnet) return [3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89, 96945816564243]
+  if (!mainnet) return [3, 4, 5, 42, 31337, 56, 97, 1287, 4002, 80001, 43113, 89, 11155111, 96945816564243]
   //support ethereum and casper initially
   return [1, 131614895977472, 56, 1284, 43114, 66]
 }

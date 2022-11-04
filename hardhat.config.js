@@ -57,6 +57,12 @@ module.exports = {
       blockGasLimit: 12400000,
       accounts: [process.env.PRIVATE_KEY],
     },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_APIKEY}`,
+      gasPrice: 10e9,
+      blockGasLimit: 12400000,
+      accounts: [process.env.PRIVATE_KEY],
+    },
     bsc: {
       url: `https://bsc.getblock.io/mainnet/?api_key=46a2dc7a-1cfe-4656-a4e4-5a57f1f66e22`,//`https://bsc-dataseed.binance.org/`,
       gasPrice: 6e9,
@@ -65,6 +71,13 @@ module.exports = {
     },
     bsctestnet: {
       url: `https://data-seed-prebsc-1-s1.binance.org:8545/`,
+      gasPrice: 10e9,
+      gasLimit: 10000000,
+      blockGasLimit: 22400000,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    sepolia: {
+      url: `https://rpc.sepolia.dev`,
       gasPrice: 10e9,
       gasLimit: 10000000,
       blockGasLimit: 22400000,
