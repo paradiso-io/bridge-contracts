@@ -263,6 +263,7 @@ contract GenericBridge is
     ) internal returns (bool) {
         require(minApprovers >= 2, "!min approvers");
         require(bridgeApprovers.length >= minApprovers, "!min approvers");
+        address[] memory uniqueSigners = new address[](r.length);
         uint256 successSigner = 0;
         if (
             r.length == s.length &&
@@ -282,7 +283,17 @@ contract GenericBridge is
                     s[i]
                 );
                 if (approverMap[signer]) {
-                    successSigner++;
+                    bool signerIsGood = true;
+                    for (uint256 k = 0; k < successSigner; k++) {
+                        if (uniqueSigners[k] == signer) {
+                            signerIsGood = false;
+                            break;
+                        }
+                    }
+                    if (signerIsGood) {
+                        uniqueSigners[successSigner] = signer;
+                        successSigner++;
+                    }
                     emit ValidatorSign(signer, signedData, block.timestamp);
                 }
             }
