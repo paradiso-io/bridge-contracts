@@ -19,6 +19,8 @@ module.exports = async (hre) => {
   const deployData = {};
 
   const chainId = chainIdByName(network.name);
+  if (chainId === 31337) return
+
   const alchemyTimeout = chainId === 31337 ? 0 : (chainId === 1 ? 5 : 3);
 
   log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
