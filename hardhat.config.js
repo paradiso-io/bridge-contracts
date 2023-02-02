@@ -16,6 +16,7 @@ require("hardhat-abi-exporter");
 require("solidity-coverage");
 require("hardhat-deploy-ethers");
 require("hardhat-deploy");
+require("solidity-coverage");
 
 // This must occur after hardhat-deploy!
 task(TASK_COMPILE_GET_COMPILER_INPUT).setAction(async (_, __, runSuper) => {

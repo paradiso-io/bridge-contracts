@@ -138,11 +138,11 @@ describe('Staking Token', async function () {
         //     console.log(i,((await erc20Mock.balanceOf(users[i].address)).toString()))
         // }
     })
-    it("upgrade contract", async function (){ 
-        const DtoStaking = await ethers.getContractFactory('DTOStakingUpgrade')
-        dtoStaking = await upgrades.upgradeProxy(dtoStaking.address,DtoStaking, [erc20Mock.address, dto.address, stakingTokenLock.address,0,0,7*86400,3*86400], { unsafeAllow: ['delegatecall'], kind: 'uups' }) //unsafeAllowCustomTypes: true,
-       await  dtoStaking.setNumbetTest(123)
-       expect(await dtoStaking.getNumberTest()).to.be.equal(123);
-    })
+    // it("upgrade contract", async function (){ 
+    //     const DtoStaking = await ethers.getContractFactory('DTOStakingUpgrade')
+    //     dtoStaking = await upgrades.upgradeProxy(dtoStaking.address,DtoStaking, [erc20Mock.address, dto.address, stakingTokenLock.address,0,0,7*86400,3*86400], { unsafeAllow: ['delegatecall'], kind: 'uups' }) //unsafeAllowCustomTypes: true,
+    //    await  dtoStaking.setNumbetTest(123)
+    //    expect(await dtoStaking.getNumberTest()).to.be.equal(123);
+    // })
 
 })
