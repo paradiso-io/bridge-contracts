@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.3;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -9,13 +9,14 @@ contract Governable is Initializable, OwnableUpgradeable {
     }
 
     modifier onlyGovernance() {
-        require(msg.sender == owner(), "!onlyGovernance");
+        require(msg.sender == governance, "!onlyGovernance");
         _;
     }
 
     address public governance;
 
     function setGovernance(address _gov) public onlyGovernance {
+        require(_gov != address(0), "null address");
         governance = _gov;
     }
 }
