@@ -5,6 +5,7 @@ import "../interfaces/IDTONFT721Bridge.sol";
 // import "./Governable.sol";
 //import "../lib/ChainIdHolding.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
@@ -29,7 +30,6 @@ contract DTOBridgeNFT721 is
         string memory _tokenSymbol
     ) external initializer {
         __Ownable_init();
-//        __ChainIdHolding_init();
         __ERC721_init(_tokenName, _tokenSymbol);
         originalTokenAddress = _originalTokenAddress;
         originChainId = _originChainId;
