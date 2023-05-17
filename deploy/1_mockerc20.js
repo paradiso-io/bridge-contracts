@@ -34,13 +34,13 @@ module.exports = async (hre) => {
 
     log('  Deploying Mock ERC20...');
     const ERC20Mock = await ethers.getContractFactory('ERC20Mock');
-    const ERC20MockInstance = await ERC20Mock.deploy("MEME" + chainNameById(chainId), "MEME" + chainId, deployer, '1000000000000000000000000000')
-    const genericBridge = await ERC20MockInstance.deployed()
-    log('  - ERC20Mock:         ', ERC20Mock.address);
-    deployData['ERC20Mock'] = {
+    const ERC20MockInstance = await ERC20Mock.deploy("Wrapped BTC Faucet", "WBTC", deployer, '1000000000000000000000000000')
+    const wbtc = await ERC20MockInstance.deployed()
+    log('  - ERC20Mock:         ', wbtc.address);
+    deployData['WBTC'] = {
       abi: getContractAbi('ERC20Mock'),
-      address: genericBridge.address,
-      deployTransaction: genericBridge.deployTransaction,
+      address: wbtc.address,
+      deployTransaction: wbtc.deployTransaction,
     }
 
     saveDeploymentData(chainId, deployData);

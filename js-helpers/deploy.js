@@ -38,6 +38,10 @@ const chainIdByName = (chainName) => {
     case 'tomotestnet': return 89;
     case 'huobitestnet': return 256;
     case 'okc': return 66;
+    case 'shardeumsphinx': return 8082;
+    case 'shardeumliberty': return 8080;
+    case 'goerli': return 5;
+    case 'sepolia': return 11155111;
     default: return 0;
   }
 };
@@ -60,17 +64,27 @@ const chainNameById = (chainId) => {
     case 89: return 'TomoTestnet';
     case 256: return 'HuobiTestnet';
     case 66: return "OKChain";
+    case 8082: return "ShardeumSphinx";
+    case 80820: return "ShardeumLiberty10";
+    case 11155111: return "Sepolia";
+    case 5: return "Goerli";
     default: return 'Unknown';
   }
 };
 
 
 const supportedChainIds = (mainnet) => {
-  if (!mainnet) return [3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89, 96945816564243]
+  if (!mainnet) return [3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89, 96945816564243, 5, 11155111]
   //support ethereum and casper initially
   return [1, 131614895977472, 56, 1284, 43114, 66]
 }
-const approvers = ["0x8e03b2f204a64E3AC0A627C16A2eB64962eD1Cb0", "0xd5D61992B9cEEEB0b2fBeaa3F796eD515A42f029", "0xb86DBF025E873F5AdC87C20f95627352C7762070", "0x45Ff52d6529A9EE855C1B2c4C0A90b1c13Bb32A9", "0x581e803a18d7F2B280E954050E1722eE8DF81df8", "0x0b733C3Af0D9376cfca9D6c1Dc5f26e2D1778e0a", "0xFCDd3d5447030aD57d613978bdAf40BC8B13CC6F", "0x4DfeCcc8eA948986776429aDeC30540A45705015"]
+const approvers = (mainnet) => {
+  if (mainnet) {
+    return ["0x8e03b2f204a64E3AC0A627C16A2eB64962eD1Cb0", "0xd5D61992B9cEEEB0b2fBeaa3F796eD515A42f029", "0xb86DBF025E873F5AdC87C20f95627352C7762070", "0x45Ff52d6529A9EE855C1B2c4C0A90b1c13Bb32A9", "0x581e803a18d7F2B280E954050E1722eE8DF81df8", "0x0b733C3Af0D9376cfca9D6c1Dc5f26e2D1778e0a", "0xFCDd3d5447030aD57d613978bdAf40BC8B13CC6F", "0x4DfeCcc8eA948986776429aDeC30540A45705015"]
+  } else {
+    return ["0x3cdc0b9a2383770c24ce335c07ddd5f09ee3e199", "0xdcaf39430997de9a96a088b31c902b4d10a55177", "0xc91b38d5bf1d2047529446cf575855e0744e9334"]
+  }
+} 
 
 const blockTimeFromDate = (dateStr) => {
   return Date.parse(dateStr) / 1000;
