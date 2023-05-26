@@ -34,11 +34,11 @@ module.exports = async (hre) => {
   log('  Deploying WrapNonEVMERC20...');
 
   const web3 = new Web3()
-  const originTokenAddress = "a4fc3a16bd5431873ac121257d4c7f1d04b8db24229266ebce731d3417f38259"
+  const originTokenAddress = "995947f349c23a1812f6c7702e75eb95afabdb5f389f150e4ddb91c9de6225f0"
   const originChainId = 96945816564243  // casper-test
-  const tokenName = "Faucet Token"
-  const tokenSymbol = "FTERC20"
-  const decimals = 18
+  const tokenName = "CasperSwap Token"
+  const tokenSymbol = "CST"
+  const decimals = 9
   const feeReceiver = '0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af'
 
   const EventHookInfo = require(`../deployments/${chainId}/EventHook.json`)
@@ -49,7 +49,7 @@ module.exports = async (hre) => {
 
   const WrapNonEVMERC20Instance = await WrapNonEVMERC20.deploy(originTokenAddress, originChainId, tokenName, tokenSymbol, decimals, feeReceiver, EventHookInfo.address)
   const wcst = await WrapNonEVMERC20Instance.deployed()
-  log('  - FTERC20:         ', wcst.address);
+  log('  - CST:         ', wcst.address);
   log('  - setting approvers now:         ');
   
   await wcst.addApprovers(approvers(false))
@@ -58,7 +58,7 @@ module.exports = async (hre) => {
   const eventHook = await EventHook.attach(EventHookInfo.address)
   await eventHook.setNEVMWrapToken(wcst.address, true)
 
-  deployData['FTERC20'] = {
+  deployData['CST'] = {
     abi: getContractAbi('WrapNonEVMERC20'),
     address: wcst.address,
     deployTransaction: wcst.deployTransaction,
