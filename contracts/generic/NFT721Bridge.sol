@@ -119,7 +119,7 @@ contract NFT721Bridge is
                         ];
                         bridgeApprovers.pop();
                         approverMap[_addrs[i]] = false;
-                        continue;
+                        break;
                     }
                 }
             }
@@ -153,6 +153,7 @@ contract NFT721Bridge is
         // require(supportedChainIds[_toChainId], "unsupported chainId");
         bool isBridgedToken = bridgeNFT721Tokens[_tokenAddress];
         for (uint256 i = 0; i < _tokenIds.length; i++) {
+            require(_tokenIds[i] <= type(uint64).max, "token id too large");
             if (!isBridgedToken) {
                 IERC721(_tokenAddress).transferFrom(
                     msg.sender,
