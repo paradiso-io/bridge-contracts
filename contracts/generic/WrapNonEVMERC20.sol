@@ -92,15 +92,14 @@ contract WrapNonEVMERC20 is
             "!min approvers"
         );
         require(bridgeApprovers.length >= minApprovers, "!min approvers");
-        address[] memory uniqueSigners = new address[](r.length);
         uint256 successSigner = 0;
         if (
             r.length == s.length &&
             s.length == v.length &&
             v.length >= minApprovers
         ) {
-            uint256 count = r.length;
-            for (uint256 i = 0; i < count; ++i) {
+            address lastRecoveredSigner = address(0);
+            for (uint256 i = 0; i < r.length; i++) {
                 address signer = ecrecover(
                     keccak256(
                         abi.encodePacked(
@@ -112,19 +111,13 @@ contract WrapNonEVMERC20 is
                     r[i],
                     s[i]
                 );
+                require(
+                    lastRecoveredSigner < signer,
+                    "signatures must be in increasing orders of signers"
+                );
+                lastRecoveredSigner = signer;
                 if (approverMap[signer]) {
-                    bool signerIsGood = true;
-                    for (uint256 k = 0; k < successSigner; k++) {
-                        if (uniqueSigners[k] == signer) {
-                            signerIsGood = false;
-                            break;
-                        }
-                    }
-                    if (signerIsGood) {
-                        uniqueSigners[successSigner] = signer;
-                        successSigner++;
-                    }
-                    // emit ValidatorSign(signer, signedData, block.timestamp);
+                    successSigner++;
                 }
             }
         }
