@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/IEventHook.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
 // ownable must be a timelock
 contract WrapNonEVMERC20 is
@@ -14,7 +15,8 @@ contract WrapNonEVMERC20 is
     Ownable,
     ChainIdHolding,
     ReentrancyGuard
-{
+{   
+    using AddressUpgradeable for address payable;
     using SafeMath for uint256;
     mapping(bytes32 => bool) public alreadyClaims;
     mapping(bytes32 => bool) public alreadyClaimedTxHashes;
@@ -29,6 +31,7 @@ contract WrapNonEVMERC20 is
     uint256 public index;
     uint256 public minApprovers;
     IEventHook public eventHook;
+    uint256 public nativeFee;
 
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestBridge(
@@ -129,6 +132,10 @@ contract WrapNonEVMERC20 is
         return successSigner >= minApprovers;
     }
 
+    function setNativeFee(uint256 fee) external onlyOwner {
+        nativeFee = fee;
+    }
+
     function claimToken(
         address _to,
         uint256 _amount,
@@ -191,6 +198,10 @@ contract WrapNonEVMERC20 is
         bytes memory _toAddr,
         uint256 _amount
     ) public payable nonReentrant {
+        require(msg.value >= nativeFee, "invalid fee");
+        if (msg.value > 0) {
+            payable(msg.sender).sendValue(msg.value);
+        }
         _burn(msg.sender, _amount);
 
         emit RequestBridge(
