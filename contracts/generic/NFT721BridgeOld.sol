@@ -12,12 +12,12 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
-contract NFT721Bridge is
+contract NFT721BridgeOld is
     CheckNft721,
     DTOUpgradeableBase,
     ReentrancyGuardUpgradeable,
-    //    BlackholePreventionUpgrade,
-    //    Governable,
+//    BlackholePreventionUpgrade,
+//    Governable,
     ChainIdHolding
 {
     using SafeMathUpgradeable for uint256;
@@ -42,12 +42,10 @@ contract NFT721Bridge is
     uint256 public index;
     uint256 public minApprovers;
     address payable public feeReceiver;
-    //    uint256 public defaultFeePercentage;
-    //    uint256 public constant DEFAULT_FEE_DIVISOR = 10_000;
-    //    uint256 public constant DEFAULT_FEE_PERCENTAGE = 10; //0.1%
+//    uint256 public defaultFeePercentage;
+//    uint256 public constant DEFAULT_FEE_DIVISOR = 10_000;
+//    uint256 public constant DEFAULT_FEE_PERCENTAGE = 10; //0.1%
     mapping(bytes => bool) public originChainTokens; //mapping of origin tokens on this chain
-    mapping(address => bool) public whitelistedTokens;
-    uint256 public maxNFTPerBridgeTx;
 
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestMultiNFT721Bridge(
@@ -69,7 +67,10 @@ contract NFT721Bridge is
         uint256 _index,
         bytes32 _claimId
     );
-    event Whitelist(bytes _tokens, bool _whitelisted);
+    // event ValidatorSign(
+    //     address _validator,
+    //     bytes32 _claimId
+    // );
 
     function initialize(uint256[] memory _chainIds) public initializer {
         __DTOUpgradeableBase_initialize();
@@ -81,35 +82,19 @@ contract NFT721Bridge is
         for (uint256 i = 0; i < _chainIds.length; i++) {
             supportedChainIds[_chainIds[i]] = true;
         }
-        maxNFTPerBridgeTx = 1;
     }
 
-    function setWhitelistedTokens(address[] memory tokens, bool whitelisted) external onlyOwner {
-        uint256 l = tokens.length;
-        for(uint256 i = 0; i < l; i++) {
-            whitelistedTokens[tokens[i]] = whitelisted;
-        }
-        emit Whitelist(abi.encode(tokens), whitelisted);
-    }
-    function setMaxNFTPerBridgeTx(uint256 max) external onlyOwner {
-        maxNFTPerBridgeTx = max;
-    }
-
-    function setFeeAndMinApprovers(
-        address payable _feeReceiver,
-        uint256 _fee,
-        uint256 _minApprovers
-    ) public onlyOwner {
+    function setFeeAndMinApprovers(address payable _feeReceiver, uint256 _fee, uint256 _minApprovers)
+    public
+        onlyOwner
+    {
         feeReceiver = _feeReceiver;
         nativeFee = _fee;
         require(_minApprovers >= 2, "required _minApprovers >= 2");
         minApprovers = _minApprovers;
     }
 
-    function setApprovers(
-        address[] memory _addrs,
-        bool _value
-    ) public onlyOwner {
+    function setApprovers(address[] memory _addrs, bool _value) public onlyOwner {
         for (uint256 i = 0; i < _addrs.length; i++) {
             if (_value) {
                 if (!approverMap[_addrs[i]]) {
@@ -120,20 +105,31 @@ contract NFT721Bridge is
                 for (uint256 j = 0; j < bridgeApprovers.length; j++) {
                     if (bridgeApprovers[j] == _addrs[i]) {
                         bridgeApprovers[j] = bridgeApprovers[
-                            bridgeApprovers.length - 1
+                        bridgeApprovers.length - 1
                         ];
                         bridgeApprovers.pop();
                         approverMap[_addrs[i]] = false;
-                        break;
+                        continue;
                     }
                 }
             }
         }
     }
 
-    function bytesToAddress(
-        bytes memory bys
-    ) public pure returns (address addr) {
+    // function setSupportedChainIds(uint256[] memory _chainIds, bool _val)
+    //     public
+    //     onlyOwner
+    // {
+    //     for (uint256 i = 0; i < _chainIds.length; i++) {
+    //         supportedChainIds[_chainIds[i]] = _val;
+    //     }
+    // }
+
+    function bytesToAddress(bytes memory bys)
+        public
+        pure
+        returns (address addr)
+    {
         assembly {
             addr := mload(add(bys, 32))
         }
@@ -145,7 +141,6 @@ contract NFT721Bridge is
         uint256[] memory _tokenIds,
         uint256 _toChainId
     ) public payable nonReentrant {
-        require(maxNFTPerBridgeTx >= _tokenIds.length, "exceed max nft per bridge tx");
         require(
             chainId != _toChainId,
             "source and target chain ids must be different"
@@ -157,22 +152,14 @@ contract NFT721Bridge is
         }
 
         // require(supportedChainIds[_toChainId], "unsupported chainId");
-        bool isBridgedToken = bridgeNFT721Tokens[_tokenAddress];
         for (uint256 i = 0; i < _tokenIds.length; i++) {
-            require(_tokenIds[i] <= type(uint64).max, "token id too large");
-            if (!isBridgedToken) {
-                IERC721(_tokenAddress).transferFrom(
-                    msg.sender,
-                    address(this),
-                    _tokenIds[i]
-                );
-            } else {
-                // burn
-                IERC721(_tokenAddress).burn(_tokenIds[i]);
-            }
+            IERC721(_tokenAddress).transferFrom(
+                msg.sender,
+                address(this),
+                _tokenIds[i]
+            );
         }
         if (!bridgeNFT721Tokens[_tokenAddress]) {
-            require(whitelistedTokens[_tokenAddress], "not whitelisted");
             emit RequestMultiNFT721Bridge(
                 abi.encode(_tokenAddress),
                 _toAddr,
@@ -231,13 +218,11 @@ contract NFT721Bridge is
                     r[i],
                     s[i]
                 );
-                require(
-                    lastRecoveredSigner < signer,
-                    "signatures must be in increasing orders of signers"
-                );
+                require(lastRecoveredSigner < signer, "signatures must be in increasing orders of signers");
                 lastRecoveredSigner = signer;
                 if (approverMap[signer]) {
                     successSigner++;
+                    // emit ValidatorSign(signer, signedData);
                 }
             }
         }
@@ -356,22 +341,37 @@ contract NFT721Bridge is
                 );
             }
         } else {
+            DTOBridgeNFT721 dt = DTOBridgeNFT721(
+                tokenMap[_chainIdsIndex[0]][_originToken]
+            );
+            address _nftOwner = address(0);
+
             for (uint256 i = 0; i < _tokenIds.length; i++) {
-                IDTONFT721Bridge(tokenMap[_chainIdsIndex[0]][_originToken])
-                    .claimBridgeToken(
-                        _originToken,
-                        _toAddr,
-                        _tokenIds[i],
-                        _originTokenIds[i],
-                        _uris[i]
-                    );
+                try dt.ownerOf(_tokenIds[i]) returns (address _a) {
+                    _nftOwner = _a;
+                } catch (bytes memory) {}
+                if (_nftOwner != address(0)) {
+                    dt.transferFrom(address(this), _toAddr, _tokenIds[i]);
+                    dt.updateTokenURIIfDifferent(_tokenIds[i], _uris[i]);
+                } else {
+                    IDTONFT721Bridge(tokenMap[_chainIdsIndex[0]][_originToken])
+                        .claimBridgeToken(
+                            _originToken,
+                            _toAddr,
+                            _tokenIds[i],
+                            _originTokenIds[i],
+                            _uris[i]
+                        );
+                }
             }
         }
     }
 
-    function getSupportedChainsForToken(
-        address _token
-    ) external view returns (uint256[] memory) {
+    function getSupportedChainsForToken(address _token)
+        external
+        view
+        returns (uint256[] memory)
+    {
         return tokenMapList[_token];
     }
 
