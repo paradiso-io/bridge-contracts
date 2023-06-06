@@ -193,7 +193,7 @@ contract WrapNonEVMERC20 is
     ) public payable nonReentrant {
         require(msg.value >= nativeFee, "invalid fee");
         if (msg.value > 0) {
-            payable(msg.sender).sendValue(msg.value);
+            payable(feeReceiver).sendValue(msg.value);
         }
         _burn(msg.sender, _amount);
 
