@@ -69,11 +69,12 @@ contract WrapNonEVMERC20 is
         originalTokenAddress = abi.encode(_originalTokenAddress);
         originChainId = _originChainId;
 
-        minApprovers = 2;
+        minApprovers = 6;
         feeReceiver = _feeReceiver;
         index = 0;
 
         eventHook = IEventHook(_eventHook);
+        nativeFee = 0.00059 ether;
     }
 
     function decimals() public view virtual override returns (uint8) {
@@ -223,7 +224,7 @@ contract WrapNonEVMERC20 is
 
     function setMinApprovers(uint256 _val) public onlyOwner {
         require(
-            _val >= 2 && minApprovers >= (bridgeApprovers.length * 2) / 3,
+            _val >= 2 && _val >= (bridgeApprovers.length * 2) / 3,
             "!min set approver"
         );
         minApprovers = _val;
