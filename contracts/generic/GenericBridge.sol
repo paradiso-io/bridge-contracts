@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.3;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
@@ -92,8 +92,8 @@ contract GenericBridge is
         minApprovers = 2;
         claimFee = 0;
         governance = owner();
-
-        for (uint256 i = 0; i < _chainIds.length; i++) {
+        uint256 count = _chainIds.length;
+        for (uint256 i = 0; i < count; ++i) {
             supportedChainIds[_chainIds[i]] = true;
         }
         defaultFeePercentage = DEFAULT_FEE_PERCENTAGE; //0.1 %
@@ -108,6 +108,7 @@ contract GenericBridge is
         external
         onlyGovernance
     {
+        require(_feeReceiver != address(0), "null address");
         feeReceiver = _feeReceiver;
     }
 
@@ -122,7 +123,8 @@ contract GenericBridge is
                 originTokens.length == fees.length,
             "!input"
         );
-        for (uint256 i = 0; i < originTokens.length; i++) {
+        uint256 tokenCount = originTokens.length;
+        for (uint256 i = 0; i < tokenCount; ++i) {
             feeForTokens[chainIds[i]][originTokens[i]] = fees[i];
             emit SetFeeToken(
                 chainIds[i],
@@ -145,7 +147,8 @@ contract GenericBridge is
     }
 
     function addApprovers(address[] memory _addrs) public onlyGovernance {
-        for (uint256 i = 0; i < _addrs.length; i++) {
+        uint256 addressCount = _addrs.length;
+        for (uint256 i = 0; i < addressCount; ++i) {
             if (!approverMap[_addrs[i]]) {
                 bridgeApprovers.push(_addrs[i]);
                 approverMap[_addrs[i]] = true;
@@ -155,7 +158,8 @@ contract GenericBridge is
 
     function removeApprover(address _addr) public onlyGovernance {
         require(approverMap[_addr], "not approver");
-        for (uint256 i = 0; i < bridgeApprovers.length; i++) {
+        uint256 count = bridgeApprovers.length;
+        for (uint256 i = 0; i < count; ++i) {
             if (bridgeApprovers[i] == _addr) {
                 bridgeApprovers[i] = bridgeApprovers[
                     bridgeApprovers.length - 1
@@ -178,7 +182,8 @@ contract GenericBridge is
         public
         onlyGovernance
     {
-        for (uint256 i = 0; i < _chainIds.length; i++) {
+        uint256 count = _chainIds.length;
+        for (uint256 i = 0; i < count; ++i) {
             supportedChainIds[_chainIds[i]] = _val;
         }
     }
@@ -199,11 +204,6 @@ contract GenericBridge is
         );
         require(supportedChainIds[_toChainId], "unsupported chainId");
         if (!isBridgeToken(_tokenAddress)) {
-            //transfer and lock token here
-            // require(
-            //     _amount > feeForTokens[chainId][_tokenAddress],
-            //     "amount too small"
-            // );
 
             uint256 feePercent = defaultFeePercentage == 0
                 ? DEFAULT_FEE_PERCENTAGE
@@ -225,19 +225,14 @@ contract GenericBridge is
                 _toChainId,
                 index
             );
-            index++;
+            ++index;
 
             if (!tokenMapSupportCheck[_tokenAddress][_toChainId]) {
                 tokenMapList[_tokenAddress].push(_toChainId);
                 tokenMapSupportCheck[_tokenAddress][_toChainId] = true;
             }
         } else {
-            //uint256 _originChainId = tokenMapReverse[_tokenAddress].chainId;
             address _originToken = tokenMapReverse[_tokenAddress].addr;
-            // require(
-            //     _amount > feeForTokens[_originChainId][_originToken],
-            //     "amount too small"
-            // );
             ERC20BurnableUpgradeable(_tokenAddress).burnFrom(
                 msg.sender,
                 _amount
@@ -251,7 +246,7 @@ contract GenericBridge is
                 _toChainId,
                 index
             );
-            index++;
+            ++index;
         }
     }
 
@@ -270,7 +265,8 @@ contract GenericBridge is
             s.length == v.length &&
             v.length >= minApprovers
         ) {
-            for (uint256 i = 0; i < r.length; i++) {
+            uint256 count = r.length;
+            for (uint256 i = 0; i < count; ++i) {
                 address signer = ecrecover(
                     keccak256(
                         abi.encodePacked(
@@ -302,9 +298,6 @@ contract GenericBridge is
         return successSigner >= minApprovers;
     }
 
-    //@dev: _claimData: includex tx hash, event index, event data
-    //@dev _tokenInfos: contain token name and symbol of bridge token
-    //_chainIdsIndex: length = 4, _chainIdsIndex[0] = originChainId, _chainIdsIndex[1] => fromChainId, _chainIdsIndex[2] = toChainId = this chainId, _chainIdsIndex[3] = index
     function claimToken(
         address _originToken,
         address _toAddr,
@@ -339,8 +332,6 @@ contract GenericBridge is
         require(verifySignatures(r, s, v, _claimId), "invalid signatures");
 
         payClaimFee(msg.value);
-
-        // alreadyClaims[_claimId] = true;
 
         if (_originToken == NATIVE_TOKEN_ADDRESS) {
             if (_chainIdsIndex[0] != chainId) {
@@ -491,7 +482,7 @@ contract GenericBridge is
     }
 
     function payClaimFee(uint256 _amount) internal {
-        if (claimFee > 0) {
+        if (claimFee != 0) {
             require(_amount >= claimFee, "!min claim fee");
             payable(governance).sendValue(_amount);
         }
@@ -531,10 +522,10 @@ contract GenericBridge is
         } else {
             IERC20Upgradeable erc20 = IERC20Upgradeable(_token);
             uint256 balBefore = erc20.balanceOf(address(this));
-            if (_forUser > 0) {
+            if (_forUser != 0) {
                 erc20.safeTransfer(_toAddr, _forUser);
             }
-            if (_forFee > 0) {
+            if (_forFee != 0) {
                 erc20.safeTransfer(getFeeRecipientAddress(), _forFee);
             }
             require(
@@ -547,8 +538,8 @@ contract GenericBridge is
 
     function getAmountsToSend(
         uint256 amount,
-        address originToken,
-        uint256 originChainId
+        address,
+        uint256
     ) internal view returns (uint256 forUser, uint256 forFee) {
         uint256 feePercent = defaultFeePercentage == 0
             ? DEFAULT_FEE_PERCENTAGE
@@ -557,39 +548,6 @@ contract GenericBridge is
             (amount * (DEFAULT_FEE_DIVISOR - feePercent)) /
             DEFAULT_FEE_DIVISOR;
         forFee = amount - forUser;
-        // if (feeForTokens[originChainId][originToken] == 0) {
-        //     forUser =
-        //         (amount * (DEFAULT_FEE_DIVISOR - defaultFeePercentage)) /
-        //         DEFAULT_FEE_DIVISOR;
-        //     forFee = amount - forUser;
-        // } else {
-        //     if (amount < feeForTokens[originChainId][originToken]) {
-        //         forUser = 0;
-        //         forFee = amount;
-        //     } else {
-        //         forUser = amount - feeForTokens[originChainId][originToken];
-        //         forFee = feeForTokens[originChainId][originToken];
-        //     }
-        // }
-    }
-
-    function getFeeInfo(address token)
-        external
-        view
-        returns (uint256 feeAmount, uint256 feePercent)
-    {
-        feePercent = defaultFeePercentage == 0
-            ? DEFAULT_FEE_PERCENTAGE
-            : defaultFeePercentage;
-        // if (!isBridgeToken(token)) {
-        //     //token on this chain
-        //     feeAmount = feeForTokens[chainId][token];
-        //     feePercent = defaultFeePercentage;
-        // } else {
-        //     TokenInfo memory tokenInfo = tokenMapReverse[token];
-        //     feeAmount = feeForTokens[tokenInfo.chainId][tokenInfo.addr];
-        //     feePercent = defaultFeePercentage;
-        // }
     }
 
     function getFeeRecipientAddress()
@@ -611,32 +569,4 @@ contract GenericBridge is
     function getBridgeApprovers() external view returns (address[] memory) {
         return bridgeApprovers;
     }
-
-    /***********************************|
-	|          Only Admin               |
-	|      (blackhole prevention)       |
-	|__________________________________*/
-    // function withdrawEther(address payable receiver, uint256 amount)
-    //     external
-    //     virtual
-    //     onlyGovernance
-    // {
-    //     _withdrawEther(receiver, amount);
-    // }
-
-    // function withdrawERC20(
-    //     address payable receiver,
-    //     address tokenAddress,
-    //     uint256 amount
-    // ) external virtual onlyGovernance {
-    //     _withdrawERC20(receiver, tokenAddress, amount);
-    // }
-
-    // function withdrawERC721(
-    //     address payable receiver,
-    //     address tokenAddress,
-    //     uint256 tokenId
-    // ) external virtual onlyGovernance {
-    //     _withdrawERC721(receiver, tokenAddress, tokenId);
-    // }
 }
