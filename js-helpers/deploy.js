@@ -39,6 +39,8 @@ const chainIdByName = (chainName) => {
     case 'tomotestnet': return 89;
     case 'huobitestnet': return 256;
     case 'okc': return 66;
+    case 'shardeumsphinx': return 8082;
+    case 'shardeumliberty': return 8080;
     case 'okextestnet': return 65;
     case 'gatetestnet': return 85;
     case 'cubetestnet': return 1819;
@@ -66,22 +68,29 @@ const chainNameById = (chainId) => {
     case 89: return 'TomoTestnet';
     case 256: return 'HuobiTestnet';
     case 66: return "OKChain";
+    case 8082: return "ShardeumSphinx";
+    case 80820: return "ShardeumLiberty10";
+    case 11155111: return "Sepolia";
     case 65: return "okextestnet";
     case 85: return "gatetestnet";
     case 1819: return "cubetestnet";
-    case 11155111: return "sepolia";
     default: return 'Unknown';
   }
 };
 
 
 const supportedChainIds = (mainnet) => {
-  if (!mainnet) return [3, 4, 5, 42, 31337, 56, 97, 1287, 4002, 80001, 43113, 89, 11155111, 96945816564243]
+  if (!mainnet) return [3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89, 96945816564243, 5, 11155111]
   //support ethereum and casper initially
   return [1, 131614895977472, 56, 1284, 43114, 66]
 }
-const approvers = ["0x8e03b2f204a64E3AC0A627C16A2eB64962eD1Cb0", "0xd5D61992B9cEEEB0b2fBeaa3F796eD515A42f029", "0xb86DBF025E873F5AdC87C20f95627352C7762070", "0x45Ff52d6529A9EE855C1B2c4C0A90b1c13Bb32A9", "0x581e803a18d7F2B280E954050E1722eE8DF81df8", "0x0b733C3Af0D9376cfca9D6c1Dc5f26e2D1778e0a", "0xFCDd3d5447030aD57d613978bdAf40BC8B13CC6F", "0x4DfeCcc8eA948986776429aDeC30540A45705015"]
-const approversTestnet = ["0x3cdc0b9a2383770c24ce335c07ddd5f09ee3e199", "0x6d378c3dc2eb8d433c3ddd6a62a6d41d44c18426", "0xc91b38d5bf1d2047529446cf575855e0744e9334", "0x99f3df513d1a13316cea132b1431223d9612caed", "0x6a61a3ced260433ddd6f8e181644d55753a5051d", "0x58d337a11f1f439839bd2b97e0ee8e6d753be5d7", "0x9c76f50a0ffd21525b1e6406e306b628f492c4be", "0x6a96eacff97c98c1d449d4e3634805241d85807f", "0x0ccacdd7c2f6bebe61e80e77b24e5de4d3b4c68b", "0xbe3ab443e16fdf70dfb35c73b45962cb56f9d9a6"]
+const approvers = (mainnet) => {
+  if (mainnet) {
+    return ["0x8e03b2f204a64E3AC0A627C16A2eB64962eD1Cb0", "0xd5D61992B9cEEEB0b2fBeaa3F796eD515A42f029", "0xb86DBF025E873F5AdC87C20f95627352C7762070", "0x45Ff52d6529A9EE855C1B2c4C0A90b1c13Bb32A9", "0x581e803a18d7F2B280E954050E1722eE8DF81df8", "0x0b733C3Af0D9376cfca9D6c1Dc5f26e2D1778e0a", "0xFCDd3d5447030aD57d613978bdAf40BC8B13CC6F", "0x4DfeCcc8eA948986776429aDeC30540A45705015"]
+  } else {
+    return ["0x3cdc0b9a2383770c24ce335c07ddd5f09ee3e199", "0xdcaf39430997de9a96a088b31c902b4d10a55177", "0xc91b38d5bf1d2047529446cf575855e0744e9334"]
+  }
+} 
 
 const blockTimeFromDate = (dateStr) => {
   return Date.parse(dateStr) / 1000;

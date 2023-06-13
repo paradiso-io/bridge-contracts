@@ -15,6 +15,10 @@ contract ERC20Mock is ERC20 {
         _mint(initialAccount, initialBalance);
     }
 
+    function decimals() public view virtual override returns (uint8) {
+        return 8;
+    }
+
     function mint(address account) public {
         _mint(account, 1000e18);
     }

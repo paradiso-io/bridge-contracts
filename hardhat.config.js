@@ -162,6 +162,24 @@ module.exports = {
       gasPrice: 1e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY_MAINNET],
+    },
+    shardeumsphinx: {
+      url: 'https://sphinx.shardeum.org/',
+      gasPrice: 1e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    shardeumliberty: {
+      url: 'https://liberty10.shardeum.org/',
+      gasPrice: 8e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    goerli: {
+      url: 'https://goerli.infura.io/v3/3a6c72cdf9e846968d21c0f3605013fd',
+      gasPrice: 150e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY],
     }
   },
   solidity: {
