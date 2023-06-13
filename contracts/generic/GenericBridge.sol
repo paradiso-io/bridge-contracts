@@ -104,10 +104,9 @@ contract GenericBridge is
         minApprovers = _val;
     }
 
-    function setFeeReceiver(address payable _feeReceiver)
-        external
-        onlyGovernance
-    {
+    function setFeeReceiver(
+        address payable _feeReceiver
+    ) external onlyGovernance {
         require(_feeReceiver != address(0), "null address");
         feeReceiver = _feeReceiver;
     }
@@ -171,17 +170,17 @@ contract GenericBridge is
         }
     }
 
-    function setSupportedChainId(uint256 _chainId, bool _val)
-        public
-        onlyGovernance
-    {
+    function setSupportedChainId(
+        uint256 _chainId,
+        bool _val
+    ) public onlyGovernance {
         supportedChainIds[_chainId] = _val;
     }
 
-    function setSupportedChainIds(uint256[] memory _chainIds, bool _val)
-        public
-        onlyGovernance
-    {
+    function setSupportedChainIds(
+        uint256[] memory _chainIds,
+        bool _val
+    ) public onlyGovernance {
         uint256 count = _chainIds.length;
         for (uint256 i = 0; i < count; ++i) {
             supportedChainIds[_chainIds[i]] = _val;
@@ -204,14 +203,12 @@ contract GenericBridge is
         );
         require(supportedChainIds[_toChainId], "unsupported chainId");
         if (!isBridgeToken(_tokenAddress)) {
-
-            uint256 feePercent = defaultFeePercentage == 0
-                ? DEFAULT_FEE_PERCENTAGE
-                : defaultFeePercentage;
-            uint256 forUser =
-                (_amount * (DEFAULT_FEE_DIVISOR - feePercent)) /
+            uint256 feePercent = getFeePercent();
+            uint256 forUser = (_amount * (DEFAULT_FEE_DIVISOR - feePercent)) /
                 DEFAULT_FEE_DIVISOR;
             uint256 forFee = _amount - forUser;
+            // check minimum fee
+            (forUser, forFee) = validateMinFee(_tokenAddress, _amount, forFee, true);
 
             safeTransferIn(_tokenAddress, msg.sender, _amount);
             safeTransferOut(_tokenAddress, msg.sender, 0, forFee);
@@ -478,6 +475,7 @@ contract GenericBridge is
             _originToken,
             _chainIdsIndex[0]
         );
+        (forUser, forFee) = validateMinFee(_originToken, _amount, forFee, false);
         safeTransferOut(_originToken, _toAddr, forUser, forFee);
     }
 
@@ -558,15 +556,48 @@ contract GenericBridge is
         ret = feeReceiver == address(0) ? payable(owner()) : feeReceiver;
     }
 
-    function getSupportedChainsForToken(address _token)
-        external
-        view
-        returns (uint256[] memory)
-    {
+    function getSupportedChainsForToken(
+        address _token
+    ) external view returns (uint256[] memory) {
         return tokenMapList[_token];
     }
 
     function getBridgeApprovers() external view returns (address[] memory) {
         return bridgeApprovers;
+    }
+
+    function getFeePercent() public view returns (uint256) {
+        return
+            defaultFeePercentage == 0
+                ? DEFAULT_FEE_PERCENTAGE
+                : defaultFeePercentage;
+    }
+
+    function validateMinFee(
+        address originTokenAddress,
+        uint256 amount,
+        uint256 _forFee,
+        bool isRequesting
+    ) public view returns (uint256 forUser, uint256 forFee) {
+        forFee = _forFee;
+        // check minimum fee
+        if (feeForTokens[chainId][originTokenAddress] > forFee) {
+            forFee = feeForTokens[chainId][originTokenAddress];
+            require(!isRequesting || amount > forFee, "amount too low");
+        }
+        forFee = amount > forFee ? forFee : amount;
+        forUser = amount - forFee;
+    }
+
+    function getBridgeAmounts(
+        address originTokenAddress,
+        uint256 _amount
+    ) external view returns (uint256 forUser, uint256 forFee) {
+        uint256 feePercent = getFeePercent();
+        forUser = (_amount * (DEFAULT_FEE_DIVISOR - feePercent)) /
+            DEFAULT_FEE_DIVISOR;
+        forFee = _amount - forUser;
+        // check minimum fee
+        (forUser, forFee) = validateMinFee(originTokenAddress, _amount, forFee, true);
     }
 }

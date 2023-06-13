@@ -604,6 +604,35 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "originTokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "getBridgeAmounts",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "forUser",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "forFee",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getBridgeApprovers",
     "outputs": [
@@ -611,6 +640,19 @@
         "internalType": "address[]",
         "name": "",
         "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getFeePercent",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -1048,6 +1090,45 @@
     "name": "upgradeToAndCall",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "originTokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_forFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isRequesting",
+        "type": "bool"
+      }
+    ],
+    "name": "validateMinFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "forUser",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "forFee",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]
