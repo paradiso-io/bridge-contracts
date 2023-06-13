@@ -6,7 +6,8 @@ const {
   getTxGasCost,
   log,
   supportedChainIds,
-  approvers
+  approversTestnet,
+  getCasperChainId
 } = require("../js-helpers/deploy");
 
 const _ = require('lodash');
@@ -40,7 +41,7 @@ module.exports = async (hre) => {
   // if (chainId == 1 || chainId == 56 || chainId == 43114 || chainId) mainnet = true
   console.log('supportedChainIds(chainId)', supportedChainIds(false))
   const NFT721Bridge = await ethers.getContractFactory('NFT721Bridge');
-  const nft721Bridge = await upgrades.deployProxy(NFT721Bridge, [supportedChainIds(chainId)], { kind: 'uups', gasLimit: 8000000 })
+  const nft721Bridge = await upgrades.deployProxy(NFT721Bridge, [supportedChainIds(false)], { kind: 'uups', gasLimit: 8000000 })
 
   log('  - NFT721Bridge:         ', nft721Bridge.address);
   deployData['NFT721Bridge'] = {
@@ -49,8 +50,8 @@ module.exports = async (hre) => {
     deployTransaction: nft721Bridge.deployTransaction,
   }
   await sleep(20000)
-  await nft721Bridge.addApprovers(approvers)
-  await nft721Bridge.setFeeReceiver("0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af")
+  await nft721Bridge.setApprovers(approversTestnet, true)
+  await nft721Bridge.setFeeAndMinApprovers("0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af", 0, 2)
 
   saveDeploymentData(chainId, deployData);
   log('\n  Contract Deployment Data saved to "deployments" directory.');

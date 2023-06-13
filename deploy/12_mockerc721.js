@@ -34,9 +34,9 @@ module.exports = async (hre) => {
 
     log('  Deploying Mock ERC721...');
     const ERC721Mock = await ethers.getContractFactory('ERC721Mock');
-    const ERC721MockInstance = await ERC721Mock.deploy("NFT" + chainNameById(chainId), "NFT" + chainId)
+    const ERC721MockInstance = await ERC721Mock.deploy()
     const genericBridge = await ERC721MockInstance.deployed()
-    log('  - ERC721Mock:         ', ERC721Mock.address);
+    log('  - ERC721Mock:         ', genericBridge.address);
     deployData['ERC721Mock'] = {
       abi: getContractAbi('ERC721Mock'),
       address: genericBridge.address,

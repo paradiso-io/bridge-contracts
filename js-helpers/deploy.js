@@ -24,6 +24,7 @@ const chainIdByName = (chainName) => {
     case 'mainnet': return 1;
     case 'ropsten': return 3;
     case 'rinkeby': return 4;
+    case 'goerli': return 5;
     case 'kovan': return 42;
     case 'hardhat': return 31337;
     case 'coverage': return 31337;
@@ -40,7 +41,9 @@ const chainIdByName = (chainName) => {
     case 'okc': return 66;
     case 'shardeumsphinx': return 8082;
     case 'shardeumliberty': return 8080;
-    case 'goerli': return 5;
+    case 'okextestnet': return 65;
+    case 'gatetestnet': return 85;
+    case 'cubetestnet': return 1819;
     case 'sepolia': return 11155111;
     default: return 0;
   }
@@ -51,6 +54,7 @@ const chainNameById = (chainId) => {
     case 1: return 'Mainnet';
     case 3: return 'Ropsten';
     case 4: return 'Rinkeby';
+    case 5: return 'Goerli';
     case 42: return 'Kovan';
     case 31337: return 'Hardhat';
     case 56: return 'BSC';
@@ -67,7 +71,9 @@ const chainNameById = (chainId) => {
     case 8082: return "ShardeumSphinx";
     case 80820: return "ShardeumLiberty10";
     case 11155111: return "Sepolia";
-    case 5: return "Goerli";
+    case 65: return "okextestnet";
+    case 85: return "gatetestnet";
+    case 1819: return "cubetestnet";
     default: return 'Unknown';
   }
 };
@@ -161,5 +167,6 @@ module.exports = {
   toBN,
   toStr,
   supportedChainIds,
-  approvers
+  approvers,
+  approversTestnet
 };

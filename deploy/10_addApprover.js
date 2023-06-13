@@ -42,8 +42,9 @@ module.exports = async (hre) => {
   log('  - GenericBridge:         ', genericBridge.address);
 
   await sleep(20000)
-  await genericBridge.setSupportedChainIds([96945816564243], true)
-  await genericBridge.addApprovers(approvers)
+  // await genericBridge.setSupportedChainIds([96945816564243], true)
+  // await genericBridge.addApprovers(approvers)
+  await genericBridge.setMinApprovers(6)
 
   log('\n  Contract Deployment Data saved to "deployments" directory.');
 

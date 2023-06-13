@@ -16,6 +16,7 @@ require("hardhat-abi-exporter");
 require("solidity-coverage");
 require("hardhat-deploy-ethers");
 require("hardhat-deploy");
+require('hardhat-contract-sizer');
 require("solidity-coverage");
 
 // This must occur after hardhat-deploy!
@@ -50,15 +51,35 @@ module.exports = {
       blockGasLimit: 12400000,
       accounts: [process.env.PRIVATE_KEY],
     },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_APIKEY}`,
+      gasPrice: 10e9,
+      blockGasLimit: 12400000,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_APIKEY}`,
+      gasPrice: 10e9,
+      blockGasLimit: 12400000,
+      accounts: [process.env.PRIVATE_KEY],
+    },
     bsc: {
-      url: `https://bsc.getblock.io/mainnet/?api_key=46a2dc7a-1cfe-4656-a4e4-5a57f1f66e22`,//`https://bsc-dataseed.binance.org/`,
+      url: `https://bsc-dataseed.binance.org/`,
       gasPrice: 6e9,
       blockGasLimit: 22400000,
       accounts: [process.env.PRIVATE_KEY_MAINNET],
     },
     bsctestnet: {
       url: `https://data-seed-prebsc-1-s1.binance.org:8545/`,
-      gasPrice: 20e9,
+      gasPrice: 10e9,
+      gasLimit: 10000000,
+      blockGasLimit: 22400000,
+      accounts: [process.env.PRIVATE_KEY_NFTBRIDGE_TESTNET],
+    },
+    sepolia: {
+      url: `https://rpc.sepolia.dev`,
+      gasPrice: 10e9,
+      gasLimit: 10000000,
       blockGasLimit: 22400000,
       accounts: [process.env.PRIVATE_KEY],
     },
@@ -76,23 +97,23 @@ module.exports = {
     },
     fantomtestnet: {
       url: `https://xapi.testnet.fantom.network/lachesis`,
-      gasPrice: 250e9,
+      // gasPrice: 250e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY],
     },
     mumbaitestnet: {
       //matic
-      url: `https://speedy-nodes-nyc.moralis.io/6f1c50d092cad31805b2371f/polygon/mumbai`,
-      gasPrice: 20e9,
+      url: `https://rpc-mumbai.maticvigil.com/`,
+      // gasPrice: 20e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY],
     },
     fujitestnet: {
       //avalanche
       url: `https://api.avax-test.network/ext/bc/C/rpc`,
-      gasPrice: 25e9,
+      // gasPrice: 25e9,
       blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY_NFTBRIDGE_TESTNET],
     },
     tomotestnet: {
       url: `https://rpc.testnet.tomochain.com`,
@@ -102,6 +123,24 @@ module.exports = {
     },
     huobitestnet: {
       url: 'https://http-testnet.hecochain.com',
+      gasPrice: 1e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    okextestnet: {
+      url: 'https://exchaintestrpc.okex.org',
+      gasPrice: 1e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    gatetestnet: {
+      url: 'https://meteora-evm.gatenode.cc',
+      gasPrice: 5e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    cubetestnet: {
+      url: 'https://http-testnet.cube.network',
       gasPrice: 1e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY],
@@ -188,9 +227,18 @@ module.exports = {
     flat: true,
   },
   etherscan: {
+    apiKey: process.env.SNOWTRACE_APIKEY
     // Your API key for Etherscan
     // Obtain one at https://bscscan.com/
-    apiKey: process.env.SNOWTRACE_APIKEY,
+    // apiKey: {
+    //   bscTestnet: process.env.BSC_APIKEY,
+    //   bsc: process.env.BSC_APIKEY,
+    //   ftmTestnet: process.env.FTM_APIKEY,
+    //   rinkeby: process.env.ETHERSCAN_APIKEY,
+    //   kovan: process.env.ETHERSCAN_APIKEY,
+    //   avalancheFujiTestnet: process.env.AVAX_APIKEY,
+    //   moonbaseAlpha: process.env.MOONBEAM_APIKEY,
+    // }
   },
   namedAccounts: {
     deployer: {
