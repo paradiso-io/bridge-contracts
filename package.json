@@ -23,14 +23,15 @@
     "solidity-coverage": "^0.8.2"
   },
   "dependencies": {
-    "@nomiclabs/hardhat-etherscan": "^2.1.2",
+    "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/contracts": "4.3.0",
-    "@openzeppelin/contracts-upgradeable": "4.3.2",
+    "@openzeppelin/contracts-upgradeable": "4.3.0",
     "@openzeppelin/hardhat-upgrades": "^1.10.0",
     "async-mutex": "^0.3.2",
     "dotenv": "^10.0.0",
     "hardhat-abi-exporter": "2.2.1",
+    "hardhat-contract-sizer": "^2.6.1",
     "hardhat-deploy": "^0.8.11",
     "hardhat-deploy-ethers": "*",
     "hardhat-gas-reporter": "^1.0.4",

@@ -4,6 +4,7 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol"; // for WETH
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
 
 /**
  * @notice Prevents ETH or Tokens from getting stuck in a contract by allowing
@@ -17,6 +18,7 @@ contract BlackholePreventionUpgrade {
   event WithdrawStuckEther(address indexed receiver, uint256 amount);
   event WithdrawStuckERC20(address indexed receiver, address indexed tokenAddress, uint256 amount);
   event WithdrawStuckERC721(address indexed receiver, address indexed tokenAddress, uint256 indexed tokenId);
+  event WithdrawStuckERC1155(address indexed receiver, address indexed tokenAddress, uint256 indexed id, uint256 amount);
 
   function _withdrawEther(address payable receiver, uint256 amount) internal virtual {
     require(receiver != address(0x0), "BHP:E-403");
@@ -40,5 +42,11 @@ contract BlackholePreventionUpgrade {
       IERC721Upgradeable(tokenAddress).transferFrom(address(this), receiver, tokenId);
       emit WithdrawStuckERC721(receiver, tokenAddress, tokenId);
     }
+  }
+
+  function _withdrawERC1155(address payable receiver, address tokenAddress, uint256 id, uint256 amount) internal virtual {
+    require(receiver != address(0x0), "BHP:E-403");
+    IERC1155Upgradeable(tokenAddress).safeTransferFrom(address(this), receiver, id, amount, "");
+    emit WithdrawStuckERC1155(receiver, tokenAddress, id, amount);
   }
 }
