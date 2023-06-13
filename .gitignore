@@ -15,7 +15,6 @@ node_modules/
 resources.txt
 .env
 .versionFilesList.json
-build/
 bin/
 notes.txt
 cache
