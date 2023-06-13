@@ -22,9 +22,9 @@ module.exports = async (hre) => {
   if (chainId === 31337) return
 
   const alchemyTimeout = chainId === 31337 ? 0 : (chainId === 1 ? 5 : 3);
-  console.log("chainid", chainId)
+
   log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-  log('DTO Multichain Bridge Protocol - Contract Deployment');
+  log('DTO Multichain ValidatorSigner Protocol - Contract Deployment');
   log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
 
   log('  Using Network: ', chainNameById(chainId));
@@ -35,18 +35,23 @@ module.exports = async (hre) => {
   log('  - Trusted Forwarder: ', trustedForwarder);
   log(' ');
 
-  log('  Deploying GenericBridge...');
-  // const GenericBridgeAddress = require(`../deployments/${chainId}/GenericBridge.json`).address
-  // const GenericBridge = await ethers.getContractFactory('GenericBridge');
-  // const genericBridge = await GenericBridge.attach(GenericBridgeAddress)
+  log('  Deploying ValidatorSigner...');
+  // let mainnet = false
+  // if (chainId == 1 || chainId == 56 || chainId == 43114 || chainId) mainnet = true
 
-  // log('  - GenericBridge:         ', genericBridge.address);
+  const ValidatorSigner = await ethers.getContractFactory('ValidatorSigner');
+  const validatorSigner = await upgrades.deployProxy(ValidatorSigner, [900], { kind: 'uups', gasLimit: 8000000 })
 
-  // await genericBridge.setSupportedChainIds(supportedChainIds, true)
+  log('  - ValidatorSigner:         ', validatorSigner.address);
+  deployData['ValidatorSigner'] = {
+    abi: getContractAbi('ValidatorSigner'),
+    address: validatorSigner.address,
+    deployTransaction: validatorSigner.deployTransaction,
+  }
 
+  saveDeploymentData(chainId, deployData);
   log('\n  Contract Deployment Data saved to "deployments" directory.');
-
   log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
 };
 
-module.exports.tags = ['setchainids']
+module.exports.tags = ['validatorsigner']

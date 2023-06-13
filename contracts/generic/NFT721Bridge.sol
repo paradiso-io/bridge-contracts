@@ -1,5 +1,4 @@
 pragma solidity ^0.8.0;
-//import "../lib/BlackholePreventionUpgrade.sol";
 import "../interfaces/IDTONFT721Bridge.sol";
 import "../interfaces/IERC721.sol";
 import "./DTOBridgeNFT721.sol";
@@ -16,8 +15,6 @@ contract NFT721Bridge is
     CheckNft721,
     DTOUpgradeableBase,
     ReentrancyGuardUpgradeable,
-    //    BlackholePreventionUpgrade,
-    //    Governable,
     ChainIdHolding
 {
     using SafeMathUpgradeable for uint256;
