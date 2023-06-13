@@ -167,6 +167,5 @@ module.exports = {
   toBN,
   toStr,
   supportedChainIds,
-  approvers,
-  approversTestnet
+  approvers
 };
