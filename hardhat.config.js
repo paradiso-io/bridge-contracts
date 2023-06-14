@@ -113,7 +113,7 @@ module.exports = {
       url: `https://api.avax-test.network/ext/bc/C/rpc`,
       // gasPrice: 25e9,
       blockGasLimit: 12487794,
-      accounts: [process.env.PRIVATE_KEY_NFTBRIDGE_TESTNET],
+      accounts: [process.env.PRIVATE_KEY],
     },
     tomotestnet: {
       url: `https://rpc.testnet.tomochain.com`,
@@ -227,7 +227,7 @@ module.exports = {
     flat: true,
   },
   etherscan: {
-    apiKey: process.env.SNOWTRACE_APIKEY
+    apiKey: process.env.BSC_APIKEY
     // Your API key for Etherscan
     // Obtain one at https://bscscan.com/
     // apiKey: {
