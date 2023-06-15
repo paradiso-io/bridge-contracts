@@ -1,0 +1,329 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0xD9f4C0BC48e51bB897189baE6c0F187260A87015",
+      "txHash": "0x14e6e76816a164d62e458a2de8023ff0988d61d10b524f143b0f24cbf89d43b8",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "aa71bcc92a634711ef2cd4087326b6e2730d546ab0b5b003081e68eed8b6a7f7": {
+      "address": "0xb1712e96ce29cB18Adc24511600B57E18d389CBc",
+      "txHash": "0x592a9c7771454bd5cc0c768fb077cbc875ad6b01f8034c6405feaad0ee0921ec",
+      "layout": {
+        "solcVersion": "0.8.3",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:214"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:64"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:77"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:37"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:67"
+          },
+          {
+            "label": "chainId",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_uint256",
+            "contract": "ChainIdHolding",
+            "src": "contracts/lib/ChainIdHolding.sol:6"
+          },
+          {
+            "label": "alreadyClaims",
+            "offset": 0,
+            "slot": "252",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:28"
+          },
+          {
+            "label": "bridgeApprovers",
+            "offset": 0,
+            "slot": "253",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:29"
+          },
+          {
+            "label": "approverMap",
+            "offset": 0,
+            "slot": "254",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:30"
+          },
+          {
+            "label": "supportedChainIds",
+            "offset": 0,
+            "slot": "255",
+            "type": "t_mapping(t_uint256,t_bool)",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:31"
+          },
+          {
+            "label": "tokenMapList",
+            "offset": 0,
+            "slot": "256",
+            "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:32"
+          },
+          {
+            "label": "tokenMapSupportCheck",
+            "offset": 0,
+            "slot": "257",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_bool))",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:33"
+          },
+          {
+            "label": "tokenMap",
+            "offset": 0,
+            "slot": "258",
+            "type": "t_mapping(t_uint256,t_mapping(t_bytes_memory_ptr,t_address))",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:34"
+          },
+          {
+            "label": "tokenMapReverse",
+            "offset": 0,
+            "slot": "259",
+            "type": "t_mapping(t_address,t_struct(TokenInfo)14306_storage)",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:35"
+          },
+          {
+            "label": "bridgeNFT721Tokens",
+            "offset": 0,
+            "slot": "260",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:36"
+          },
+          {
+            "label": "nativeFee",
+            "offset": 0,
+            "slot": "261",
+            "type": "t_uint256",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:37"
+          },
+          {
+            "label": "index",
+            "offset": 0,
+            "slot": "262",
+            "type": "t_uint256",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:39"
+          },
+          {
+            "label": "minApprovers",
+            "offset": 0,
+            "slot": "263",
+            "type": "t_uint256",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:40"
+          },
+          {
+            "label": "feeReceiver",
+            "offset": 0,
+            "slot": "264",
+            "type": "t_address_payable",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:41"
+          },
+          {
+            "label": "originChainTokens",
+            "offset": 0,
+            "slot": "265",
+            "type": "t_mapping(t_bytes_memory_ptr,t_bool)",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:45"
+          },
+          {
+            "label": "whitelistedTokens",
+            "offset": 0,
+            "slot": "266",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:46"
+          },
+          {
+            "label": "maxNFTPerBridgeTx",
+            "offset": 0,
+            "slot": "267",
+            "type": "t_uint256",
+            "contract": "NFT721Bridge",
+            "src": "contracts/generic/NFT721Bridge.sol:47"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_bytes_memory_ptr": {
+            "label": "bytes",
+            "numberOfBytes": "32"
+          },
+          "t_bytes_storage": {
+            "label": "bytes",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(address => uint256[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_bool))": {
+            "label": "mapping(address => mapping(uint256 => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(TokenInfo)14306_storage)": {
+            "label": "mapping(address => struct NFT721Bridge.TokenInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes_memory_ptr,t_address)": {
+            "label": "mapping(bytes => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes_memory_ptr,t_bool)": {
+            "label": "mapping(bytes => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_bool)": {
+            "label": "mapping(uint256 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_bytes_memory_ptr,t_address))": {
+            "label": "mapping(uint256 => mapping(bytes => address))",
+            "numberOfBytes": "32"
+          },
+          "t_struct(TokenInfo)14306_storage": {
+            "label": "struct NFT721Bridge.TokenInfo",
+            "members": [
+              {
+                "label": "addr",
+                "type": "t_bytes_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "chainId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    }
+  }
+}
