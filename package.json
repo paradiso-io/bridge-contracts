@@ -23,6 +23,7 @@
     "solidity-coverage": "^0.8.2"
   },
   "dependencies": {
+    "@nomicfoundation/hardhat-foundry": "^1.0.1",
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/contracts": "4.3.0",

@@ -36,3 +36,9 @@ test-results.xml
 yarn-error.log
 .openzeppelin/unknown-31337.json
 package-lock.json
+cache
+cache_forge
+flatten
+.env
+solang-mac
+out

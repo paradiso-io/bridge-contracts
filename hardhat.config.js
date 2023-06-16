@@ -18,6 +18,7 @@ require("hardhat-deploy-ethers");
 require("hardhat-deploy");
 require('hardhat-contract-sizer');
 require("solidity-coverage");
+require("@nomicfoundation/hardhat-foundry");
 // require("@nomicfoundation/hardhat-toolbox")
 
 // This must occur after hardhat-deploy!
