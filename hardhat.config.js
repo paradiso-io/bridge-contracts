@@ -8,8 +8,8 @@ const {
 } = require("hardhat/builtin-tasks/task-names");
 
 require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-ethers");
+require("@nomiclabs/hardhat-etherscan");
 require("@openzeppelin/hardhat-upgrades");
 require("hardhat-gas-reporter");
 require("hardhat-abi-exporter");
@@ -18,6 +18,7 @@ require("hardhat-deploy-ethers");
 require("hardhat-deploy");
 require('hardhat-contract-sizer');
 require("solidity-coverage");
+// require("@nomicfoundation/hardhat-toolbox")
 
 // This must occur after hardhat-deploy!
 task(TASK_COMPILE_GET_COMPILER_INPUT).setAction(async (_, __, runSuper) => {
@@ -85,7 +86,7 @@ module.exports = {
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_APIKEY}`,
-      gasPrice: 50e9,
+      gasPrice: 20e9,
       // blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY_MAINNET],
     },
@@ -227,18 +228,13 @@ module.exports = {
     flat: true,
   },
   etherscan: {
-    apiKey: process.env.BSC_APIKEY
-    // Your API key for Etherscan
-    // Obtain one at https://bscscan.com/
-    // apiKey: {
-    //   bscTestnet: process.env.BSC_APIKEY,
-    //   bsc: process.env.BSC_APIKEY,
-    //   ftmTestnet: process.env.FTM_APIKEY,
-    //   rinkeby: process.env.ETHERSCAN_APIKEY,
-    //   kovan: process.env.ETHERSCAN_APIKEY,
-    //   avalancheFujiTestnet: process.env.AVAX_APIKEY,
-    //   moonbaseAlpha: process.env.MOONBEAM_APIKEY,
-    // }
+    // apiKey: process.env.ETHERSCAN_APIKEY
+    apiKey: {
+      bsctestnet: process.env.BSC_APIKEY,
+      bsc: process.env.BSC_APIKEY,
+      moonbeam: process.env.MOONSCAN_APIKEY,
+      mainnet: process.env.ETHERSCAN_APIKEY
+    }
   },
   namedAccounts: {
     deployer: {
