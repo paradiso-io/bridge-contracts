@@ -5,7 +5,8 @@ const {
   getContractAbi,
   log,
   supportedChainIds,
-  approvers
+  approvers,
+  toWei
 } = require("../js-helpers/deploy");
 
 let sleep = async (time) => new Promise((resolve) => setTimeout(resolve, time))
@@ -44,7 +45,7 @@ module.exports = async (hre) => {
   }
   await sleep(20000)
   await nft721Bridge.setApprovers(approvers(true), true)
-  await nft721Bridge.setFeeAndMinApprovers("0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af", '6000000000000000', 6)
+  await nft721Bridge.setFeeAndMinApprovers("0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af", toWei('0.8'), 6)
 
   saveDeploymentData(chainId, deployData);
   log('\n  Contract Deployment Data saved to "deployments" directory.');

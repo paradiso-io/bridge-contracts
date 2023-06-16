@@ -20,7 +20,6 @@ module.exports = async (hre) => {
 
   const chainId = chainIdByName(network.name);
   if (chainId === 31337) return
-  const alchemyTimeout = chainId === 31337 ? 0 : (chainId === 1 ? 5 : 3);
 
   log('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
   log('DTO Multichain Bridge Protocol - Contract Deployment');
@@ -35,13 +34,11 @@ module.exports = async (hre) => {
   log(' ');
 
   log('  Deploying GenericBridge...');
-  // let mainnet = false
-  // if (chainId == 1 || chainId == 56 || chainId == 43114 || chainId) mainnet = true
-  console.log('supportedChainIds(chainId)', supportedChainIds())
+  console.log('supportedChainIds(chainId)', supportedChainIds(true))
   const balance = await ethers.provider.getBalance(deployer)
   console.log('balance', balance.toString())
   const GenericBridge = await ethers.getContractFactory('GenericBridge');
-  const genericBridge = await upgrades.deployProxy(GenericBridge, [supportedChainIds(false)], { kind: 'uups', gasLimit: 2000000 })
+  const genericBridge = await upgrades.deployProxy(GenericBridge, [supportedChainIds(true)], { kind: 'uups', gasLimit: 2000000 })
 
   log('  - GenericBridge:         ', genericBridge.address);
   deployData['GenericBridge'] = {
@@ -50,7 +47,7 @@ module.exports = async (hre) => {
     deployTransaction: genericBridge.deployTransaction
   }
   await sleep(20000)
-  await genericBridge.addApprovers(approvers(false))
+  await genericBridge.addApprovers(approvers(true))
   await genericBridge.setFeeReceiver("0x3b9cAeA186DbEFa01ef4e922e38d4a32dE2d51af")
 
   saveDeploymentData(chainId, deployData);
