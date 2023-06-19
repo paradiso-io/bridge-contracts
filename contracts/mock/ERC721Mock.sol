@@ -9,9 +9,9 @@ contract ERC721Mock is ERC721Enumerable, Ownable {
     using Strings for uint256;
 
     string public defaultURI;
-    constructor() ERC721('GFC Faucet', 'GFC')
+    constructor() ERC721('Fake NFT for Testing', 'FakeForTest')
     {
-        defaultURI = "ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/";
+        defaultURI = "ipfs://QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq/1";
     }
 
     function mint() external {
