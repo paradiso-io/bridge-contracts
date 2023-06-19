@@ -89,7 +89,7 @@ contract GenericBridge is
         __ChainIdHolding_init();
         NATIVE_TOKEN_ADDRESS = 0x1111111111111111111111111111111111111111;
         supportedChainIds[chainId] = true;
-        minApprovers = 2;
+        minApprovers = 6;
         claimFee = 0;
         governance = owner();
         uint256 count = _chainIds.length;

@@ -123,6 +123,12 @@ module.exports = {
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY],
     },
+    tomo: {
+      url: `https://rpc.tomochain.com`,
+      gasPrice: 1e9,
+      blockGasLimit: 12487794,
+      accounts: [process.env.PRIVATE_KEY_MAINNET],
+    },
     huobitestnet: {
       url: 'https://http-testnet.hecochain.com',
       gasPrice: 1e9,
@@ -155,7 +161,7 @@ module.exports = {
     },
     moonbeam: {
       url: 'https://rpc.api.moonbeam.network',
-      gasPrice: 101e9,
+      gasPrice: 150e9,
       blockGasLimit: 12487794,
       accounts: [process.env.PRIVATE_KEY_MAINNET],
     },

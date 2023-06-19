@@ -37,6 +37,7 @@ const chainIdByName = (chainName) => {
     case 'fujitestnet': return 43113;
     case 'avalaunche': return 43114;
     case 'tomotestnet': return 89;
+    case 'tomo': return 88;
     case 'huobitestnet': return 256;
     case 'okc': return 66;
     case 'shardeumsphinx': return 8082;
@@ -66,6 +67,7 @@ const chainNameById = (chainId) => {
     case 43114: return 'avalaunche';
     case 1284: return 'moonbeam';
     case 89: return 'TomoTestnet';
+    case 88: return 'Tomo';
     case 256: return 'HuobiTestnet';
     case 66: return "OKChain";
     case 8082: return "ShardeumSphinx";
@@ -82,7 +84,7 @@ const chainNameById = (chainId) => {
 const supportedChainIds = (mainnet) => {
   if (!mainnet) return [3, 4, 42, 31337, 56, 97, 1287, 4002, 80001, 43114, 89, 96945816564243, 5, 11155111]
   //support ethereum and casper initially
-  return [1, 131614895977472, 56, 1284, 43114, 66]
+  return [1, 131614895977472, 56, 1284, 43114, 66, 88]
 }
 const approvers = (mainnet) => {
   if (mainnet) {
