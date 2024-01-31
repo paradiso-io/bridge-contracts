@@ -49,6 +49,8 @@ contract GenericBridge is
     uint256 public defaultFeePercentage;
     uint256 public constant DEFAULT_FEE_DIVISOR = 10_000;
     uint256 public constant DEFAULT_FEE_PERCENTAGE = 10; //0.1%
+    
+    address public rebalanceAddress; 
 
     //_token is the origin token, regardless it's bridging from or to the origini token
     event RequestBridge(
@@ -110,6 +112,14 @@ contract GenericBridge is
     {
         require(_feeReceiver != address(0), "null address");
         feeReceiver = _feeReceiver;
+    }
+
+    function setRebalanceContract(address _rebalance) public onlyOwner {
+        rebalanceAddress = _rebalance;
+    }
+
+    function approveTokenForRebalance(address tokenAddress) public onlyOwner  {
+        IERC20Upgradeable(tokenAddress).approve(rebalanceAddress, type(uint256).max);
     }
 
     //originTokens for this chain
