@@ -46,6 +46,7 @@ const chainIdByName = (chainName) => {
     case 'gatetestnet': return 85;
     case 'cubetestnet': return 1819;
     case 'sepolia': return 11155111;
+    case 'arbitrumsepolia': return 421614;
     default: return 0;
   }
 };
@@ -76,6 +77,7 @@ const chainNameById = (chainId) => {
     case 65: return "okextestnet";
     case 85: return "gatetestnet";
     case 1819: return "cubetestnet";
+    case 421614: return "Arbitrum Sepolia";
     default: return 'Unknown';
   }
 };
