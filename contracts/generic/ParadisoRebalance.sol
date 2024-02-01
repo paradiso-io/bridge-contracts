@@ -16,8 +16,9 @@ contract ParadisoRebalance is DTOUpgradeableBase, ReentrancyGuardUpgradeable, Ac
     using AddressUpgradeable for address payable;
 
     address public stargateRouter;
+    mapping (bytes32 => bool) public messagesUsed;
 
-    event Rebalance(address tokenAddress, uint256 dstChainId, address recipient, uint256 amount);
+    event Rebalance(address tokenAddress, uint256 dstChainId, address recipient, uint256 amount, uint256 deathline);
 
     function getSignatureSigner(bytes32 r, bytes32 s, uint8 v, bytes32 signedData) internal returns (address){
         return ecrecover(
@@ -66,6 +67,7 @@ contract ParadisoRebalance is DTOUpgradeableBase, ReentrancyGuardUpgradeable, Ac
         bytes32[2] memory rs, uint8 v)
     public payable onlyRole(bytes32("operator")) {
         require(block.timestamp < PoolIdAdnDeadline[2], "request bridge expiry");
+        require(!messagesUsed[keccak256(abi.encode("bridge", tokenAddress, sender, dstChainId, amount, PoolIdAdnDeadline))], "Message is already used");
         require(hasRole(bytes32("validator"), getSignatureSigner(
             rs[0], rs[1], v, keccak256(abi.encode("bridge", tokenAddress, sender, dstChainId, amount, PoolIdAdnDeadline))
         )), "invalid sender signature");
@@ -95,7 +97,7 @@ contract ParadisoRebalance is DTOUpgradeableBase, ReentrancyGuardUpgradeable, Ac
             _lzTxParams.dstNativeAddr,
             "0x");
 
-        emit Rebalance(tokenAddress, dstChainId, recipient, amount);
+        emit Rebalance(tokenAddress, dstChainId, recipient, amount, PoolIdAdnDeadline[2]);
     }
 
 
